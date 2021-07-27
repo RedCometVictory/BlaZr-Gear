@@ -6,6 +6,7 @@
 .pnp.js
 .env
 .env*
+/config/sample.sql
 
 # testing
 /coverage
