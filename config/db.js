@@ -3,7 +3,6 @@ require('dotenv').config();
 // PostgreSQL
 const { Pool } = require('pg');
 
-
 // for local development
 const pool = new Pool({
   host: process.env.PG_HOST,

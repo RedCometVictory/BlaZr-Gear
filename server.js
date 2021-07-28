@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
 const path = require('path');
+import { notFound, errorHandler } from './middleware/errorMiddleware';
 
 app.use(cookieParser());
 const pool = require ('./config/db');
@@ -17,7 +19,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 if (process.env.NODE_ENV === 'development') {
-    whiteList = ['http://localhost:3000'];
+  whiteList = ['http://localhost:3000'];
+  app.use(morgan('dev'));
 }
 // server can interact with client
 app.use(cors({
@@ -30,6 +33,7 @@ const authRoutes = require('./routes/authRoutes');
 const postsRoutes = require('./routes/postsRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const usersRoutes = require('./routes/usersRoutes');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 // Init Middleware /Parse JSON (access req.body)
 app.use(express.json({/* extended: false */}));
@@ -45,6 +49,13 @@ app.use('/api/posts', postsRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/users', usersRoutes); // '/users' = '/'
 
+// PAYPAL
+// app.get('/api/config/paypal', (req, res) => {
+//   res.send(process.env.PAYPAL_CLIENT_ID);
+// });
+
+// uploads go to cloudinary
+
 // Serve static assets in production - USE IN PRODUCTION DEPLOYMENT
 if (process.env.NODE_ENV === 'production') {
   // Set static folder - use in PRODUCTION DEPLOYMENT
@@ -54,6 +65,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+app.use(notFound);
+app.use(errorHandler);
+
 // database server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
+app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port: ${PORT}`));
