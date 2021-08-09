@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
 const path = require('path');
-import { notFound, errorHandler } from './middleware/errorMiddleware';
+// import { notFound, errorHandler } from './middleware/errorMiddleware';
+// const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 app.use(cookieParser());
 const pool = require ('./config/db');
@@ -30,13 +31,16 @@ app.use(cors({
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
-const postsRoutes = require('./routes/postsRoutes');
-const profileRoutes = require('./routes/profileRoutes');
-const usersRoutes = require('./routes/usersRoutes');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/userRoutes');
+// const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 // Init Middleware /Parse JSON (access req.body)
-app.use(express.json({/* extended: false */}));
+app.use(express.json({
+  // extended: false
+}));
 
 // send data - backend npm run server (nodemon)
 if (process.env.NODE_ENV === 'development') {
@@ -45,9 +49,10 @@ if (process.env.NODE_ENV === 'development') {
 
 // define routes (to controllers) - change proxy to reflect url
 app.use('/api/auth', authRoutes);
-app.use('/api/posts', postsRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/users', usersRoutes); // '/users' = '/'
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes); // '/users' = '/'
 
 // PAYPAL
 // app.get('/api/config/paypal', (req, res) => {
@@ -65,8 +70,8 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.use(notFound);
-app.use(errorHandler);
+// app.use(notFound);
+// app.use(errorHandler);
 
 // database server
 const PORT = process.env.PORT || 5000;

@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-
+const pool = require ('../config/db');
+// const pool = require ('./config/db');
 // Get token from header, created by initial res.json, (when req sent to protected route) is required
 // if access token is expired - refresh w/reftoken
 // pass via header in the auth actions from redux...
-module.exports = async function(req, res, next) {
+// module.exports = async function(req, res, next) {
+const authJWT = async (req, res, next) => {
   // varify header exists, get token from header
   const authHeader = String(req.header('Authorization'));
   let decoded;
@@ -22,6 +24,17 @@ module.exports = async function(req, res, next) {
       return res.status(401).send("Server Error! Token is not valid.");
     }    
   } else {
-    res.status(403).json({ msg: 'No token. Authorization denied.'});
+    res.status(401).json({ msg: 'No token. Authorization denied.'});
   }
 };
+
+const admin = async (req, res, next) => {
+  const { role } = req.user; // passed via header
+  if (req.user && role === 'admin') {
+    next()
+  } else {
+    res.status(401)
+    throw new Error('Not authorized as an admin')
+  }
+}
+module.exports = { authJWT, admin };

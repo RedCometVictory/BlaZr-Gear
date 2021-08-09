@@ -24,7 +24,7 @@ exports.createProfileValidator = [
 // create / edit user profile - list all required fields
 exports.editProfileValidator = [
   check('username', 'Please include a username.').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
-  check('tag_name', 'Please include a tag name.').not().isEmpty().trim().isLength({min: 4, max: 12}).withMessage('Tag name must be between 4 to 12 characters.'),
+  // check('tag_name', 'Please include a tag name.').not().isEmpty().trim().isLength({min: 4, max: 12}).withMessage('Tag name must be between 4 to 12 characters.'),
   check('user_email', 'Please include a valid email.').isEmail().trim(),
   check('birthday', 'Birthdate is required.').not().isEmpty()
   // check('skills', 'Skills is required.').not().isEmpty()
@@ -34,9 +34,21 @@ exports.editProfileValidator = [
 // Register User - produce errs for err.array
 exports.registerUserValidator = [
   check('username', 'Please create a username.').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
-  check('tagName', 'Please create a tag name.').not().isEmpty().trim().isLength({min: 4, max: 12}).withMessage('Tag name must be between 4 to 12 characters.'),
   check('email', 'Please include a valid email.').isEmail().trim(),
   check('password', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16})
+  // min 8 char long.
+  // At least one uppercase.
+  // At least one lower case.
+  // At least one special character.
+  // check("password", "...").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
+];
+
+exports.adminEditsUserValidator = [
+  check('f_name', 'Please create a first name at least 2 characters long.').not().isEmpty().trim().isLength({min: 2, max: 60}),
+  check('l_name', 'Please create a last name at least 2 characters long.').not().isEmpty().trim().isLength({min: 2, max: 60}),
+  check('username', 'Please create a username (1 - 12 chars).').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
+  check('user_email', 'Please include a valid email.').isEmail().trim(),
+  check('role', 'Please include a role for the user.').not().isEmpty()
   // min 8 char long.
   // At least one uppercase.
   // At least one lower case.
