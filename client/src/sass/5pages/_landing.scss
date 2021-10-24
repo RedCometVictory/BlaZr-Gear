@@ -1,0 +1,108 @@
+// mobile first
+.hero {
+  // background: url('../../img/mtn-lake.jpg') no-repeat center center/cover;
+  padding-top: 50.4px;
+  // height: calc(100vh - 50.4px);
+  height: 100vh;
+  overflow-y: hidden;
+  &__content {
+    height: 100%;
+    width: 100%;
+    // background-color: rgba(75, 94, 199, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  &__slides {
+    height: 100%;
+  }
+  &__slide-image {
+    // height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  &__arrows {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 200px;
+    width: 100%;
+    padding: 0 3rem 0 3rem;
+    position: absolute;
+    top: 40%;
+    .arrow-cont {
+      height: 3rem;
+      width: 3rem;
+      border-radius: 50%;
+      // opacity: 0.5;
+      cursor: pointer;
+      font-size: 2.6rem;
+      outline: none;
+      .left {
+        // transform: rotate(180deg);
+        color: var(--bg-panel);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 3rem;
+        width: 3rem;
+        // font-size: 1.6rem;
+      }
+      .right {
+        color: var(--bg-panel);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 3rem;
+        width: 3rem;
+        // font-size: 1.6rem;
+      }
+    }
+  }
+  &__desc {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1.2rem;
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    max-width: 50%;
+  }
+  &__title {
+    text-align: center;
+    padding: 1rem 1rem;
+    color: var(--overlay-text);
+  }
+  &__buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 3rem;
+    width: 50%;
+    margin: 0 auto;
+  }
+}
+
+// for desktop 820px++
+@media (min-width: 820px) {
+  .hero {
+    &__sidebar {
+      max-width: 400px;
+      border-radius: initial;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 33%;
+      height: 100%;
+      text-align: center;
+      position: absolute;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    &__title {
+      padding: 0 1rem;
+    }
+    &__buttons {
+      width: 66%;
+    }
+  }
+}

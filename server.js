@@ -5,8 +5,6 @@ const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
 const path = require('path');
-// import { notFound, errorHandler } from './middleware/errorMiddleware';
-// const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 app.use(cookieParser());
 const pool = require ('./config/db');
@@ -14,13 +12,13 @@ const pool = require ('./config/db');
 // heroku address
 const HOST = process.env.HEROKU_DOMAIN;
 let whiteList;
-
+//  'https://www.sandbox.paypal.com'
 if (process.env.NODE_ENV === 'production') {
-  whiteList = [HOST];
+  whiteList = [HOST, 'https://www.sandbox.paypal.com/'];
 }
 
 if (process.env.NODE_ENV === 'development') {
-  whiteList = ['http://localhost:3000'];
+  whiteList = ['http://localhost:3000', 'https://www.sandbox.paypal.com/'];
   app.use(morgan('dev'));
 }
 // server can interact with client
@@ -33,9 +31,11 @@ app.use(cors({
 const authRoutes = require('./routes/authRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
-// const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const slideRoutes = require('./routes/slideRoutes');
+const imageRoutes = require('./routes/imageRoute');
 
 // Init Middleware /Parse JSON (access req.body)
 app.use(express.json({
@@ -47,17 +47,25 @@ if (process.env.NODE_ENV === 'development') {
   app.get('/', async (req, res, next) => res.send("API is running..."));
 };
 
+// const Environment = process.env.NODE_ENV === "production" ? paypalSDK.core.SandboxEnvironment : paypalSDK.core.SandboxEnvironment;
+// const paypalClient = new paypalSDK.core.PayPalHttpClient(
+//   new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET)
+// );
+
 // define routes (to controllers) - change proxy to reflect url
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes); // '/users' = '/'
+app.use('/api/payment', paymentRoutes);
+app.use('/api/slides', slideRoutes);
+app.use('/api/image', imageRoutes);
 
-// PAYPAL
-// app.get('/api/config/paypal', (req, res) => {
-//   res.send(process.env.PAYPAL_CLIENT_ID);
-// });
+// PAYPAL - configure order
+app.get('/api/config/paypal', (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID);
+});
 
 // uploads go to cloudinary
 
@@ -69,9 +77,6 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
-
-// app.use(notFound);
-// app.use(errorHandler);
 
 // database server
 const PORT = process.env.PORT || 5000;

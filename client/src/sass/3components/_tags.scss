@@ -1,0 +1,30 @@
+.tag {
+  font-size: 0.8rem;
+  padding: 0.1rem;
+  text-align: center;
+  margin: 0.3rem;
+  background: var(--light-color);
+  color: #333;
+}
+.tag-danger {
+  background-color: var(--danger-color);
+  color: #fff;
+}
+.tag-success {
+  background-color: var(--success-color);
+  color: #fff;
+}
+.tag-white {
+  background-color: #fff;
+  color: #fff;
+  border: #ccc solid 1px;
+}
+.tag-dark {
+  // background-color: var(--dark-color);
+  background-color: #000;
+  color: #fff;
+}
+.tag-light {
+  background-color: var(--light-color);
+  color: #fff;
+}

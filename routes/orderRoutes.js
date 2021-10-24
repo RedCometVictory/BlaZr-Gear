@@ -2,18 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { authJWT, admin } = require('../middleware/authenticator');
 const { createPostValidator, validatorResult } = require('../middleware/validator');
+const { getAllOrders, getMyOrders, getOrderById, createOrder, orderPayment, updateOrderToPaid, updateOrderDeliveredStatus } = require('../controllers/orderController'); 
 
-const { getAllOrders, getMyOrders, getOrderById, createOrder, orderPayment, updateOrderToDelivered } = require('../controllers/orderController'); 
+// @route    GET /orders/my-orders
+// @desc     Get all orders, review.
+// @access   Private
+router.get('/my-orders', authJWT, getMyOrders);
 
 // @route    GET /orders/ 
 // @desc     Get all orders, review.
 // @access   Private/Admin 
 router.get('/', authJWT, admin, getAllOrders);
-
-// @route    GET /orders/myorders
-// @desc     User reviews orders / order history.
-// @access   Private ***
-router.get('/myorders', authJWT, getMyOrders);
 
 // @route    GET /orders/:order_id
 // @desc     Get individual order to view detail. 
@@ -27,13 +26,13 @@ router.post('/', authJWT, createOrder);
 
 // @route    POST /orders/:order_id/payment
 // @desc     User updates payment of order.
-// @access   Private***
-// router.put('/:order_id/pay', authJWT, createPostValidator, validatorResult, updateOrderToPaid);
-router.put('/:order_id/payment', authJWT, orderPayment);
+// @access   Private
+router.put('/:order_id/pay', authJWT, createPostValidator, validatorResult, updateOrderToPaid);
+// router.put('/:order_id/payment', authJWT, orderPayment);
 
 // @route    PUT /orders/:order_id/deliver
 // @desc     Admin updates delivery status of order.
-// @access   Private/Admin ***
-// router.put('/:order_id/deliver', authJWT, admin, createPostValidator, validatorResult, updateOrderToDelivered);
+// @access   Private/Admin
+router.put('/:order_id/deliver', authJWT, admin, updateOrderDeliveredStatus);
 
 module.exports = router;

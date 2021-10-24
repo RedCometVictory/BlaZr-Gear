@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { storage } = require('../middleware/cloudinary');
-// const upload = multer({ storage, limits: { fieldSize: 3 * 1024 * 1024 } }); //3MB
 const { authJWT, admin } = require('../middleware/authenticator');
 const upload = multer({
   storage,
@@ -15,7 +14,7 @@ const upload = multer({
   }
 });
 const { authTest, registerUser, authValidToken, authLogout, forgotPassword, resetPassword, authRefreshToken, authDelete, verifyResetToken } = require('../controllers/authController');
-const { registerUserValidator, signinAuthValidator, validatorResult } = require('../middleware/validator');
+const { registerUserValidator, signinAuthValidator, forgotPasswordValidator, resetPasswordValidator, validatorResult } = require('../middleware/validator');
 
 // @route    GET /auth/ (endpoint: auth)
 // @desc     Test route / verify / backend / user_loaded
@@ -26,17 +25,17 @@ router.get('/', authJWT, authTest);
 // @desc     Authenticate users already in db (login) and get token (to make req to private routes)
 // @access   Public
 router.post('/login', signinAuthValidator, validatorResult, authValidToken);
-// router.post('/login', authValidToken);
 
+// *** be mindful of secure app security from gmail
 // @route    POST auth/register
 // @desc     register a user
 // @access   Public
-router.post('/register', upload.single('avatar'), registerUserValidator, validatorResult, registerUser);
+router.post('/register', registerUserValidator, validatorResult, registerUser);
 
 // @route    POST auth/forgot-password
 // @desc     forgot password, send email link to renew
 // @access   Public
-router.post('/forgot-password', forgotPassword);
+router.post('/forgot-password', forgotPasswordValidator, validatorResult, forgotPassword);
 
 // @route    POST auth/verify-reset
 // @desc     verify reset token is not expired
@@ -46,7 +45,7 @@ router.post('/verify-reset', verifyResetToken);
 // @route    POST auth/login
 // @desc     verify reset token, create new password
 // @access   Public
-router.post('/reset-password', resetPassword);
+router.post('/reset-password', resetPasswordValidator, validatorResult, resetPassword);
 
 // @route    POST auth/refresh-token
 // @desc     Generate new access (upon expiration) & refresh token
@@ -59,9 +58,8 @@ router.post('/refresh-token', authRefreshToken);
 router.post('/logout', authLogout);
 
 // @route    DELETE auth/remove
-// @desc     User can delete their own profile, Admin can delete or blacklist any user profile upon user request or violation of policy
+// @desc     User deletes their own profile, Admin can delete or blacklist any user profile upon user request or violation of policy
 // @access   Private, Admin Private
 router.delete('/remove', authJWT, authDelete);
-// router.delete('/remove', authJWT, admin, authDelete);
 
 module.exports = router;

@@ -15,17 +15,17 @@ const upload = multer({
 }); //3MB
 const { createPostValidator, validatorResult } = require('../middleware/validator');
 
-const { getAllProducts, createProductReview, getTopProducts, getProductById, createProduct, updateProduct, deleteProduct } = require('../controllers/productController'); 
+const { getCategories, getAllProducts, createProductReview, getTopProducts, getProductById, createProduct, updateProduct, updateProductReview, deleteProduct, deleteProductReview } = require('../controllers/productController'); 
+
+// @route    GET /products/categories
+// @desc     Get all product categories.
+// @access   Public
+router.get('/categories', getCategories);
 
 // @route    GET /products/ 
 // @desc     Get all products. This is central page
 // @access   Public
 router.get('/', getAllProducts);
-
-// @route    POST /products/:prod_id/reviews
-// @desc     Post review of product.
-// @access   Private
-router.get('/:prod_id/reviews', authJWT, createProductReview);
 
 // @route    GET /products/top
 // @desc     Get best selling items. 
@@ -40,16 +40,32 @@ router.get('/:prod_id', getProductById);
 // @route    POST /products/ 
 // @desc     Create product.
 // @access   Private/Admin
-router.post('/', authJWT, admin, createProduct);
+router.post('/', authJWT, admin, upload.single('image_url'), createProduct);
+
+// @route    POST /products/:prod_id/reviews
+// @desc     Post review of product.
+// @access   Private
+router.post('/:prod_id/reviews', authJWT, createPostValidator, validatorResult, createProductReview);
+// router.post('/:prod_id', authJWT, createProductReview);
 
 // @route    PUT /products/:prod_id
 // @desc     Admin updates content of a product.
 // @access   Private/Admin
 router.put('/:prod_id', authJWT, admin, upload.single('image_url'), createPostValidator, validatorResult, updateProduct);
 
+// @route    PUT /products/:prod_id/reviews/:review_id
+// @desc     Admin updates content of a product.
+// @access   Private
+router.put('/:prod_id/reviews/:review_id', authJWT, createPostValidator, validatorResult, updateProductReview);
+
 // @route    DELETE /products/:prod_id
 // @desc     Admin deletes product from store. 
 // @access   Private/Admin
 router.delete('/:prod_id', authJWT, admin, deleteProduct);
+
+// @route    DELETE /products/:prod_id/reviews/:review_id
+// @desc     Admin deletes product from store. 
+// @access   Private
+router.delete('/:prod_id/reviews/:review_id', authJWT, deleteProductReview);
 
 module.exports = router;

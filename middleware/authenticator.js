@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const pool = require ('../config/db');
-// const pool = require ('./config/db');
 // Get token from header, created by initial res.json, (when req sent to protected route) is required
 // if access token is expired - refresh w/reftoken
 // pass via header in the auth actions from redux...
@@ -30,6 +29,7 @@ const authJWT = async (req, res, next) => {
 
 const admin = async (req, res, next) => {
   const { role } = req.user; // passed via header
+  // if (req.user && (role === 'admin' || role == 'staff')) {
   if (req.user && role === 'admin') {
     next()
   } else {

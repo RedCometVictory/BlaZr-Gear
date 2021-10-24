@@ -1,5 +1,5 @@
 require('dotenv').config();
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -29,7 +29,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'ecomm-uploads', // cloud folder
+    folder: 'ecommerce', // cloud folder
     allowed_formats: 'jpeg, jpg, gif, png',
     // public_id: function (req, file, cb) {
       // `${file.fieldname}-${Date.now()}-${file.originalname}`

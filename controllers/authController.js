@@ -3,32 +3,32 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 const { refreshTokenString, resetTokenGenerator, accessTokenGenerator, refreshTokenGenerator, getAccessTokenFromHeaders, validateRefreshToken, validateResetToken, refreshTokenCookieOptions } = require('../middleware/jwtGenerator');
-const { signedUpMail, forgotPasswordMail, PasswordResetSuccessMail } = require('../middleware/emailService');
+const { signedUpMail, forgotPasswordMail, PasswordResetSuccessMail, bannedAccountMail } = require('../middleware/emailService');
 
-// req.user accessible via token (authJWT)
-// used to access user id via state.auth.user.id
-// *** Insomnia Tested / Passed
+// req.user accessible via token (authJWT), used to access user id via state.auth.user.id
+// *** Insomnia Tested / Passed / Works in App
 // /auth/
 // Private
 exports.authTest = async (req, res, next) => {
-  // console.log("loading user data...")
-  const { id } = req.user; // passed via header
+  let { id, stripeCustId } = req.user; // passed via header
   try {
-    // select all but password
     const user = await pool.query(
-      'SELECT * FROM users WHERE id = $1', [id]
+      'SELECT * FROM users WHERE id = $1;', [id]
     );
-    if (!user.rows[0] > 0) {
+    if (user.rowCount === 0 || !user.rows[0]) {
       return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to get user data." }] });
     }
     // do not send the password to the client
-    // console.dir(user.rows[0]);
     user.rows[0].user_password = undefined;
-    
-    res.status(200).json({
+    let userRows = user.rows[0];
+    if (!stripeCustId) stripeCustId = "";
+    userRows.stripeCustId = stripeCustId;
+
+    return res.status(200).json({
       success: "Test successful!",
       data: {
-        user: user.rows[0]
+        // userInfo: user.rows[0]
+        userInfo: userRows
       }
     });
   } catch (err) {
@@ -37,8 +37,8 @@ exports.authTest = async (req, res, next) => {
   }
 };
 
-// *** Insomnia Tested / Passed
-// NOTE: email service returns res as undefined (likely because receiver email does not exist), still recieved email in sender inbox
+// *** Insomnia Tested / Passed / Works in App
+// NOTE: email service returns res as undefined, may be due to gmail security. If receiver email does not exist, sender inbox is told so via email
 // /auth/register
 // Public
 exports.registerUser = async (req, res, next) => {
@@ -50,27 +50,11 @@ exports.registerUser = async (req, res, next) => {
     return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
   }
 
-  let defaultAvatar = `https://res.cloudinary.com/${process.env.CLDNAME}/image/upload/v1621492034/social-uploads/Default-welcomer_zvjurb.png`;
-  let confirmedAvatar = defaultAvatar;
-  let confirmedAvatarFilename = '';
-
   try {
-    if (req.file && req.file.path) {
-      if (req.file.path) {
-        confirmedAvatar = req.file.path;
-        confirmedAvatarFilename = req.file.filename;
-      }
-    }
-    if (confirmedAvatar.startsWith('dist\\')) {
-      let editAvatarUrl = confirmedAvatar.slice(4);
-      confirmedAvatar = editAvatarUrl;
-    }
-
     // check if client provided info is not already present in db, to prevent repeated info
     let emailResult = await pool.query('SELECT user_email FROM users WHERE user_email = $1', [ email ]);
     let usernameResult = await pool.query('SELECT username FROM users WHERE username = $1', [ username ]);
 
-    // if (user.rowCount !== 0) {
     if (usernameResult.rowCount !== 0) {
       return res.status(400).json({ errors: [{ msg: 'The username already exists!' }] });
     }
@@ -87,39 +71,32 @@ exports.registerUser = async (req, res, next) => {
     // not storing as a obj, but in psqldb
     const encryptedPassword = await bcrypt.hash(password, salt);
 
-    console.log('===================');
-    console.log("inserting user");
-    // Insert new registered user to table:
-    // avatar created later after login process...
     let newUser = await pool.query(
-      'INSERT INTO users (f_name, l_name, username, user_email, user_password, user_avatar, user_avatar_filename) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [firstName, lastName, username, email, encryptedPassword, confirmedAvatar, confirmedAvatarFilename]
+      'INSERT INTO users (f_name, l_name, username, user_email, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *', [firstName, lastName, username, email, encryptedPassword]
     );
-    if (!newUser) {
-      console.log("user does not exist")
-    }
-    console.log(`user id: ${newUser.rows[0].id}`)
-    console.log('===================');
-    console.log('===================');
-    console.log("user created, now creating cart");
-    // create individual cart_id for user
-     let newUserCart = await pool.query(
-       'INSERT INTO carts(user_id) VALUES ($1) RETURNING *;', [newUser.rows[0].id]
-     );
 
+    if (newUser.rowCount === 0 || !newUser) {
+      return res.status(401).json({ errors: [{ msg: "Failed to register user." }] });
+    }
+
+    let newUserCart = await pool.query(
+      'INSERT INTO carts(user_id) VALUES ($1) RETURNING *;', [newUser.rows[0].id]
+    );
 
     const jwtToken = accessTokenGenerator(newUser.rows[0].id, newUser.rows[0].role, newUserCart.rows[0].id);
-    
-    // TODO: Fix this error: likely issue with transporter setup (email servuce)
+
+    // Fix nodemailer error: likely issue with transporter setup (email servuce)
     // user created, now creating cart
     // res is not defined - error caused by user registering email address does not officially exist on any service
     await signedUpMail(email);
     // hide token from client (already added to db)
-    // newUser.rows[0].user_password = undefined;
-    // return access jetToken to client, so that they may use it to login right away
+    newUser.rows[0].user_password = undefined;
+    // return access jetToken to client
     res.status(200).json({ 
       status: "Success! Account created.",
       data: {
-        token: jwtToken
+        token: jwtToken,
+        // userInfo: newUser.rows[0]
       }
     });
   } catch (err) {
@@ -128,25 +105,24 @@ exports.registerUser = async (req, res, next) => {
   }
 };
 
-// *** Insomnia Tested / Passed
+// *** Insomnia Tested / Passed / Works in App
 // login user - successfully passed postman
 // /auth/login
 // Public
 exports.authValidToken = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    // const user = await pool.query(
-    //   'SELECT * FROM users WHERE user_email = $1', [email]
-    // );
-    console.log(email);
-    console.log(password);
     const user = await pool.query(
       'SELECT U.*, C.id AS cart_id FROM users AS U JOIN carts AS C ON C.user_id = U.id WHERE U.user_email = $1;', [email]
     );
 
-    // if no user - nothing returned...
     if (user.rows.length === 0) {
       return res.status(400).json({ errors: [{ msg: "Invalid email or password."}] })
+    }
+
+    if (user.rows[0].role === 'banned') {
+      await bannedAccountMail(user.rows[0].user_email);
+      return res.status(400).json({ errors: [{ msg: "Account is banned / currently under review."}] });
     }
 
     const isMatch = await bcrypt.compare(
@@ -187,159 +163,91 @@ exports.authValidToken = async (req, res, next) => {
       status: "Successful login!",
       data: {
         token: jwtToken, // signed, send to auth header save to LS
-        user: user.rows[0]
+        // userInfo: user.rows[0]
       }
     });
-    // check user via email exists in db
-    // user found - match password input val w/ encrypted password (db)
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error...");
   }
 }
 
-// *** Insomnia Tested / Passed
+// *** Insomnia Tested / Passed / Works in App
 // /auth/forgot-password
 // Public
 exports.forgotPassword = async (req, res, next) => {
   const { email } = req.body;
-  console.log("----forgot----password----");
-  console.log(email);
-  console.log("----forgot----password----");
   try {
     const userInfo = await pool.query(
       'SELECT * FROM users WHERE user_email = $1;', [email]
     );
 
-    if (!userInfo) {
-      return res.status(400).json({ errors: [{ msg: 'User does not exists!' }] });
+    if (userInfo.rowCount === 0 || !userInfo) {
+      return res.status(403).json({ errors: [{ msg: 'User does not exists!' }] });
     }
 
-    // generate reset token
-    // 'INSERT INTO users (f_name, l_name, username, user_email, user_password, user_avatar, user_avatar_filename) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *'
-    // const resetToken = crypto.randomBytes(64).toString('hex');
-    
-    // reset token
-    // let resetSecret = crypto.randomBytes(64).toString('hex');
+    if (userInfo.rows[0].role === 'banned') {
+      await bannedAccountMail(userInfo.rows[0].user_email);
+      return res.status(400).json({ errors: [{ msg: "Account is banned / currently under review."}] });
+    }
+
     let user_id = userInfo.rows[0].id;
-    // console.log();
-    console.log(user_id);
-    // *** ***
-    // *** ***
     const resetToken = resetTokenGenerator(user_id, email);
-    // const resetToken = resetTokenGenerator(resetSecret, email);
-    // *** ***
-    // *** ***
-    console.log("ooooooooo");
-    console.log(resetToken);
+
     const createResetToken = await pool.query(
-    //   // 'INSERT INTO reset_tokens (email_address, reset_token, used) VALUES ($1, $2, $3);', [email, resetToken, true]
       'INSERT INTO reset_tokens (email_address, reset_token) VALUES ($1, $2);', [email, resetToken]
     );
-      
-      // token expires in 30mins
-      // 
-    // date.getTime() = current time
-    // const date = new Date();
-    // const minutes = 30;
-    // minutes * seconds * milliseconds
-    // date.setTime(date.getTime() + (minutes * 60 * 1000));
-    // const tokenExpiration = date;
 
-    // const createResetToken = await pool.query(
-      // 'INSERT INTO reset_tokens (email, token, used, expiration) VALUES ($1, $2, $3, $4);' [email, resetToken, true, tokenExpiration]
-    // );
-
-    // mail link to user email address:
+    // token expires in 30mins, mail link to user email address:
     // send resetToken and email address in the email
     await forgotPasswordMail(resetToken, email);
     res.status(200).json({ 
       status: "Success! Email sent, be sure to check your spam folder.",
-      // data: {
-        // token: jwtToken
-      // }
     });
-    
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error...");
   }
 };
 
-// *** Insomnia Tested / Passed
-// via useefeect on the front end first verify the reset token is not xpired, if so user must restart the process of resetitng for an ew password. Front end povides the token and the email in the url params for comparison for reset token verif and resetting the password confirmation
+// *** Insomnia Tested / Passed / Works in App
 // /auth/verify-reset
 // Public
 exports.verifyResetToken = async (req, res, next) => {
-  // const { token, email } = req.params;
   const { token, email } = req.query;
   let verifiedToken;
-  // let currentTime = new Date();
-  // const compareCurrentDate = currentTime.setTime(Date.getTime());
-
-  // console.log(token);
-  // console.log("--------------");
-  // console.log(email);
   try {
     verifiedToken = validateResetToken(token);
-
-    // console.log("==token verified / validated==");
     if (!verifiedToken) {
       // update reset token has been used
-      // console.log("verified as false");
       await pool.query(
         'UPDATE reset_tokens SET used = $1 WHERE email_address = $2;', [true, email]
       );
 
-      // console.log("reset token verified as false, updated used status to true");
-      return res.status(401).json({
-        status: "Warning! Reset Token has expired. Please apply for a new password again.",
-        data: {
-          allowReset: false
-        }
-      })
+      let errMessage = 'Reset Token not found or expired. Please try password reset again.';
+      return res.status(403).json({ errors: [{ msg: errMessage }] });
     }
-    // get user info and user reset token
-    // used property ensures that each reset attempt only works once
-    // console.log("-+-+-+-+-+-+-+-+-+-");
+    // get user info & user reset token, 'used' property ensures each reset attempt only works once
     const verifToken = await pool.query(
-      // 'SELECT U.*, R.reset_token, R.email_address, R.used AS reset_email FROM users AS U JOIN reset_tokens AS R on R.email_address = U.user_email WHERE U.user_email = $1 AND R.reset_token = $2 AND R.used = $3;', [email, token, false]
       'SELECT U.*, R.reset_token, R.email_address, R.used AS reset_email FROM users AS U JOIN reset_tokens AS R on R.email_address = U.user_email WHERE U.id = $1 AND U.user_email = $2 AND R.reset_token = $3 AND R.used = $4;', [verifiedToken.id, email, token, false]
     );
 
-    if (!verifToken.rows[0] || !verifToken) {
+    if (verifToken.rowCount === 0 || !verifToken) {
       await pool.query(
         'UPDATE reset_tokens SET used = $1 WHERE email_address = $2;', [true, email]
       );
-      // update used to false OR tryu to delete the used reset token row
-      return res.status(404).json({
-        status: "Error. Reset Token not found. Please apply for a new password again.",
-        data: {
-          allowReset: false
-        }
-      });
+      // update used false to true; delete true tokens later
+      let errMessage = "Reset Token not found. Please try password reset again.";
+      return res.status(403).json({ errors: [{ msg: errMessage }] });
     };
-    // console.log("=888-+-+-+-+-+-+-+-+-+-888=");
-    // console.log(verifToken.rows);
-    // console.log("=888-+-+-+-+-+-+-+-+-+-888=");
-    // console.log("-+-+-+-+-+-+-+-+-+-");
 
     const resetTokenFromDB = verifToken.rows[0].reset_token;
-    // console.log(resetTokenFromDB);
-    // console.log("----token verification begins----");
-
-    // if (verifToken.rows[0].email_address === email && resetTokenFromDB === token) {
-      // verify reset from db with reset token from email
-      // verifiedToken = validateResetToken(token, resetTokenFromDB);
-    // }
-
-    // console.log("reset verified as true")
     // update reset token has been used
     await pool.query(
       'UPDATE reset_tokens SET used = $1 WHERE email_address = $2;', [true, email]
     );
 
-    return res.json({
+    return res.status(200).json({
       status: "Success! Reset token valid.",
       data: {
         // validToken: verifiedToken.rows[0],
@@ -352,79 +260,48 @@ exports.verifyResetToken = async (req, res, next) => {
   }
 };
 
-// *** Insomnia Tested / Passed
+// *** Insomnia Tested / Passed / Works in App
 // /auth/reset-password
 // Public
 exports.resetPassword = async (req, res, next) => {
   // user passed in token & email (must match with backend before new passwords confirmed)
-  // password 1 & 2 must match in order for the form to submit
-  // const { resetToken, email } = req.params;
-  // reset token from req.query
   const { token, email } = req.query;
-  // const { resetToken, email, password, password2 } = req.body;
   const { password, password2 } = req.body;
 
-  // token id is from the url, so as a param from the front end it is passed into req.body then submitted
+  // token id from url, a param, it's passed into req.body
   if (!password || !password2) {
-    return res.status(400).json({
-      status: "Unauthorized! Passwords not submitted."
-    })
+    return res.status(403).json({ errors: [{ msg: 'Unauthorized! Passwords not submitted.' }] });
   }
 
   if (password !== password2) {
-    return res.status(400).json({
-      status: "Unauthorized! Passwords do not match."
-    })
+    return res.status(403).json({ errors: [{ msg: 'Error. Passwords do not match.' }] });
   }  
   try {
     const verifiedToken = validateResetToken(token);
-    // console.log("========verifiedtoken.id========")
-    // console.log(verifiedToken.id)
-    // console.log("========verifiedtoken.email========")
-    // console.log(verifiedToken.email)
     if (!verifiedToken) {
-      // update used to false OR tryu to delete the used reset token row
-      return res.status(401).json({
-        status: "Warning! Reset Token has expired. Please apply for a new password again.",
-        data: {
-          allowReset: false
-        }
-      });
+      return res.status(403).json({ errors: [{ msg: 'Reset token expired. Please try password reset again.' }] });      
     };
-    // console.log("beginning to veriftoken from db")
-    // get user info and user reset token, also double checking if the token still exists in db
-    // if used === true, then token has been previously verified
+
+    // get user info and reset token, double check if token still exists in db
+    // if used === true, then token has been previously verified and is no longer valid
     const verifToken = await pool.query(
       'SELECT U.*, R.reset_token, R.email_address, R.used AS reset_email FROM users AS U JOIN reset_tokens AS R on R.email_address = U.user_email WHERE U.id = $1AND U.user_email = $2 AND R.reset_token = $3 AND R.used = $4;', [verifiedToken.id, email, token, true]
     );
-    
-    console.log(verifToken.rows)
-    if (!verifToken.rows[0] || !verifToken) {
-      // update used to false OR tryu to delete the used reset token row
-      return res.status(404).json({
-        status: "Error. Reset Token not found. Please apply for a new password again.",
-        data: {
-          allowReset: false
-        }
-      });
+
+    if (verifToken.rowCount === 0 || !verifToken) {
+      return res.status(403).json({ errors: [{ msg: 'Reset Token not found. Please try password reset again.' }] });
     };
     const resetTokenIDFromDB = verifToken.rows[0].id;
     const resetTokenFromDB = verifToken.rows[0].reset_token;
-    // console.log("---resetTokenIDFromDB===")
-    // console.log(resetTokenIDFromDB)
-    // console.log("---resetTokenFromDB===")
-    // console.log(resetTokenFromDB)
-
     // Generate new user - encrypt password
     const salt = await bcrypt.genSalt(11);
     // not storing as a obj, but in psqldb
     const encryptedPassword = await bcrypt.hash(password, salt);
 
-    // console.log("---saving new password into db---")
     const updateNewPassword = await pool.query(
       'UPDATE users SET user_password = $1 WHERE user_email = $2 AND id = $3;', [encryptedPassword, verifiedToken.email, verifiedToken.id]
     );
-    // console.log("---password saved---")
+
     // delete reset token after successful use
     await pool.query(
       'DELETE FROM reset_tokens WHERE used = true AND email_address = $1;', [email]
@@ -433,10 +310,6 @@ exports.resetPassword = async (req, res, next) => {
 
     res.status(200).json({
       status: "Success! Password reset. Please login using new password.",
-      // data: {
-      //  validToken: validatedToken.rows[0],
-      //  allowReset: true
-      // }
     })
   } catch (err) {
     console.error(err.message);
@@ -444,6 +317,7 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
+// TODO --- finish refresh token section
 // *** Insomnia Tested / Passed
 // successfully tested on postman
 // call this route via client usseffect with settimeout to expire before access token actually expires
@@ -451,8 +325,6 @@ exports.resetPassword = async (req, res, next) => {
 // /auth/refresh-token
 // Public
 exports.authRefreshToken = async (req, res, next) => {
-  // res.send("this is the refresh route!");
-  // get ref coookie!
   const { refresh } = req.cookies;
 
   // check for access token - may not need to send headers for refresh...
@@ -565,7 +437,7 @@ exports.authRefreshToken = async (req, res, next) => {
 //   }
 // });
 
-// *** Insomnia Tested / Passed
+// *** Insomnia Tested / Passed / Works in App
 // logout - remove refresh token - sucessfully tested on postman!
 // /auth/logout
 // Public
@@ -573,7 +445,7 @@ exports.authLogout = async (req, res, next) => {
   const { refresh } = req.cookies;
   // remove access token from localstorage:
   // console.log("attempting logout of user")
-  if (!refresh) return "logout: no refresh cookie exists!"; 
+  // if (!refresh) return "logout: no refresh cookie exists!"; 
   // verify token to get payload...
   // try {
   //   res.send("you have a cookie!")
@@ -582,32 +454,34 @@ exports.authLogout = async (req, res, next) => {
   // }
   const verifiedRefToken = validateRefreshToken(refresh);
 
-  if (verifiedRefToken === null) {
-    res.status(403).send('Failed to verify refresh token.');
-    return; // maybe redirect / call logout (handles bu authJWT middleware)
-  }
-  console.log("logging out:");
-  console.log(verifiedRefToken);
-  console.log("==============");
+  // if (verifiedRefToken === null) {
+  //   res.status(403).send('Failed to verify refresh token.');
+  //   return; // maybe redirect / call logout (handles bu authJWT middleware)
+  // }
+  // console.log("logging out:");
+  // console.log(verifiedRefToken);
+  // console.log("==============");
   // console.log(verifiedRefToken.refreshTokenId);
-  console.log(verifiedRefToken.refreshToken);
+  // console.log(verifiedRefToken.refreshToken);
 
   try {
-    console.log("refresh token cookie has been verified!");
+    // console.log("refresh token cookie has been verified!");
     // res.send("you have a cookie!")
     // clear existing cookies:
-    const clearRefreshToken = await pool.query(
-      'UPDATE users SET refresh_token = null WHERE refresh_token = $1 RETURNING *', [verifiedRefToken.refreshToken]
-    );
-    if (clearRefreshToken.rows[0].refresh_token !== null) {
-      return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to nullify refresh token." }] });
-    }
-
-    // console.log(clearRefreshToken.rows[0].refresh_token);
-    // res.send("successfully nulled refresh token");
-    // res.clearCookie('refresh'); // instead of deleting, override
-    res.cookie('refresh', '', { expires: new Date(1) });
-    // to effectively "delete" a cookie, one must set the expiration to essentially be maxAge=1
+    if (verifiedRefToken) {
+      const clearRefreshToken = await pool.query(
+        'UPDATE users SET refresh_token = null WHERE refresh_token = $1 RETURNING *', [verifiedRefToken.refreshToken]
+      );
+      // if (clearRefreshToken.rows[0].refresh_token !== null) {
+      //   return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to nullify refresh token." }] });
+      // }
+        
+      // console.log(clearRefreshToken.rows[0].refresh_token);
+      // res.send("successfully nulled refresh token");
+      // res.clearCookie('refresh'); // instead of deleting, override
+      res.cookie('refresh', '', { expires: new Date(1) });
+      // to effectively "delete" a cookie, one must set the expiration to essentially be maxAge=1
+    };
     
     res.send({ "success": "Logged out successfully!" });
     // implement login redirects later
@@ -624,42 +498,13 @@ exports.authLogout = async (req, res, next) => {
 // Private / Admin ?
 exports.authDelete = async (req, res, next) => {
   const { id, role, cartID } = req.user;
-  try {    
-    //* Foreign keys create constraints that prevent us from deleting parent tables right away, thus delete all child tables (that have foreign keys) first, or give foreign keys null values, then delete parent tables last, another option is to use ON DELETE CASCADE, which seems to do this process automatically but it may lead to errors?
+  try {
     const findUser = await pool.query(
       'SELECT id from users WHERE id = $1;', [id]
     );
 
     if (!findUser) {
-      res.status(404).json({
-        status: "Error. User not found."
-      })
-    }
-
-    console.log("user found");
-    
-    //     }
-    //   }
-    //   await Promise.all(promises);
-    // };
-    console.log("attempting to delete background image for profile");
-    // temporarily comment out this background image section
-    let backgroundImageFilename = await pool.query(
-      'SELECT background_image_filename FROM profiles WHERE user_id = $1;', [id]
-    );
-    // if (backgroundImageFilename.rows[0].background_image_filename) {
-    if (backgroundImageFilename) {
-      console.log("deleting cloudinary background image");
-    //   await cloudinary.uploader.destroy(backgroundImageFilename.rows[0].background_image_filename);
-    }
-    
-    // does not select url, thus default image url will not be deleted
-    let avatarImageFilename = await pool.query(
-      'SELECT user_avatar_filename FROM users WHERE id = $1;', [id]
-    );
-    if (avatarImageFilename.rows[0].user_avatar_filename) {
-      console.log("deleting avatar image from cloudinary");
-      // await cloudinary.uploader.destroy(avatarImageFilename.rows[0].user_avatar_filename);
+      res.status(404).json({ errors: [{ msg: "Error. User not found." }] })
     }
 
     // if user role = admin || staff remove comments they made
@@ -667,33 +512,23 @@ exports.authDelete = async (req, res, next) => {
       // const deleteAllComments = await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
       await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
       // if (!deleteAllComments) {
-      // res.status(404).json({
-      //   status: "Error. User comments  found."
-      // })
+        // res.status(404).json({ errors: [{ msg: "Error. User comments found." }] });
       // }
     }
     const deleteAllUserReviews = await pool.query('DELETE FROM reviews WHERE user_id = $1;', [id]);
-    // const deleteAllPosts = await pool.query('DELETE FROM posts WHERE user_id = $1;', [id]);
 
     const profileId = await pool.query('SELECT profiles.id FROM profiles WHERE profiles.user_id = $1', [id]);
-
     // if (profileId.rows[0]) {
     if (profileId) {
-      console.log("deleting form user profiles");
-      // delete all user profile data
       const deleteProfile = await pool.query('DELETE FROM profiles WHERE user_id = $1;', [id]);
     }
-
-    console.log("deleting useer cart");
     const deleteUserCart = await pool.query(
       "DELETE FROM carts WHERE user_id = $1;", [id]
     );
-      
-    console.log("deleting user from users");
-    // delete user account // deleteUsersTable(id);
     const deleteUser = await pool.query('DELETE FROM users WHERE id = $1;', [id]);
-
-    return res.status(200).json({ msg: "User and associated data has been deleted." });
+    return res.status(200).json({
+      status: "User and associated data has been deleted."
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error...");

@@ -1,0 +1,216 @@
+:root.light {
+  --navbar-brand: rgb(253, 53, 53);
+  // --navbar-color: rgb(236, 235, 235);
+  // --navbar-color: rgb(214, 214, 214);
+  --navbar-color: rgb(27, 40, 233);
+  // --navbar-color: rgb(238, 232, 232);
+  --navbar-color-a: rgba(51, 51, 51, 0.6);
+  --navbar-text: rgb(65, 65, 65);
+  --navbar-title: rgb(243, 243, 243);
+  --navbar-text-hover: rgb(221, 171, 8);
+  // --bg-primary: rgb(214, 214, 214);
+  --bg-primary: rgb(224, 224, 224);
+  --bg-panel: rgb(240, 240, 240);
+  --bg-panel-02: rgb(212, 212, 212);
+  --hero-color-a: rgba(51, 51, 51, 0.6);
+  --hero-text: rgb(221, 221, 221);
+  --input-border-neutral: rgb(19, 202, 226);
+  --input-border-hover: rgb(101, 101, 101);
+  --input-border-focused: rgb(101, 101, 101);
+  --overlay-text: rgb(252, 252, 252);
+  --color-logo: rgb(0, 0, 0);
+  --color-tagbox: rgb(51, 51, 51);
+  --color-text: rgb(56, 56, 56);
+  --color-link: rgb(252, 53, 53);
+  --color-header: rgb(0, 119, 255);
+  --color-header-bar: rgb(56, 54, 54);
+  --color-form-label: rgb(10, 9, 9);
+  --color-description: rgba(51, 51, 51, 0.7);
+  --color-btn-border: rgb(44, 53, 233);
+  --color-btn-border-danger: rgb(250, 53, 53);
+  --color-btn: rgb(77, 86, 253);
+  --color-btn-primary: rgb(193, 195, 219);
+  --color-btn-text: rgb(51, 51, 51);
+  --color-btn-text-hover: rgb(124, 116, 116);
+  --color-btn-hover: rgb(216, 216, 216);
+  --color-btn-secondary-hover: rgb(151, 150, 150);
+  --light-disabled-color: #6c757d;
+  --alert-neutral: #f4f4f4;
+  --alert-danger: #dc3545;
+  --alert-success: #28a745;
+  // --danger-color: #dc3545;
+  --danger-color: rgb(202, 0, 0);
+}
+:root.dark {
+  --navbar-brand: rgb(253, 53, 53);
+  --navbar-color: rgb(223, 9, 9);
+  // --navbar-color: rgb(185, 6, 6);
+  // --navbar-color: rgba(51, 51, 51, 1);
+  --navbar-color-a: rgba(51, 51, 51, 0.6);
+  --navbar-text: rgb(221, 221, 221);
+  --navbar-title: rgb(243, 243, 243);
+  --navbar-text-hover: rgb(243, 247, 16);
+  --bg-primary: rgb(66, 61, 61);
+  --bg-panel: rgb(54, 54, 54);
+  // --bg-panel-02: rgb(102, 102, 102);
+  --bg-panel-02: rgb(37, 37, 37);
+  --hero-color-a: rgba(51, 51, 51, 0.6);
+  --hero-text: rgb(221, 221, 221);
+  --input-border-neutral: rgb(130, 234, 248);
+  --input-border-hover: rgb(202, 230, 247);
+  // --input-border-focused: rgb(130, 234, 248);
+  --input-border-focused: rgb(65, 182, 250);
+  // --input-border-focused: rgb(26, 169, 252);
+  --overlay-text: rgb(252, 252, 252);
+  --color-logo: rgb(0, 0, 0);
+  // --color-navbar: rgb(51, 51, 51);
+  // --color-link: rgb(198, 198, 198);
+  --color-tagbox: rgb(181, 181, 181);
+  --color-text: rgb(221, 221, 221);
+  --color-link: rgb(252, 53, 53);
+  // --color-navbar: rgb(100, 100, 100);
+  --color-header: rgb(54, 132, 255);
+  --color-header-bar: rgb(56, 54, 54);
+  --color-form-label: rgb(181, 181, 181);
+  --color-description: rgba(51, 51, 51, 0.7);
+  --color-btn-border: rgb(44, 53, 233);
+  --color-btn-border-danger: rgb(250, 53, 53);
+  --color-btn: rgb(44, 55, 233);
+  --color-btn-primary: rgb(44, 55, 233);
+  // --color-btn-primary: rgb(44, 55, 233);
+  --color-btn-text: rgb(245, 238, 238);
+  --color-btn-text-hover: rgb(51, 51, 51);
+  --color-btn-hover: rgb(216, 216, 216);
+  --color-btn-secondary-hover: rgb(141, 141, 141);
+  --dark-disabled-color: #4a4a4b;
+  --alert-neutral: #f4f4f4;
+  --alert-danger: #dc3545;
+  --alert-success: #28a745;
+  --danger-color: #dc3545;
+}
+
+
+
+// --section-card-bg: ;
+
+
+  // --main-bg: rgba(252, 252, 252);
+  // --main-bg-a: rgba(252, 252, 252, 0.90);
+  // --navbar-color: rgb(235, 235, 235);
+  // --navbar-color-a: rgba(235, 235, 235, 0.65);
+  // --navbar-color: rgb(214, 214, 214);
+  // --navbar-color-a: rgba(214, 214, 214, 0.65);
+  // --navbar-color-border: rgb(214, 214, 214);
+  // --navbar-btn-a: rgba(214, 214, 214, 0.65);
+  // --navbar-btn-icon: rgb(45, 45, 45);
+  // --navbar-btn-border: rgb(214, 214, 214);
+  // --navbar-btn-border-a: rgb(214, 214, 214, 0.65);
+  // --color-logo:rgb(51, 51, 51);
+  // --color-heading: rgb(0, 119, 255);
+  // --color-text-light:#B5B5B5;
+  // --color-text-dark:#333333;
+  // --color-border: #bbbbbb;
+  // --li-hover-color: rgb(212, 211, 211);
+  // --li-border:rgb(51, 51, 51);
+  // --footer-bg-color-a: rgb(235, 235, 235, 1);
+  // --section-particle-mask-a: linear-gradient(to bottom, transparent 60%, black 75%);
+  // --section-particles-mask-a: linear-gradient(to top, transparent 60%, black 100%);
+  // --section-bg-color-a: rgba(235, 235, 235, 0);
+  // --section-card-bg-a: rgba(235, 235, 235, 0);
+  // --section-card-bg-tech-a: rgba(235, 235, 235, 1);
+  // --section-card-tech-border-a: 0px solid rgba(10, 9, 9, 0);
+  // --section-product-card-border-a: initial;
+  // --section-product-info-bg-a: rgba(235, 235, 235, 1);
+  // --section-product-info-border-a: initial;
+// }
+/*
+:root.dark-winter {
+  --main-bg: rgb(10, 9, 9);
+  --main-bg-a: rgb(10, 9, 9, 0.75);
+  --navbar-color: rgb(10, 9, 9);
+  --navbar-color-a: rgba(10, 9, 9, 0.75);
+  --navbar-color-border: #2de9f5;
+  --navbar-btn-a: rgba(45, 233, 245, 1);
+  --navbar-btn-icon:rgb(10, 9, 9);
+  --navbar-btn-border: rgb(45, 233, 245);
+  --navbar-btn-border-a: rgb(45, 233, 245, 1);
+  --color-logo: rgb(45, 233, 245);
+  --color-heading: rgb(45, 233, 245);
+  --color-text:#B5B5B5;
+  --color-border: rgb(45, 233, 245);
+  --li-hover-color: rgb(45, 233, 245);
+  --li-border:rgb(45, 233, 245);
+  --footer-bg-color-a:rgb(10, 9, 9, 1);
+  --section-particles-mask-a: initial;
+  --section-bg-color-a: rgba(10, 9, 9, 0);
+  --section-card-bg-a: rgba(10, 9, 9, 0);
+  --section-card-bg-tech-a: rgba(10, 9, 9, 0);
+  --section-card-tech-border-a: 1px solid rgba(45, 233, 245, 1);
+  --section-product-card-border-a: 1px solid rgba(45, 233, 245, 1);
+  --section-product-info-bg-a: rgba(45, 233, 245, 0);
+  --section-product-info-border-a: 0px solid rgba(45, 233, 245, 0);
+}
+:root.dark-summer {
+  --main-bg: rgb(51, 51, 51);
+  --main-bg-a: rgb(51, 51, 51, 0.75);
+  --color-navbar: rgb(51, 51, 51);
+  --navbar-color-a: rgba(51, 51, 51, 0.75);
+  --navbar-color-border: rgb(255, 164, 0);
+  --navbar-btn-a: rgba(255, 164, 0, 1);
+  --navbar-btn-icon:rgb(45, 45, 45);
+  --navbar-btn-border: rgb(255, 164, 0);
+  --navbar-btn-border-a: rgb(255, 164, 0, 1);
+  --color-logo: rgb(255, 164, 0);
+  // --color-heading: #3684FF;
+  --color-heading: rgb(255, 164, 0);
+  --color-text:#B5B5B5;
+  --color-border: rgb(255, 164, 0);
+  --li-hover-color: rgb(255, 164, 0);
+  --li-border:rgb(255, 164, 0);
+  --footer-bg-color-a: rgb(67, 67, 67, 1);
+  --section-particles-mask-a: initial;
+  --section-bg-color-a: rgba(67, 67, 67, 1);
+  --section-card-bg-a: rgba(67, 67, 67, 1);
+  --section-card-bg-tech-a: rgba(67, 67, 67, 1);
+  --section-card-tech-border-a: 0px solid rgba(255, 164, 0, 0);
+  --section-product-card-border-a: 1px solid rgba(255, 164, 0, 1);
+  --section-product-info-bg-a: rgba(235, 235, 235, 0);
+  --section-product-info-border-a: initial;
+}
+
+
+
+
+
+
+// swap dark / light mode
+// key=className, value=$variable
+$themes: (
+  light: (
+    backgroundColor: $light-bg,
+    foregroundColor: $light-bg-panel,
+    header: $light-color-heading,
+    textColor: $light-color-text
+  ),
+  dark: (
+    backgroundColor: $dark-bg,
+    foregroundColor: $dark-bg-panel,
+    header: $dark-color-heading,
+    textColor: $dark-color-text
+  )
+);
+// change border color of buttons and other elements
+$borderSwap: (
+  winter: (
+    border: $dark-pt-winter,
+    buttonColor: $dark-pt-winter,
+    buttonBorder: $dark-pt-winter
+    // buttonTextColor: $dark-pt-winter
+  ),
+  summer: (
+    border: $dark-pt-summer,
+    buttonColor: $dark-pt-summer,
+    buttonBorder: $dark-pt-summer
+  )
+);
+*/

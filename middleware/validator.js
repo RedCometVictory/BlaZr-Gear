@@ -3,57 +3,90 @@ const { check, validationResult } = require('express-validator');
 // authRoutes
 // authenticate users already in db (login) an get token (used to make req to provate routes)
 exports.signinAuthValidator = [
-  check('email', 'Please include a valid email address.').isEmail().trim(),
+  check('email', 'Please include a valid email address.').exists().isEmail().trim(),
   check('password', 'Password is required.').exists().isLength({min: 6, max: 16}).withMessage('Password must be between 6 to 16 characters.')
-];
-
-// postRoutes
-// create a post
-exports.createPostValidator = [
-  check('description', 'Description text is required.').not().isEmpty()
-];
-
-// profileRoutes
-// create / edit user profile - list all required fields
-exports.createProfileValidator = [
-  check('birthday', 'Birthdate is required.').not().isEmpty()
-  // check('skills', 'Skills is required.').not().isEmpty()
-];
-
-// profileRoutes
-// create / edit user profile - list all required fields
-exports.editProfileValidator = [
-  check('username', 'Please include a username.').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
-  // check('tag_name', 'Please include a tag name.').not().isEmpty().trim().isLength({min: 4, max: 12}).withMessage('Tag name must be between 4 to 12 characters.'),
-  check('user_email', 'Please include a valid email.').isEmail().trim(),
-  check('birthday', 'Birthdate is required.').not().isEmpty()
-  // check('skills', 'Skills is required.').not().isEmpty()
 ];
 
 // userRoutes
 // Register User - produce errs for err.array
 exports.registerUserValidator = [
-  check('username', 'Please create a username.').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
-  check('email', 'Please include a valid email.').isEmail().trim(),
-  check('password', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16})
+  check('email', 'Please include a valid email.').exists().isEmail().trim(),
+  check('password', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
+  check('password2', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
+  check('username', 'Please create a username.').not().isEmpty().trim().isLength({min: 1, max: 120}).withMessage('Username must be between 1 to 12 characters.'),
+  check('firstName', "Please include first name,").not().isEmpty().isLength({min: 1, max: 60}),
+  check('lastName', "Please include last name,").not().isEmpty().isLength({min: 1, max: 60})
   // min 8 char long.
   // At least one uppercase.
   // At least one lower case.
   // At least one special character.
   // check("password", "...").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
+];
+
+exports.forgotPasswordValidator = [
+  check('email', 'Please include a valid email address.').exists().isEmail().trim()
+];
+
+exports.resetPasswordValidator = [
+  check('email', 'Please include a valid email.').exists().isEmail().trim(),
+  check('password', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
+  check('password2', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
+];
+
+// profileRoutes
+// edit user table info - list all required fields
+exports.editUserInfoValidator = [
+  check('user_email', 'Please include a valid email.').exists().isEmail().trim(),
+  check('username', 'Please create a username.').not().isEmpty().trim().isLength({min: 1, max: 120}).withMessage('Username must be between 1 to 12 characters.'),
+  check('f_name', "Please include first name.").not().isEmpty().isLength({min: 1, max: 60}),
+  check('l_name', "Please include last name.").not().isEmpty().isLength({min: 1, max: 60})
+];
+
+// profileRoutes
+// create / edit user profile - list all required fields
+exports.createUpdateProfileValidator = [
+  check('address', 'Address is required.').not().isEmpty(),
+  // check('phone', 'Phone number is required.').exists().isMobilePhone(),
+  check('phone', 'Phone number is required.').exists().isNumeric(),
+  check('city', 'City is required.').not().isEmpty(),
+  check('state', 'State is required.').not().isEmpty().isLength({min: 2}),
+  check('country', 'Country is required.').not().isEmpty().isLength({min: 2}),
+  check('zipcode', 'Zipcode is required.').not().isEmpty().isLength({min: 2, max: 5})
+];
+
+// slideRoutes
+// create / edit slides - list all required fields
+exports.createUpdateSlideValidator = [
+  check('description', 'Description text is required.').not().isEmpty()
+];
+
+// user/cartRoutes
+// create user shipping info
+exports.createShippingInfoValidator = [
+  check('address', 'Address is required.').not().isEmpty(),
+  check('zipcode', 'Zipcode is required.').not().isEmpty().isLength({min: 2, max: 5}),
+  check('city', 'City is required.').not().isEmpty(),
+  check('state', 'State is required.').not().isEmpty().isLength({min: 2}),
+  check('country', 'Country is required.').not().isEmpty().isLength({min: 2})
 ];
 
 exports.adminEditsUserValidator = [
   check('f_name', 'Please create a first name at least 2 characters long.').not().isEmpty().trim().isLength({min: 2, max: 60}),
   check('l_name', 'Please create a last name at least 2 characters long.').not().isEmpty().trim().isLength({min: 2, max: 60}),
   check('username', 'Please create a username (1 - 12 chars).').not().isEmpty().trim().isLength({min: 1, max: 12}).withMessage('Username must be between 1 to 12 characters.'),
-  check('user_email', 'Please include a valid email.').isEmail().trim(),
+  check('user_email', 'Please include a valid email.').exists().isEmail().trim(),
   check('role', 'Please include a role for the user.').not().isEmpty()
   // min 8 char long.
   // At least one uppercase.
   // At least one lower case.
   // At least one special character.
   // check("password", "...").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
+];
+
+// postRoutes
+// create a post
+exports.createPostValidator = [
+  check('description', 'Description text is required.').not().isEmpty()
 ];
 
 // validation Result - may need async
@@ -68,34 +101,19 @@ exports.validatorResult = (req, res, next) => {
   next();
 }
 
-// exports.signupValidator = [
-//   check('username').not().isEmpty().trim().withMessage('All fields required'),
-//   check('email').isEmail().normalizeEmail().withMessage('Invalid email'),
-//   check('password')
-//     .isLength({ min: 6 })
-//     .withMessage('Password must be at least 6 characters long'),
-// ];
 
-// exports.signinValidator = [
-//   check('email').isEmail().normalizeEmail().withMessage('Invalid email'),
-//   check('password')
-//     .isLength({ min: 6 })
-//     .withMessage('Password must be at least 6 characters long'),
-// ];
+/* function phonenumber(inputtxt) {
+  // var phoneno = /^\d{10}$/;
+  let phoneno = /^((\+1|1)?( |-)?)?(\([2-9][0-9]{2}\)|[2-9][0-9]{2})( |-)?([2-9][0-9]{2}( |-)?[0-9]{4})$/
+  if(inputtxt.value.match(phoneno)) {
+    return true;
+  } else {
+    // alert("message");
+    return false;
+  }
+}
 
-// exports.validatorResult = (req, res, next) => {
-//   const result = validationResult(req);
-//   const hasErrors = !result.isEmpty();
-
-//   if (hasErrors) {
-//     const firstError = result.array()[0].msg;
-//     return res.status(400).json({
-//       errorMessage: firstError,
-//     });
-
-//     // console.log('hasErrors: ', hasErrors);
-//     // console.log('result: ', result);
-//   }
-
-//   next();
-// };
+console.log(phonenumber('111-111-2355')); 
+let phone = '111-123-4567';
+console.log(phone.value.match(/^((\+1|1)?( |-)?)?(\([2-9][0-9]{2}\)|[2-9][0-9]{2})( |-)?([2-9][0-9]{2}( |-)?[0-9]{4})$/))
+*/

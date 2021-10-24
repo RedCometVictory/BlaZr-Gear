@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { authJWT, admin } = require('../middleware/authenticator');
 const { createPostValidator, validatorResult } = require('../middleware/validator');
-
 const { getCart, addCartItem, deleteCartItem, updateCartQuantity, increaseCartQTY, decreaseCartQTY } = require('../controllers/cartController'); 
 
-// @route    GET /cart/ 
-// @desc     Get cart items.
+// @route    GET /cart/me
+// @desc     user gets their cart items.
 // @access   Private
-router.get('/', authJWT, getCart);
+router.get('/me', authJWT, getCart);
+
+// @route    GET /cart/:user_id
+// @desc     user gets their cart items.
+// @access   Private / Admin
+// router.get('/', authJWT, getCartByUserId);
 
 // @route    POST /cart/add
 // @desc     User adds items to cart. 

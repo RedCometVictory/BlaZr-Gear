@@ -1,0 +1,32 @@
+.search {
+  // &__form {}
+  &__input-group {
+    display: flex;
+    height: 2rem;
+    position: relative;
+  }
+  &__input {
+    border: none;
+    padding: 0 0 0 7px;
+    border-radius: 3px;
+    width: 12rem;
+  }
+  &__confirm-btn {
+    position: absolute;
+    right: 0;
+    height: 100%;
+  }
+  &__btn {
+    border: none;
+    border-radius: 3px;
+    height: 100%;
+    width: 2rem;
+  }
+  &__searchBar {
+    display: flex;
+    justify-content: center;
+    box-shadow: none;
+    color: green;
+    border: 1px solid green;
+  }
+}

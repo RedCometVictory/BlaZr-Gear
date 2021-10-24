@@ -1,0 +1,122 @@
+// ----------------------------------------
+.admProductDetail {
+  &__title {
+    margin-top: 0.7rem;
+    margin-bottom: 1.2rem;
+  }
+  &__delete-confirm {
+    border: 1px solid var(--danger-color);
+    padding: 0.6rem;
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__delete-btns {
+    width: 80%;
+    // padding: 0 6px 0 12px;
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: space-evenly;
+    .btns {
+      padding: 0.3rem 3rem;
+      cursor: pointer;
+      background-color: var(--danger-color);
+      border-radius: 3px;
+      border: none;
+      transition: background-color 230ms ease-in;
+    }
+    .del-primary {
+      // margin-right: 8px;
+      &:hover {
+        background-color: rgb(241, 93, 93);
+        // border: 1px solid rgb(248, 112, 112);
+      }
+    }
+    .del-secondary {
+      &:hover {
+        background-color: rgb(241, 93, 93);
+      }
+    }
+  }
+  &__details {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__image {
+    margin-right: 3rem;
+  }
+  &__img {
+    height: 100%;
+    width: 100%;
+    max-height: 600px;
+    min-width: 420px;
+    max-width: 600px;
+    background-color: yellow;
+  }
+  &__info {
+    // background-color: rgb(181, 160, 201);
+    width: 100%;
+    padding: 12px;
+    max-height: 300px;
+    max-width: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    div .title {
+      font-weight: 600;
+    }
+  }
+  &__btn-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+    .update-btn {
+      margin-bottom: 0.65rem;
+      cursor: pointer;
+    }
+    &.user-item {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+    }
+    .delete-btn {
+      background: var(--danger-color);
+      &:hover {
+        color: white;
+      }
+    }
+  }
+  &__info-section {
+    margin-top: 1.2rem;
+    .info-header {
+      margin-bottom: 0.5rem;
+      &.two {
+        margin: 1.8rem 0 0rem;
+      }
+    }
+  }
+  &__user {
+    border: 1px solid white;
+    width: 100%;
+    display: flex;
+    position: relative;
+    &.user-item {
+      grid-template-columns: 22% 23% 26% 14% 14%;
+    }
+  }
+  &__user-group {
+    margin: 2% 2% 6% 2%;
+  }
+  &__user-label {
+    white-space: nowrap;
+  }
+}
+
+// --------------------------------------------------
+
+// .admProdUpdate {
+  
+// }

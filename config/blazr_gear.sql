@@ -4,6 +4,7 @@
 -- \c <database> name to select database to work with
 -- \l list all databases
 -- \dt show all tables in current selected database
+-- \d <table name> show details of columns that make up a table, must first select a database
 
 -- can be skipped if db already created via heroku cli
 -- CREATE DATABASE blazr_gear;
@@ -41,8 +42,8 @@ CREATE TABLE users(
   username VARCHAR(120) NOT NULL UNIQUE,
   user_email VARCHAR(60) NOT NULL UNIQUE,
   user_password VARCHAR(660) NOT NULL,
-  user_avatar VARCHAR(300),
-  user_avatar_filename VARCHAR(600),
+  -- user_avatar VARCHAR(300),
+  -- user_avatar_filename VARCHAR(600),
   refresh_token TEXT,
   role VARCHAR(10) NOT NULL DEFAULT 'visitor',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -66,13 +67,13 @@ CREATE TABLE profiles(
   country VARCHAR(120),
   zipcode VARCHAR(10),
   -- gender VARCHAR(50),
-  birth_date DATE,
+  -- birth_date DATE,
   company VARCHAR(255),
   -- status VARCHAR(255),
   -- interests TEXT,
   -- bio VARCHAR(360),
-  background_image VARCHAR(300),
-  background_image_filename VARCHAR(600),
+  -- background_image VARCHAR(300),
+  -- background_image_filename VARCHAR(600),
   user_id UUID,
   FOREIGN KEY(user_id) REFERENCES users(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -88,15 +89,21 @@ CREATE TABLE carts(
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- create porducts table first
 CREATE TABLE cart_items(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   quantity INT NOT NULL,
-  cart_id UUID,
-  product_id UUID,
+  cart_id UUID NOT NULL, -- perhaps add UNIQUE
+  product_id UUID NOT NULL, -- perhaps add UNIQUE
   FOREIGN KEY(cart_id) REFERENCES carts(id),
   FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- altering table columns, making them NOT NULL
+-- ALTER TABLE cart_items ALTER COLUMN cart_id SET NOT NULL, ALTER COLUMN product_id SET NOT NULL;
+-- altering table columns, making them UNIQUE
+-- ALTER TABLE cart_items ADD UNIQUE (cart_id, product_id);
 
 -- ############################################################
 -- product schema
@@ -106,12 +113,12 @@ CREATE TABLE products(
   product_image_url VARCHAR(320) NOT NULL,
   product_image_filename VARCHAR(320) NOT NULL,
   brand VARCHAR(255) NOT NULL DEFAULT 'N/A',
-  category VARCHAR(255) NOT NULL DEFAULT 'N/A',
+  category TEXT NOT NULL DEFAULT 'N/A',
   description TEXT NOT NULL,
   -- include total reviews of product as a number
   -- rating INT NOT NULL DEFAULT 0,
   price NUMERIC(6,2) NOT NULL DEFAULT 0,
-  -- count_in_stock INT NOT NULL DEFAULT 0,
+  count_in_stock INT NOT NULL DEFAULT 0,
   -- user_id UUID,
   -- review_id UUID,
   -- FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -131,8 +138,8 @@ CREATE TABLE products(
 CREATE TABLE reviews(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title VARCHAR(120),
-  description TEXT NOT NULL,
-  rating INT NOT NULL,
+  description TEXT,
+  rating INT NOT NULL DEFAULT 0,
   user_id UUID,
   product_id UUID,
   -- comment_id UUID,
@@ -160,7 +167,7 @@ CREATE TABLE comments(
   -- FOREIGN KEY (order_items_id) REFERENCES users(id) ON DELETE CASCADE
 CREATE TABLE orders(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  -- payment_method VARCHAR(255) NOT NULL,
+  payment_method VARCHAR(360),
   amount_subtotal NUMERIC(6,2) NOT NULL DEFAULT 0.0,
   tax_price NUMERIC (4,2) NOT NULL DEFAULT 0.0,
   shipping_price NUMERIC(5,2) NOT NULL DEFAULT 0.0,
@@ -169,7 +176,8 @@ CREATE TABLE orders(
   paid_at VARCHAR(120),
   is_delivered BOOLEAN NOT NULL DEFAULT false,
   delivered_at VARCHAR(120),
-  stripe_payment_id VARCHAR(100),
+  stripe_payment_id VARCHAR(140),
+  paypal_order_id VARCHAR(140),
   user_id UUID,
   -- payment_result_id UUID,
   -- shipping_address_id UUID,

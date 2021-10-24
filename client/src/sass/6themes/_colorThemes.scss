@@ -1,0 +1,79 @@
+// purple-prime theme
+:root.purple-prime {
+  --color-logo: rgb(245, 238, 238);
+  --color-tagbox: rgb(181, 181, 181);
+  --color-header: rgb(100, 100, 100);
+  --color-text: rgb(181, 181, 181);
+  --color-form-label: rgb(175, 150, 250);
+  --color-link: rgb(175, 150, 250);
+  --color-navbar: rgb(175, 150, 250);
+  --color-navbar-a: rgba(175, 150, 250, 0.2);
+  // --color-navbar-2: rgba(175, 150, 250, 0.8);
+  --color-navbar-2: rgba(138, 119, 197, 0.6);
+  --color-btn-text: rgb(245, 238, 238);
+  --color-btn-text-hover: rgb(175, 150, 250);
+  --color-btn-hover: rgb(255, 249, 249);
+  --color-btn-secondary-hover: rgb(175, 150, 250);
+  --bg-primary: rgb(51, 51, 51);
+  --bg-panel: rgb(67, 67, 67);
+  // --bg-panel: rgb(192, 32, 139);
+  --overlay-text: rgb(245, 238, 238);
+  --alert-neutral: #f4f4f4;
+  --alert-danger: #dc3545;
+  --alert-success: #28a745;
+  --danger-color: #dc3545;
+}
+// bumbleBeee theme
+:root.bee {
+  --color-logo: rgb(51, 51, 51);
+  --color-tagbox: rgb(181, 181, 181);
+  --color-header: rgb(230, 245, 30);
+  --color-text: rgb(181, 181, 181);
+  --color-form-label: rgb(222, 201, 6);
+  --color-link: rgb(222, 201, 6);
+  --color-navbar: rgb(222, 201, 6);
+  --color-navbar-a: rgba(222, 201, 6, 0.2);
+  --color-navbar-2: rgba(140, 127, 5, 0.6);
+  // --color-navbar-2: rgba(154, 124, 15, 0.8);
+  // --color-navbar: rgb(202, 182, 2);
+  --color-btn-text: rgb(245, 238, 238);
+  --color-btn-text-hover: rgb(222, 201, 6);
+  --color-btn-hover: rgb(245, 238, 238);
+  --color-btn-secondary-hover: rgb(222, 201, 6);
+  --bg-primary: rgb(51, 51, 51);
+  --bg-panel: rgb(67, 67, 67);
+  // --bg-panel: rgb(225, 246, 67);
+  --overlay-text: rgb(252, 252, 252);
+  --alert-neutral: #f4f4f4;
+  --alert-danger: #dc3545;
+  --alert-success: #28a745;
+  --danger-color: #dc3545;
+}
+// redcomet theme
+:root.redcomet {
+  --color-logo: rgb(29, 1, 1);
+  --color-tagbox: rgb(181, 181, 181);
+  --color-header: rgb(248, 56, 56);
+  --color-text: rgb(181, 181, 181);
+  // --color-text: rgb(36, 18, 18);
+  --color-form-label: rgba(181, 181, 181, 0.8);
+  --color-link: rgb(243, 28, 28);
+  --color-navbar: rgb(243, 28, 28);
+  --color-navbar-a: rgba(243, 28, 28, 0.2);
+  // --color-navbar: rgb(233, 55, 505);
+  // --color-navbar-2: rgba(123, 2, 2, 0.8);
+  --color-navbar-2: rgba(152, 18, 18, 0.6);
+  // --color-navbar-2: rgba(181, 181, 181, 0.8);
+  --color-btn-text: rgb(245, 238, 238);
+  --color-btn-text-hover: rgb(243, 28, 28);
+  --color-btn-hover: rgb(245, 238, 238);
+  --color-btn-secondary-hover: rgb(243, 28, 28);
+  --bg-primary: rgb(51, 51, 51);
+  --bg-panel: rgb(67, 67, 67);
+  // --bg-panel: rgb(229, 17, 17);
+  --overlay-text: rgb(252, 252, 252);
+  --alert-neutral: #f4f4f4;
+  --alert-danger: #dc3545;
+  --alert-success: #28a745;
+  --danger-color: #dc3545;
+}

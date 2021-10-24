@@ -1,0 +1,25 @@
+// margin settings
+.mgn {
+  margin: 0.5rem;
+  &-sm { margin: 0.3rem; }
+  &-md { margin: 0.6rem; }
+  &-1 { margin: 1rem; }
+  &-2 { margin: 2rem; }
+  &-3 { margin: 3rem; }
+}
+.mgn-xa {
+    padding: 0.5rem;
+    &-sm { margin: 0 0.3rem; }
+    &-md { margin: 0 0.6rem; }
+    &-1 { margin: 0 1rem; }
+    &-2 { margin: 0 2rem; }
+    &-3 { margin: 0 3rem; }
+  }
+.mgn-ya {
+    margin: 0.5rem 0;
+    &-sm { margin: 0.3rem; }
+    &-md { margin: 0.6rem; }
+    &-1 { margin: 1rem 0; }
+    &-2 { margin: 2rem 0; }
+    &-3 { margin: 3rem 0; }
+}
