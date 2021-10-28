@@ -1,6 +1,217 @@
 .products {
   // padding-top: 3rem;
   // product card class names
+  .top-prod {
+    margin: 0 2% 0 2%;
+  }
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    h2 {
+      text-align: center;
+      margin: 0 0 12px 0;
+    }
+  }
+  &__items-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 6px 0 6px;
+  }
+  &__card {
+    margin: 1.8rem auto 0;
+    border-radius: 6px;
+    max-width: 300px;
+    height: 422px;
+    background-color: var(--bg-panel);
+    position: relative;
+  }
+  &__image-cont {
+    height: 160px;
+    max-height: 160px;
+    width: 100%;
+    display: flex;
+    overflow-y: hidden;
+    background-color: white;
+  }
+  &__img {
+    object-fit: cover;
+  }
+  &__card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 2px 4px 0px 4px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+  }
+  &__card-title {
+    background-color: var(--bg-panel-02);
+    // padding-bottom: 27px;
+    padding: 2px 4px 27px 4px;
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 90%, 0 80%);
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0 80%);
+  }
+  &__title {
+    text-align: center;
+    color: var(--color-text);
+    font-size: 15px;
+  }
+  &__review-count {
+    font-size: 0.7rem;
+  }
+  &__price {
+    font-size: 1.1rem;
+  }
+  &__buttons {
+    padding-top: 6px;
+    div {
+      cursor: pointer;
+    }
+  }
+}
+
+@media (min-width: 400px) {
+  .products {
+    &__header {
+      margin: 0 4rem 0 4rem;
+      h2 {
+        text-align: center;
+        margin: 0 0 12px 0;
+      }
+    }
+    &__items-page {
+      flex-direction: row;
+      align-items: center;
+      span {
+        margin: 0 12px 0 0;
+      };
+    }
+  }
+}
+
+@media (min-width: 430px) {
+  .products {
+    &__header {
+      flex-direction: row;
+      margin: 0 2% 0 4rem;
+    }
+    &__container {
+      display: grid;
+      grid-template-columns: 48% 48%;
+      margin: 0 10px 0 10px;
+      justify-content: space-between;
+    }
+    &__card {
+      max-width: 280px;
+    }
+    &__card-body {
+      padding: 0 2px 0 2px;
+    }
+    &__card-title {
+      background-color: var(--bg-panel-02);
+    }
+  }
+}
+
+@media (min-width: 660px) {
+  .products {
+    &__container {
+      display: grid;
+      grid-template-columns: 32% 32% 32%;
+      margin: 0 2% 0 2%;
+      justify-content: space-between;
+    }
+    &__card {
+      margin: 1.8rem 0 0 0;
+      max-width: 300px;
+    }
+    &__card-body {
+      padding: 0 2px 0 2px;
+    }
+    &__card-title {
+      background-color: var(--bg-panel-02);
+    }
+  }
+}
+
+@media (min-width: 720px) {
+  .products {
+    &__header {
+      margin: 0 2% 0 2%;
+    }
+  }
+}
+
+@media (min-width: 820px) {
+  .products {
+    .top-prod {
+      margin: initial;
+    }
+    &__header {
+      margin: initial;
+    }
+    &__container {
+      margin: initial;
+    }
+  }
+}
+
+@media (min-width: 920px) {
+  .products {
+    // &__header {}
+    &__container {
+      display: grid;
+      grid-template-columns: 24% 24% 24% 24%;
+      // grid-template-columns: 25% 25% 25% 25%;
+      // grid-template-columns: 320px 320px 320px 320px;
+      // grid-template-rows: repeat(3, 360px);
+      // grid-template-rows: repeat(3, 420px);
+      // justify-content: unset;
+      justify-items: center;
+      // margin-top: 1.2rem;
+    }
+    &__card {
+      margin: 1.8rem 0 0 0;
+      max-width: 242px;
+    }
+    // &__card-title {
+      // padding-bottom: 27px;
+      // -webkit-clip-path: polygon(0 0, 100% 0, 100% 90%, 0 80%);
+      // clip-path: polygon(0 0, 100% 0, 100% 90%, 0 80%);
+    // }
+    // &__title {}
+    // &__card-info {}
+    // &__ratings {}
+    // &__review-count {}
+    // &__price {} // mirufui
+    // &__buttons {}
+  }
+}
+
+// ##################################################
+// product detail page classes
+
+
+// ##########################################################
+// ##########################################################
+// ##########################################################
+// ##########################################################
+// ##########################################################
+// ##########################################################
+// ##########################################################
+
+/*
+.products {
+  // padding-top: 3rem;
+  // product card class names
   &__header {
     display: flex;
     justify-content: space-between;
@@ -221,3 +432,5 @@
     // }
   }
 }
+
+*/

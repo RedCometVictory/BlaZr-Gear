@@ -64,32 +64,34 @@ const ProductDetail = () => {
           <div className="product__image">
             <img className="product__img" src={productById.productInfo.product_image_url} alt="product view" />
           </div>
-          <div className="product__info">
-            <div className="product__detail">
-              <div className="product__price">$ {productById.productInfo.price}</div>
-              <ReactStars
-                className="product__rating"
-                count={5}
-                size={18}
-                edit={false}
-                value={Number(productById?.productRating?.review)}
-                activeColor='#e4d023'
-              />
-              <div className="product__review">{productById.productReviews?.length} Reviews</div>
-              {/* <div className="product__id">Product ID# {prod_id}</div> */}
-              <div className="product__stock">
-                {productById.productInfo.count_in_stock > 0 ? `${productById.productInfo.count_in_stock} in stock` : 'Out of Stock'}
+          <div className="product__info-sec">
+            <div className="product__info">
+              <div className="product__detail">
+                <div className="product__price">$ {productById.productInfo.price}</div>
+                <ReactStars
+                  className="product__rating"
+                  count={5}
+                  size={18}
+                  edit={false}
+                  value={Number(productById?.productRating?.review)}
+                  activeColor='#e4d023'
+                />
+                <div className="product__review">{productById.productReviews?.length} Reviews</div>
+                {/* <div className="product__id">Product ID# {prod_id}</div> */}
+                <div className="product__stock">
+                  {productById.productInfo.count_in_stock > 0 ? `${productById.productInfo.count_in_stock} in stock` : 'Out of Stock'}
+                </div>
               </div>
-            </div>
-            <div className="product__qty-counter">
-              <div className="product__qty-incrementor btn-qty" onClick={decreaseQty}>
-                <span className="sign">-</span>
-              </div>
-              <div className="product__qty">
-                <input type="number" className="product__qty-input-count" value={quantity} readOnly/>
-              </div>
-              <div className="product__qty-incrementor btn-qty" onClick={increaseQty}>
-                <span className="sign">+</span>
+              <div className="product__qty-counter">
+                <div className="product__qty-incrementor set-qty btn-left" onClick={decreaseQty}>
+                  <span className="sign">-</span>
+                </div>
+                <div className="product__qty">
+                  <input type="number" className="product__qty-input-count" value={quantity} readOnly/>
+                </div>
+                <div className="product__qty-incrementor set-qty btn-right" onClick={increaseQty}>
+                  <span className="sign">+</span>
+                </div>
               </div>
             </div>
             <div className="product__buttons">

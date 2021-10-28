@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { FaCaretDown,  FaShoppingCart } from 'react-icons/fa';
+import { FaCaretDown, FaBars, FaShoppingCart } from 'react-icons/fa';
 import ModeButton from './ModeButton';
 import { logout } from '../../redux/actions/authActions';
 import Search from './Search';
+import useWindow from '../../hooks/useWindow';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const caretToggleRef = useRef();
+  const { height, width } = useWindow();
   const userAuth = useSelector(state => state.auth);
   const cart = useSelector(state => state.cart);
   const { isAuthenticated, userInfo } = userAuth;
   const { cartItems } = cart;
   const [hasMounted, setHasMounted] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [caretChecked, setCaretChecked] = useState(false);
+  const [caretCheckedDesktop, setCaretCheckedDesktop] = useState(false);
 
 
   // useEffect(() => {
@@ -92,6 +96,10 @@ const Navbar = () => {
     </>
   );
 
+  const handleCaretChecked = (e) => {
+      setCaretChecked(e.currentTarget.checked)
+  };
+
   // login/logout, cart, cart total count of items, account
   // dropdown (for account link when clicked): username (not link), profile link, orders link, searchbar, CATERGories (drop down of categories), shop
 
@@ -105,39 +113,34 @@ const Navbar = () => {
         <h1><Link to="/" className="logo">BlaZr Gear</Link></h1>
       </div>
       <div className="nav__link-bar">
-        {/* <input type="text" placeholder="search products" className="search"/> */}
         <Search />
       </div>
       <div className="nav__menu-content">
         <input type="checkbox" name="toggler" className="nav__toggler" />
-        <label htmlFor="toggler" className="nav__burger"></label>
+        <label htmlFor="toggler" className="nav__burger">
+          <FaBars />
+          <div className="x">X</div>
+        </label>
         <nav className="nav__menu">
-          <ul className="nav__links">
+          <ul className="nav__links small">
             <li className="nav__link-item">
               <Link to="/shop" className="nav__link">Shop</Link>
             </li>
-            <li className="nav__link-item">
+            <li className="nav__link-item role-link">
               <input
                 type="checkbox" 
                 className="nav__caret-toggle"
-                onChange={e => setIsChecked(e.currentTarget.checked)}
-                checked={isChecked}
+                onChange={e => handleCaretChecked(e)}
+                checked={caretChecked}
               />
               <span
-                className="nav__link"
-                onClick={() => setIsChecked(!isChecked)}
+                className="nav__link role-link"
+                onClick={() => setCaretChecked(!caretChecked)}
               >
                 {!isAuthenticated ? 'Login' : userInfo?.role === 'admin' &&  isAuthenticated ? 'Admin' : userInfo && (`${userInfo.f_name}`)}
-                {/* {loginStatus} */}
                 <span><FaCaretDown className="nav__caret" /></span>
               </span>
-              <ul className="nav__links--secondary">
-              {/* {isAuthenticated ? authLinks : guestLinks} */}
-                {/* {!isAuthenticated ? (
-                  {guestLinks}
-                ) :  (
-                  {authLinks}
-                )} */}
+              <ul className="nav__links--secondary small">
                 {!isAuthenticated ? (
                   guestLinks
                 ) : userInfo?.role === 'admin' &&  isAuthenticated ? (
@@ -145,33 +148,54 @@ const Navbar = () => {
                 ) : (
                   authLinks
                 )}
-                {/* {!isAuthenticated ? (
+              </ul>
+            </li>
+          </ul>
+          <ul className="nav__links large">
+            <li className="nav__link-item">
+              <Link to="/shop" className="nav__link">Shop</Link>
+            </li>
+            <li className="nav__link-item role-link">
+              <input
+                type="checkbox" 
+                className="nav__caret-toggle"
+                onChange={e => setCaretCheckedDesktop(e.currentTarget.checked)}
+                checked={caretCheckedDesktop}
+                ref={caretToggleRef}
+              />
+              <span
+                className="nav__link role-link"
+                onClick={() => setCaretCheckedDesktop(!caretCheckedDesktop)}
+              >
+                {!isAuthenticated ? 'Login' : userInfo?.role === 'admin' &&  isAuthenticated ? 'Admin' : userInfo && (`${userInfo.f_name}`)}
+                <span><FaCaretDown className="nav__caret" /></span>
+              </span>
+              <ul className="nav__links--secondary large">
+                {!isAuthenticated ? (
                   guestLinks
-                ) : userInfo.role !== 'admin' &&  isAuthenticated ? (
-                  authLinks
-                ) : userInfo.role === 'admin' && isAuthenticated ? (
+                ) : userInfo?.role === 'admin' &&  isAuthenticated ? (
                   adminLinks
                 ) : (
                   authLinks
-                )} */}
-                {/* {isAuthenticated && userInfo.role === 'admin' && (adminLinks)} */}
-                {/* {!userRole && userInfo.role? !== 'admin' && (
-                  isAuthenticated ? authLinks : guestLinks
                 )}
-                {isAuthenticated && userInfo.role === 'admin' && (adminLinks)} */}
               </ul>
             </li>
           </ul>
         </nav>
-        <Link to={'/cart'} className="nav__cart">
-          <div className="nav__cart-item">
-            {getCartItemCount()}
-          </div>
-          <div className="nav__cart-icon">
-            <FaShoppingCart />
-          </div>
-        </Link>
-        <div className="nav__theme-select" >
+        <div className="nav__cart">
+          <Link to={'/cart'} className="">
+            <div className="nav__cart-item">
+              {getCartItemCount()}
+            </div>
+            <div className="nav__cart-icon">
+              <FaShoppingCart />
+            </div>
+          </Link>
+        </div>
+        <div className="nav__theme-select small" >
+          <ModeButton />
+        </div>
+        <div className="nav__theme-select large" >
           <ModeButton />
         </div>
       </div>

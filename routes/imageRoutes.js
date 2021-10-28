@@ -7,7 +7,7 @@ const { getImages, getImageById, deleteImage } = require('../controllers/imageCo
 // @route    GET /images/all
 // @desc     Get all images.
 // @access   Public/Admin
-router.get('/all', getImages);
+router.get('/all', authJWT, admin, getImages);
 
 // @route    GET /images/:image_id
 // @desc     Get image by id. 

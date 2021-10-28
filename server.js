@@ -35,7 +35,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const slideRoutes = require('./routes/slideRoutes');
-const imageRoutes = require('./routes/imageRoute');
+const imageRoutes = require('./routes/imageRoutes');
 
 // Init Middleware /Parse JSON (access req.body)
 app.use(express.json({
@@ -60,7 +60,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes); // '/users' = '/'
 app.use('/api/payment', paymentRoutes);
 app.use('/api/slides', slideRoutes);
-app.use('/api/image', imageRoutes);
+app.use('/api/images', imageRoutes);
 
 // PAYPAL - configure order
 app.get('/api/config/paypal', (req, res) => {

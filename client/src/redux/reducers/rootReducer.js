@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'; // all reducers into one
 import alertReducer from './alertReducer';
 import authReducer from './authReducer';
 import cartReducer from './cartReducer';
+import imageReducer from './imageReducer';
 import orderReducer from './orderReducer';
 import productReducer from './productReducer';
 import userReducer from './userReducer';
@@ -13,6 +14,7 @@ export default combineReducers({
   alert: alertReducer,
   auth: authReducer,
   cart: cartReducer,
+  image: imageReducer,
   order: orderReducer,
   product: productReducer,
   user: userReducer,

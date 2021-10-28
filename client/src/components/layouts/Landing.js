@@ -49,7 +49,8 @@ const Landing = () => {
     }
     setIndex(index === 0 ? length - 1 : index - 1);
   };
-  const duration = 10000; // in ms ~ 10 secs
+  // const duration = 10000; // in ms ~ 10 secs
+  const duration = 1000000; // in ms ~ 10 secs
   useEffect(() => {
     const nextSlide = () => {
       setIndex(index => (index === length - 1 ? 0 : index + 1));
@@ -104,7 +105,7 @@ const Landing = () => {
     <main className="container">
       {topProducts && topProducts.length > 0 && (
         <section className="products">
-          <h2>Top Selling Products</h2>
+          <h2 className="top-prod">Top Selling Products</h2>
           <div className="products__container">
             {topProducts.map(product => (
               <ProductItem key={product.id} product={product} />

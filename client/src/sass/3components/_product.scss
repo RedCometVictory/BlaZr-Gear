@@ -1,0 +1,229 @@
+.product {
+  &__title {
+    margin: 2.7rem 2% 0px 2%;
+    margin-bottom: 1.2rem;
+  }
+  &__details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  &__image {
+    margin-right: initial;
+  }
+  &__info-sec {
+    padding: 3%;
+  }
+  &__info {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 0 8px 0;
+  }
+  &__detail {
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-end;
+    div {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  &__price {
+    text-align: end;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  &__rating {
+    // display: flex;
+    border: 1px solid gold;
+    // justify-content: flex-end;
+    // text-align: end;
+  }
+  &__review {
+    text-align: end;
+  }
+  &__id {
+    text-align: end;
+  }
+  &__qty-counter {
+    margin: 20px 0 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__qty-incrementor {
+    cursor: pointer;
+    &.set-qty {
+      height: 29px;
+      width: 40px;
+      position: relative;
+      border: 1px solid var(--color-text);
+      color: var(--color-text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      &:active {
+        background-color: white;
+      }
+    }
+    &.btn-left {
+      -webkit-border-top-left-radius: 6px;
+      -webkit-border-bottom-left-radius: 6px;
+      -moz-border-radius-topleft: 6px;
+      -moz-border-radius-bottomleft: 6px;
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+    &.btn-right {
+      -webkit-border-top-right-radius: 6px;
+      -webkit-border-bottom-right-radius: 6px;
+      -moz-border-radius-topright: 6px;
+      -moz-border-radius-bottomright: 6px;
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+    .sign {
+      font-weight: 800;
+      font-size: 1.5rem;
+      position: absolute;
+      bottom: -2px;
+    }
+  }
+  &__qty-input-count {
+    height: 40px;
+    width: 42px;
+    border-radius: 6px;
+    // margin: 0 8px 0 8px;
+    text-align: center;
+    font-size: 1.2em;
+    border: none;
+    &::-webkit-inner-spin-button, 
+    &::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    // firecow
+    &[type=number] {
+      -moz-appearance: textfield;
+    }
+  }
+  // &__qty {}
+  &__qty-decrease {
+    cursor: pointer;
+    .sign {
+      font-weight: 800;
+      font-size: 1.5rem;
+    }
+  }
+  &__stock {
+    text-align: end;
+  }
+  &__buttons {
+    div {
+      cursor: pointer;
+    }
+    // position: absolute;
+    // bottom: 10px;
+    // left: 10px;
+    // right: 10px;
+    // padding-top: 6px;
+  }
+  &__section {
+    // margin-top: 3rem; // ----
+    display: flex;
+    flex-direction: column;
+    margin: 3rem 3% 0 3%;
+  }
+  &__description {
+    // color: green;
+    // max-width: 500px;
+  }
+  // &__reviews {
+    // h2 {
+    //   text-align: center;
+    //   margin: 2rem 0 1.6rem 0;
+    // }
+  // }
+}
+
+@media (min-width: 460px) {
+  .product {
+    // &__title {
+    //   margin: 0.7rem 3% 1.2rem 3%;
+    // }
+    &__image {
+      margin: 0 2% 0 2%;
+    }
+  }
+}
+
+@media (min-width: 720px) {
+  .product {
+    &__title {
+      margin: 0.7rem 3% 1.2rem 3%;
+    }
+    &__image {
+      margin: 0 3% 0 3%;
+    }
+  }
+}
+
+@media (min-width: 820px) {
+  .product {
+    &__title {
+      margin: 0.7rem 0 1.2rem 0;
+    }
+    &__details {
+      flex-direction: row;
+    }
+    &__image {
+      margin: 0 3rem 0 0;
+    }
+    &__img {
+      height: 100%;
+      width: 100%;
+      max-height: 600px;
+      min-width: 420px;
+      max-width: 600px;
+      background-color: yellow;
+    }
+    &__info-sec {
+      padding: initial;
+      width: 100%;
+      padding: 12px;
+      max-height: 300px;
+      max-width: 360px;
+      position: relative;
+    }
+    // &__info {}
+    // &__detail {}
+    // &__price {}
+    // &__rating {}
+    // &__review {}
+    // &__id {}
+    // &__qty-counter {}
+    // &__qty-incrementor {}
+    // &__qty-input-count {}
+    //   // firecow
+    //   &[type=number] {
+    //     -moz-appearance: textfield;
+    //   }
+    // }
+    &__section {
+      margin: 3rem 0 0 0;
+      // display: flex;
+      // flex-direction: column;
+    }
+    &__description {
+      // color: green;
+      // max-width: 500px;
+    }
+    &__reviews {
+      // h2 {
+      //   text-align: center;
+      //   margin: 2rem 0 1.6rem 0;
+      // }
+    }
+  }
+}

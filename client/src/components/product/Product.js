@@ -68,9 +68,9 @@ const Product = () => {
           <h2>
             <Link to="/shop">Shop</Link>
           </h2>
-          <div className="admProducts__items-page">
+          <div className="products__items-page">
             <span>Items per Page:{" "}</span>
-            <div className="admProducts__items-select">
+            <div className="products__items-select">
               <select name="category" value={category} onChange={e => categoryChange(e)}>
                 {categories.map((category, index) => (
                   <option value={category.category} key={index}>{category.category}</option>

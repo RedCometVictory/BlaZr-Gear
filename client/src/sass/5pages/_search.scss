@@ -1,5 +1,4 @@
 .search {
-  // &__form {}
   &__input-group {
     display: flex;
     height: 2rem;
@@ -9,11 +8,11 @@
     border: none;
     padding: 0 0 0 7px;
     border-radius: 3px;
-    width: 12rem;
+    width: 9rem;
   }
   &__confirm-btn {
     position: absolute;
-    right: 0;
+    right: 3px;
     height: 100%;
   }
   &__btn {
@@ -26,7 +25,38 @@
     display: flex;
     justify-content: center;
     box-shadow: none;
-    color: green;
-    border: 1px solid green;
+  }
+}
+
+@media (min-width: 276px) {
+  .search {
+    &__input {
+      width: 10rem;
+    }
+    &__confirm-btn {
+      right: 0;
+    }
+  }
+}
+
+@media (min-width: 320px) {
+  .search {
+    &__input {
+      width: 11rem;
+    }
+    &__confirm-btn {
+      right: 0;
+    }
+  }
+}
+
+@media (min-width: 720px) {
+  .search {
+    &__input {
+      width: 12rem;
+    }
+    &__confirm-btn {
+      right: 0;
+    }
   }
 }

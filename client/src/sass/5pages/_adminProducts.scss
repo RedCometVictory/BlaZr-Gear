@@ -249,3 +249,35 @@
     text-align: center
   }
 }
+
+.admImage {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-column-gap: 8px;
+  grid-row-gap: 8px;
+  &__tile {
+    border: 1px solid yellow;
+    // height: 180px;
+    padding: 16px 16px 8px;
+  }
+  &__image {
+    cursor: pointer;
+    overflow: hidden;
+  }
+  &__img {
+    height: 180px;
+    object-fit: contain;
+    overflow: hidden;
+  }
+  &__view {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    margin: 0 auto;
+    .view-btn {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+  }
+}

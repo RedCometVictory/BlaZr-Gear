@@ -38,7 +38,11 @@ const AdminProductList = () => {
 
   const itemCountChange = (e) => {
     setIsLoading(true);
-    setItemsPerPage(e.target.value); // 12 or 20, dropdown
+    if (e.target.value > itemsPerPage) {
+      setCurrentPage(currentPage = currentPage - 1);
+    }
+    // setItemsPerPage(e.target.value); // 12 or 20, dropdown
+    setItemsPerPage(Number(e.target.value)); // 12 or 20, dropdown
   };
 
   const pageChange = (chosenPage) => {
@@ -80,11 +84,11 @@ const AdminProductList = () => {
                 </button>
               </Link>
             </div>
-            <div className="">
+            <div className="admProducts__create-item">
               <Link to='/admin/image/list'>
-                <div className="btn btn-secondary">
+                <button className="btn btn-secondary">
                   Images List
-                </div>
+                </button>
               </Link>
             </div>
             <div className="admProducts__total-items">
