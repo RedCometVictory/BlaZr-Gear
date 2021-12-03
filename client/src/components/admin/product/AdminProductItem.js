@@ -14,29 +14,29 @@ const AdminProductItem = ({
         <div className="admProdItem__image">
           <img className="admProdItem__img" src={product_image_url} alt="product view" />
         </div>
-        <div className="admProdItem__detail">
-          <div className="admProdItem__detail-set one">
+        <div className="admProdItem__detail prod-item">
+          <div className="admProdItem__detail-set one prod-item">
             <div className="admProdItem__set sm">ID#: {product_id}</div>
             <div className="admProdItem__set md">{brand}</div>
             <div className="admProdItem__set md">{category}</div>
           </div>
-          <div className="admProdItem__detail-set two">
+          <div className="admProdItem__detail-set two prod-item">
             <div className="admProdItem__set ov-hd">{name}</div>
           </div>
-          <div className="admProdItem__detail-set three">
+          <div className="admProdItem__detail-set three prod-item">
             <div className="admProdItem__set">Reviews</div>
             <div className="admProdItem__set md">AVG: {review_avg}</div>
             <div className="admProdItem__set md">Count: {count}</div>
             <div className="admProdItem__set md">{created_at}</div>
           </div>
-          <div className="admProdItem__detail-set four">
+          <div className="admProdItem__detail-set four prod-item">
             <div className="admProdItem__set md">Stock Total: {count_in_stock}</div>
             <div className="admProdItem__set md">Grand Total: ${price}</div>
           </div>
-          <div className="admProdItem__detail-set five">
+          <div className="admProdItem__detail-set five prod-item">
             <Link to={`/admin/product/${product_id}/detail`}>
               <div className="btn btn-primary">
-                <span className="detail-eye"><FaRegEye/> View</span>
+                <span className="detail-eye prod-item-eye"><FaRegEye/> View</span>
               </div>
             </Link>
           </div>

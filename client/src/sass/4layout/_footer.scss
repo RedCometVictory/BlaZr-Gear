@@ -7,8 +7,11 @@
   padding: 1.3rem 1rem 0;
   width: 100%;
   font-size: 1rem;
-  position: relative;
-  background-color: var(--footer-bg-color-a);
+  // position: relative;
+  position: absolute;
+  bottom: 0;
+  // background-color: var(--footer-bg-color-a);
+  background-color: var(--bg-panel);
   flex-direction: column;
   &__links {
     display: flex;

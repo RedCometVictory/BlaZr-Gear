@@ -3,14 +3,6 @@ import ReactStars from 'react-rating-stars-component';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProductReview, deleteProductReview } from '../../redux/actions/productActions';
 
-// TODO --- perhaps import review state, spinner takes place of the new review in the list until fully loaded
-// const initialState = {
-//   title: '', description: ''
-// }
-// review: {
-  // id, username, user_id, product_id, created_at
-// }
-
 const ReviewItem = ({ review }) => {
   const dispatch = useDispatch();
   const userAuth = useSelector(state => state.auth);
@@ -58,23 +50,27 @@ const ReviewItem = ({ review }) => {
           value={review.rating}
           activeColor='#e4d023'
         />
-        {!setConfirmDelete && editForm && (
-          <div className="review__edit-submit">
-            <input type="submit" form="edit-review-form" value="Submit Edit" />
-          </div>
-        )}
-        {!setConfirmDelete && userInfo && userInfo.id === review.user_id && (
-          <>
-          <div className="review__edit" onClick={() => editFormHandler()}>
-            {!editForm ? (
-              <>Edit Review</>
-            ) : (
-              <>Cancel Review</>
-            )}
-          </div>
-          <button className="review__delete" onClick={() => isSetConfirmDelete(true)}>X</button>
-          </>
-        )}
+        <div className="review__btns">
+          {!setConfirmDelete && editForm && (
+            <div className="review__edit-submit">
+              <input type="submit" form="edit-review-form" value="Submit Edit" />
+            </div>
+          )}
+          {!setConfirmDelete && userInfo && userInfo.id === review.user_id && (
+            <>
+            <div className="review__edit" onClick={() => editFormHandler()}>
+              {!editForm ? (
+                <>Edit Review</>
+              ) : (
+                <>Cancel Review</>
+              )}
+            </div>
+            <div className="">
+              <button className="review__delete" onClick={() => isSetConfirmDelete(true)}>X</button>
+            </div>
+            </>
+          )}
+        </div>
         {setConfirmDelete && (
           <div className="review__delete-confirm">
             <div>Are you sure?</div>
@@ -101,7 +97,6 @@ const ReviewItem = ({ review }) => {
             />
           </div>
           <div className="reviews__form-group">
-            {/* <label htmlFor="title" className="label">Review Title</label> */}
             <input
               className="form-input"
               type="text"

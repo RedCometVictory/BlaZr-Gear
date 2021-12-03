@@ -21,11 +21,17 @@ const ProductItem = ({
   const [hasMounted, setHasMounted] = useState(false);
   const { isAuthenticated } = userAuth;
 
+  // ORIGINAL
+  // useEffect(() => {
+  //   let inCart = cartItems.find(item => item.product.id === id);
+  //   if (!inCart) return setItemInCart(false);
+  //   if (inCart) return setItemInCart(true);
+  // }, [id, cartItems]);
   useEffect(() => {
-    let inCart = cartItems.find(item => item.product.id === id);
+    let inCart = cartItems.find(item => item.product.product_id === product_id);
     if (!inCart) return setItemInCart(false);
     if (inCart) return setItemInCart(true);
-  }, [id, cartItems]);
+  }, [product_id, cartItems]);
 
   useEffect(() => {
     setHasMounted(true);
@@ -35,7 +41,8 @@ const ProductItem = ({
     return null;
   }
 
-  const addToCart = (prod_id, qty = 1, cartItems) => {
+  // const addToCart = (prod_id, qty = 1, cartItems) => {
+  const addToCart = (prod_id, qty = 1) => {
     if (!isAuthenticated) {
       dispatch(addItemToCartGuest(prod_id, qty));
       // console.log("guest: checking if item is in cart")

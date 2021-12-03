@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { listAllCategories, listAllProducts } from '../../../redux/actions/productActions';
 import AdminProductItem from './AdminProductItem';
 import Paginate from '../../layouts/Paginate';
+import Spinner from '../../layouts/Spinner';
 
 const AdminProductList = () => {
   const dispatch = useDispatch();
@@ -55,15 +56,13 @@ const AdminProductList = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Info</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="admProducts">
-        <div className="admProducts__header">
+        <div className="admProducts__header prod-item">
           <h2 className="admProducts__title">Products in Store</h2>
-          <div className="admProducts__header-options">
-            <div className="admProducts__items-page">
+          <div className="admProducts__header-options prod-item">
+            <div className="admProducts__items-page prod-item">
               <span>Items per Page:{" "}</span>
               <div className="admProducts__items-select">
                 <select name="category" value={category} onChange={(e) => categoryChange(e)}>
@@ -77,21 +76,21 @@ const AdminProductList = () => {
                 </select>
               </div>
             </div>
-            <div className="admProducts__create-item">
+            <div className="admProducts__create-item prod-item">
               <Link to="/admin/product/create">
                 <button className="btn btn-secondary">
                   Add Product
                 </button>
               </Link>
             </div>
-            <div className="admProducts__create-item">
+            <div className="admProducts__create-item prod-item">
               <Link to='/admin/image/list'>
                 <button className="btn btn-secondary">
                   Images List
                 </button>
               </Link>
             </div>
-            <div className="admProducts__total-items">
+            <div className="admProducts__total-items prod-item">
               {products.length} Products
             </div>
           </div>

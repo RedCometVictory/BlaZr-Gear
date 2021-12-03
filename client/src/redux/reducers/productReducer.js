@@ -1,4 +1,7 @@
 import {
+  PRODUCT_ID_REQUEST,
+  PRODUCT_ID_SUCCESS,
+  PRODUCT_ID_FAILURE,
   PRODUCT_CATEGORY_REQUEST,
   PRODUCT_CATEGORY_SUCCESS,
   PRODUCT_CATEGORY_FAILURE,
@@ -36,6 +39,7 @@ import {
 } from '../constants/productConstants';
 
 const initialState = {
+  productIds: [],
   productById: null,
   products: [],
   topProducts: [],
@@ -43,15 +47,19 @@ const initialState = {
   page: null,
   pages: null,
   loading: true,
-  // isSuccess: false,
-  // error: {}
-  errors: {}
+  errors: []
 }
 
 const productReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case PRODUCT_ID_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        productIds: []
+      }
     case PRODUCT_CATEGORY_REQUEST:
       return {
         ...state,
@@ -81,6 +89,12 @@ const productReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         categories: payload
+      }
+    case PRODUCT_ID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        productIds: payload
       }
     case PRODUCT_LIST_SUCCESS:
       return {
@@ -150,6 +164,8 @@ const productReducer = (state = initialState, action) => {
     case PRODUCT_CREATE_RESET:
     case PRODUCT_CREATE_REVIEW_RESET:
       return {}
+    case PRODUCT_ID_FAILURE:
+      return { ...state, loading: false, errors: payload }
     case PRODUCT_CATEGORY_FAILURE:
     case PRODUCT_LIST_FAILURE:
     case PRODUCT_TOP_FAILURE:

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsersAdmin } from '../../../redux/actions/userActions';
 import AdminUserItem from './AdminUserItem';
+import Spinner from '../../layouts/Spinner';
 
 const AdminUserList = () => {
   const dispatch = useDispatch();
@@ -24,15 +25,13 @@ const AdminUserList = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Info</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="admProducts">
         <div className="admProducts__header">
           <h2 className="admProducts__title">Users</h2>
           <div className="admProducts__header-options">
-            <div className="admProducts__total-items">
+            <div className="admProducts__total-items user-item">
               {users.length} Users
             </div>
           </div>

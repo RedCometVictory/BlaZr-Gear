@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getUserProfile } from '../../redux/actions/userActions';
 import ProfileUserForm from './ProfileUserForm';
 import ProfileForm from './ProfileForm';
+import Spinner from '../layouts/Spinner';
 
 const Profile = () => {
   // const { user_id } = useParams();
@@ -76,7 +77,7 @@ const Profile = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Information</div>
+      <Spinner />
     ) : (
       <section className="admProductDetail">
         <div className="admProductDetail__title">

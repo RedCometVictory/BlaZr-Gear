@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getAllSlides } from '../../../redux/actions/slideActions';
 import AdminSlideItem from './AdminSlideItem';
+import Spinner from '../../layouts/Spinner';
 
 const AdminSlideList = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const AdminSlideList = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Info</div>
+      <Spinner />
     ) : (
       <section className="admProducts">
         <div className="admProducts__header">

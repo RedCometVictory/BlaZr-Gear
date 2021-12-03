@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUserProfileAdmin } from '../../../redux/actions/userActions';
 import AdminUserUpdate from './AdminUserUpdate';
+import Spinner from '../../layouts/Spinner';
 
 const AdminUserDetail = () => {
   const { user_id } = useParams();
@@ -36,9 +37,7 @@ const AdminUserDetail = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Information</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="admProductDetail">
         <div className="admProductDetail__title">
@@ -46,7 +45,7 @@ const AdminUserDetail = () => {
         </div>
         <div className="admProductDetail__details">
           <div className="admProductDetail__user">
-            <div className="admProductDetail__user-section">
+            <div className="admProductDetail__user-section user-item">
               <div className="admProductDetail__user-group">
                 <div className="admProductDetail__user-label">
                   ID#: 

@@ -3,6 +3,7 @@ import Pagination from 'react-js-pagination';
 
 const Paginate = ({ currentPage, itemsPerPage, pages, pageChange}) => {
 
+  // TODO: convert props from strings to numbers before placing into pagination comp
   Number(currentPage);
   Number(itemsPerPage);
   Number(pages);

@@ -1,6 +1,9 @@
 import api from '../../utils/api';
 import { setAlert } from './alertActions';
 import {
+  PRODUCT_ID_REQUEST,
+  PRODUCT_ID_SUCCESS,
+  PRODUCT_ID_FAILURE,
   PRODUCT_CATEGORY_REQUEST,
   PRODUCT_CATEGORY_SUCCESS,
   PRODUCT_CATEGORY_FAILURE,
@@ -40,9 +43,31 @@ import {
 } from '../constants/productConstants';
 import { createProductForm, updateProductForm } from '../../utils/formDataServices';
 
+export const getAllProductIds = () => async dispatch => {
+  try {
+    // console.log("ACTION: list all product ids");
+    dispatch({type: PRODUCT_ID_REQUEST});
+
+    const res = await api.get(`/products/product-ids`);
+    
+    dispatch({
+      type: PRODUCT_ID_SUCCESS,
+      payload: res.data.data.productIds
+    })
+  } catch (err) {
+    dispatch(setAlert('Failed to list product ids.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: PRODUCT_ID_FAILURE});
+  }
+};
+
 export const listAllCategories = () => async dispatch => {
   try {
-    console.log("ACTION: list all categories");
+    // console.log("ACTION: list all categories");
     dispatch({type: PRODUCT_CATEGORY_REQUEST});
 
     const res = await api.get(`/products/categories`);

@@ -25,8 +25,7 @@ const ReviewForm = ({prodId}) => {
   const submitReviewHandler = e => {
     e.preventDefault();
     let formData = {...reviewFormData, rating};
-    
-    // dispatch(createProductReview(prod_id, reviewFormData));
+
     dispatch(createProductReview(prodId, formData));
     setReviewFormData({ title: '', description: '' });
     setRating(1);
@@ -73,7 +72,6 @@ const ReviewForm = ({prodId}) => {
             />
           </div>
           <div className="reviews__form-group">
-            {/* <label htmlFor="title" className="label">Review Title</label> */}
             <input
               className="form-input"
               type="text"

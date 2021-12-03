@@ -27,7 +27,7 @@ const initialState = {
   order: null,
   orders: [],
   loading: true,
-  error: {}
+  errors: []
 };
 const orderReducer = (state = initialState, action) => {
   const { type, payload } = action;
@@ -60,7 +60,7 @@ const orderReducer = (state = initialState, action) => {
     case ORDER_LIST_MY_FAILURE:
     case ORDER_LIST_FAILURE:
     case ORDER_DELIVER_FAILURE:
-      return { loading: false, error: payload }
+      return { loading: false, errors: payload }
     case ORDER_CREATE_RESET:
     case ORDER_PAY_RESET:
     case ORDER_DELIVER_RESET:

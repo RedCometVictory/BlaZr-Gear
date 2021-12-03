@@ -9,15 +9,12 @@ const api = Axios.create({
   // baseURL: `https://squadupsocial.herokuapp.com/api`,
   // baseURL: '/api',
   // baseURL: '/',
-  // data: data,
   // headers: {
     // "Authorization": "Bearer "+localStorage.getItem("token"),
     // "Authorization": "Bearer "+localStorage.token && JSON.parse(localStorage.token)
     // 'X-Content-Type-Options': "nosniff",
     // 'Content-Type': 'application/json',
-    // 'Content-Type': 'multipart/form-data',
-    // 'Accept': 'application/json'
-    // 'Accept': 'multipart/form-data'
+    // 'Content-Type': 'multipart/form-data'
   // },
   credentials: 'include',
 });

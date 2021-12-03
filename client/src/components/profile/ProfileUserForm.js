@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserInfo } from '../../redux/actions/userActions';
+import Spinner from '../layouts/Spinner';
 
 const initialState = {f_name: '', l_name: '', username: '', user_email: ''};
 
@@ -42,7 +42,7 @@ const ProfileUserForm = ({stateChanger}) => {
   return (
     <>
     {loading ? (
-      <div className="">Loading update page...</div>
+      <Spinner />
     ) : (
       <section className="">
         <form className="admForm" onSubmit={onSubmit} >

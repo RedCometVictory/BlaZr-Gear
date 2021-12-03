@@ -83,6 +83,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    p {
+      &:nth-child(2) {
+        margin-left: 10px;
+      }
+    }
   }
   &__section {
     width: 100%;
@@ -258,36 +263,6 @@
   }
 }
 
-// for desktop
-@media (min-width: 820px) {
-  .form-page-wrapper {
-    padding: 3.5rem 0rem 0rem;
-  }
-  // .form-container {
-    // height: auto;
-    // margin: 0 auto;
-  // }
-  .form {
-    width: 100%;
-    padding: 1rem 0 0.5rem;
-    &__group {
-      &.bio-input {
-        margin-bottom: 0
-      }
-      &.background-img-mrg-sm {
-        margin-top: 16px;
-      }
-    }
-    &__toggle-btn {
-      margin: 1rem 0 1.66rem;
-    }
-    &__inner-container {
-      display: flex;
-      justify-content: center;
-    }
-  }
-}
-
 // --------------------------------------------------
 
 .admForm {
@@ -297,6 +272,12 @@
   padding: 1rem 0 0.5rem;
   border-radius: 5px;
   position: relative;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 1rem 0 1rem;
+  }
   .file-btn-input {
     cursor: pointer;
     &::file-selector-button { // firefox
@@ -384,6 +365,12 @@
     display: flex;
     justify-content: space-evenly;
     margin: 0 0 1rem 0;
+    flex-direction: column;
+    .btn {
+      &:nth-child(1) {
+        margin-bottom: 0.6rem;
+      }
+    }
   }
   &__image {
     width: 150px;
@@ -429,10 +416,65 @@
   }
 }
 
+@media (min-width: 300px) {
+  .admForm {
+    &__show {
+      flex-direction: initial;
+      .btn {
+        &:nth-child(1) {
+          margin-bottom: initial;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 520px) {
+  .admForm {
+    padding: initial;
+    &__header {
+      margin-top: 1rem;
+      margin-bottom: 1.2rem;
+      margin-left: 4rem;
+    }
+  }
+}
+
+@media (min-width: 720px) {
+  .admForm {
+    &__header {
+      margin: 1rem 1rem 0 1rem;
+    }
+  }
+}
+
 // for desktop
 @media (min-width: 820px) {
-  .admForm-page-wrapper {
+  .form-page-wrapper {
     padding: 3.5rem 0rem 0rem;
+  }
+  // .form-container {
+    // height: auto;
+    // margin: 0 auto;
+  // }
+  .form {
+    width: 100%;
+    padding: 1rem 0 0.5rem;
+    &__group {
+      &.bio-input {
+        margin-bottom: 0
+      }
+      &.background-img-mrg-sm {
+        margin-top: 16px;
+      }
+    }
+    &__toggle-btn {
+      margin: 1rem 0 1.66rem;
+    }
+    &__inner-container {
+      display: flex;
+      justify-content: center;
+    }
   }
   .admForm {
     width: 100%;

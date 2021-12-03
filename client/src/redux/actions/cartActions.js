@@ -5,6 +5,7 @@ import {
   CART_GET_ALL_GUEST,
   CART_ADD_ITEM,
   CART_ADD_ITEM_GUEST,
+  CART_UPDATE_LIST,
   CART_UPDATE_ITEM,
   CART_ADD_ITEM_FAILURE,
   CART_ADD_ITEM_GUEST_FAILURE,
@@ -47,11 +48,22 @@ export const getCartGuest = () => async dispatch => {
     })
   } catch (err) {
     dispatch(setAlert('Failed to get guest cart.', 'danger'));
-    // const errors = err.response.data.errors;
+  }
+};
 
-    // if (errors) {
-    //   errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-    // }
+export const resetCartOnProductDelete = (match) => async (dispatch, getState) => {
+  try {
+    console.log("match");
+    console.log(match);
+    dispatch({
+      type: CART_UPDATE_LIST,
+      payload: match
+    })
+    
+    console.log("resetting cartItems to LS state")
+    localStorage.setItem('__cart', JSON.stringify(getState().cart.cartItems));
+  } catch (err) {
+    dispatch(setAlert('Failed to reset guest cart.', 'danger'));
   }
 };
 
@@ -91,6 +103,7 @@ export const addItemToCartGuest = (prod_id, qty) => async (dispatch, getState) =
   } catch (err) {
     dispatch(setAlert('Failed to add to cart.', 'danger'));
     dispatch({type: CART_ADD_ITEM_GUEST_FAILURE});
+    // TODO: search item by product_id, if value returned from backend is false, delete from cart
     // const errors = err.response.data.errors;
 
     // if (errors) {

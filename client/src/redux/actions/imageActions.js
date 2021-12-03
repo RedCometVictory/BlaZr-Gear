@@ -71,12 +71,13 @@ export const deleteImage = (image_id, history) => async dispatch => {
     dispatch(setAlert('Deleted image.', 'success'));
     history.push('/admin/image/list');
   } catch (err) {
-    dispatch(setAlert('Failed to deleste image.', 'danger'));
+    dispatch(setAlert('Failed to delete image.', 'danger'));
     const errors = err.response.data.errors;
     
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
+
     dispatch({type: IMAGE_DELETE_FAILURE});
   }
 };

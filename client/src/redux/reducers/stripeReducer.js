@@ -16,7 +16,7 @@ const initialState = {
   clientSecret: null,
   success: false,
   loading: true,
-  errors: {}
+  errors: []
 };
 
 const stripeReducer = (state = initialState, action) => {

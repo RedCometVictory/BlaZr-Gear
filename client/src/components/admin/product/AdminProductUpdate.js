@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 // import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProduct } from '../../../redux/actions/productActions';
+import Spinner from '../../layouts/Spinner';
 
 const initialState = {name: '', image_url: '', brand: '', category: '', description: '', price: '', count_in_stock: ''};
 
@@ -94,9 +95,7 @@ const AdminProductUpdate = ({stateChanger}) => {
   return (
     <>
     {loading ? (
-      <div className="">Loading update page...</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="">
         <form className="admForm" onSubmit={onSubmit} >
@@ -127,7 +126,6 @@ const AdminProductUpdate = ({stateChanger}) => {
               <div className="admForm__group">
                 <label htmlFor="category" className="admForm__label">Category: </label>
                 <select name="category" value={category} onChange={e => onChange(e)}>
-                  {/* <option value="all">All</option> */}
                   <option value="Video Games">Video Games</option>
                   <option value="Electronics">Electronics</option>
                   <option value="Sneakers">Sneakers</option>

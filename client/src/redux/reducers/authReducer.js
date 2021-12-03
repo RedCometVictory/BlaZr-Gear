@@ -112,8 +112,6 @@ const authReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         // status: payload.status,
-        // error: payload,
-        // error: payload?.status,
         errors: payload,
         // allowReset: payload.data.allowReset
         allowReset: false

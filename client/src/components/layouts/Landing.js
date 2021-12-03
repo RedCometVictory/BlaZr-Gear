@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { Link, Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-// import Product from '../product/Product';
 import ProductItem from '../product/ProductItem';
 import { getAllSlides } from '../../redux/actions/slideActions';
 import { listTopProducts } from '../../redux/actions/productActions';
+import Spinner from './Spinner';
 
 const Landing = () => {
   const dispatch = useDispatch();
@@ -49,8 +49,8 @@ const Landing = () => {
     }
     setIndex(index === 0 ? length - 1 : index - 1);
   };
-  // const duration = 10000; // in ms ~ 10 secs
-  const duration = 1000000; // in ms ~ 10 secs
+  const duration = 10000; // in ms ~ 10 secs
+  // const duration = 1000000; // in ms ~ 10 secs
   useEffect(() => {
     const nextSlide = () => {
       setIndex(index => (index === length - 1 ? 0 : index + 1));
@@ -77,7 +77,7 @@ const Landing = () => {
       <div className="hero__content">
         <div className="hero__slides">
           {loading ? (
-            <div className="">Spinner Goes Here</div>
+            <Spinner />
           ) : (
             <img src={slideImgArr[index]} alt="loading slideshow..." className="hero__slide-image" />
           )}

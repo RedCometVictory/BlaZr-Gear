@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { createSlide } from '../../../redux/actions/slideActions';
 
 const initialState = {title: '', image_url: '', description: '', theme: '', category: ''};
@@ -79,7 +79,16 @@ const AdminSlideCreate = () => {
   return (
     <section className="">
       <form className="admForm" onSubmit={onSubmit} >
-        <h2>Add Slide</h2>
+        <div className="admForm__header">
+          <h2>Add Slide</h2>
+          <div className="">
+            <Link to='/admin/slide/list'>
+              <div className="btn btn-secondary update-btn">
+                Slide List
+              </div>
+            </Link>
+          </div>
+        </div>
         <div className="admForm__section create-form">
           <div className="admForm__group">
             <label htmlFor="image_url" className="admForm_label">

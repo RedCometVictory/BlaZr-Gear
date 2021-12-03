@@ -1,8 +1,13 @@
 // ----------------------------------------
 .admProductDetail {
+  padding: 0 1rem;
   &__title {
-    margin-top: 0.7rem;
+    text-align: center;
+    margin-top: 3rem;
     margin-bottom: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   &__delete-confirm {
     border: 1px solid var(--danger-color);
@@ -19,6 +24,7 @@
     margin-top: 0.6rem;
     display: flex;
     justify-content: space-evenly;
+    flex-direction: column;
     .btns {
       padding: 0.3rem 3rem;
       cursor: pointer;
@@ -28,7 +34,7 @@
       transition: background-color 230ms ease-in;
     }
     .del-primary {
-      // margin-right: 8px;
+      margin-bottom: 0.6rem;
       &:hover {
         background-color: rgb(241, 93, 93);
         // border: 1px solid rgb(248, 112, 112);
@@ -43,17 +49,18 @@
   &__details {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
   }
-  &__image {
-    margin-right: 3rem;
-  }
+  // &__image {
+    // margin-right: 3rem;
+  // }
   &__img {
     height: 100%;
     width: 100%;
     max-height: 600px;
-    min-width: 420px;
+    // min-width: 420px;
     max-width: 600px;
-    background-color: yellow;
+    // background-color: yellow;
   }
   &__info {
     // background-color: rgb(181, 160, 201);
@@ -68,6 +75,19 @@
     div .title {
       font-weight: 600;
     }
+    &.image-info {
+      padding: 12px 0 0 0;
+      // white-space:normal;
+    }
+  }
+  &__info-inner {
+    &.image-info {
+      div {
+        &:nth-child(3) {
+          font-size: 13px;
+        }
+      }
+    }
   }
   &__btn-container {
     display: flex;
@@ -78,9 +98,11 @@
       cursor: pointer;
     }
     &.user-item {
+      margin-top: 6px;
       position: absolute;
-      top: 8px;
+      bottom: 2px;
       right: 10px;
+      left: 10px;
     }
     .delete-btn {
       background: var(--danger-color);
@@ -91,11 +113,12 @@
   }
   &__info-section {
     margin-top: 1.2rem;
+    &.two {
+      padding: 4rem 0 0 0;
+      margin: 1.8rem 1rem 0;
+    }
     .info-header {
       margin-bottom: 0.5rem;
-      &.two {
-        margin: 1.8rem 0 0rem;
-      }
     }
   }
   &__user {
@@ -103,8 +126,14 @@
     width: 100%;
     display: flex;
     position: relative;
+    flex-direction: column;
     &.user-item {
       grid-template-columns: 22% 23% 26% 14% 14%;
+    }
+  }
+  &__user-section {
+    &:nth-child(3) {
+      margin-bottom: 5rem;
     }
   }
   &__user-group {
@@ -112,6 +141,111 @@
   }
   &__user-label {
     white-space: nowrap;
+  }
+}
+
+@media (min-width: 250px) {
+  .admProductDetail {
+    &__info-section {
+      &.two {
+        padding: 2rem 0 0 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 366px) {
+  .admProductDetail {
+    &__delete-btns {
+      flex-direction: initial;
+      .del-primary {
+        margin-bottom: initial;
+      }
+    }
+    &__info-section {
+      &.two {
+        padding: 1rem 0 0 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 520px) {
+  .admProductDetail {
+    &__title {
+      margin-top: 1rem;
+      margin-bottom: 1.2rem;
+      margin-left: 3rem;
+    }
+    &__btn-container {
+      &.user-item {
+        left: initial;
+      }
+    }
+    &__user {
+      flex-direction: initial;
+    }
+    &__user-section {
+      &:nth-child(1) {
+        margin: initial;
+      }
+      &.user-item {
+        width: 50%;
+      }
+    }
+  }
+}
+
+@media (min-width: 600px) {
+  .admProductDetail {
+    &__btn-container {
+      &.user-item {
+        top: 2px;
+        bottom: initial;
+      }
+    }
+    &__details {
+      flex-direction: initial;
+    }
+    &__image {
+      margin-right: 3rem;
+    }
+    &__img {
+      height: initial;
+      // width: initial;
+      width: 100%;
+      // min-width: 420px;
+      min-width: initial;
+    }
+    &__info {
+      padding: initial;
+    }
+    &__info-section {
+      .info-header {
+        padding: initial;
+      }
+    }
+  }
+}
+
+@media (min-width: 720px) {
+  .admProductDetail {
+    &__title {
+      margin-top: 1rem;
+      margin-bottom: 1.2rem;
+      margin-left: initial;
+      text-align: initial;
+    }
+    &__img {
+      height: initial;
+      min-width: 420px;
+    }
+  }
+}
+
+@media (min-width: 820px) {
+  .admProductDetail {
+    padding: initial;
   }
 }
 

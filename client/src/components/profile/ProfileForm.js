@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createUserProfile, updateUserProfile } from '../../redux/actions/userActions';
 import { shippingAddressForCart } from '../../redux/actions/cartActions';
+import Spinner from '../layouts/Spinner';
 
 const initialState = {address: '', address2: '', phone: '', city: '', state: '', country: '', zipcode: '', company: ''};
 
@@ -68,7 +69,7 @@ const ProfileUserForm = ({stateChanger}) => {
   return (
     <>
     {loading ? (
-      <div className="">Loading update page...</div>
+      <Spinner />
     ) : (
       <section className="">
         <form className="admForm" onSubmit={userById.myProfileInfo && userById.myProfileInfo.user_id === userById.userData?.id ? (onSubmitUpdateHandler) : (onSubmitCreateHandler)} >

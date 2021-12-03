@@ -1,27 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCartGuest } from '../../redux/actions/cartActions';
+import { getCartGuest, resetCartOnProductDelete } from '../../redux/actions/cartActions';
 import { getUserProfile } from '../../redux/actions/userActions'
 import { setAlert } from '../../redux/actions/alertActions';
+import { getAllProductIds } from '../../redux/actions/productActions';
 import CartItem from './CartItem';
 
 const Cart = () => {
   // const { prod_id } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  // const productDetails = useSelector(state => state.product);
   const userAuth = useSelector(state => state.auth);
+  const productDetails = useSelector(state => state.product);
   const cartDetails = useSelector(state => state.cart);
   const [hasMounted, setHasMounted] = useState(false);
   const { isAuthenticated } = userAuth;
-  const { loading, error, cartItems, shippingAddress } = cartDetails;
+  let { productIds } = productDetails;
+  let { loading, cartItems, shippingAddress } = cartDetails;
   let price = {};
-  
+
   useEffect(() => {
+    dispatch(getAllProductIds());
+
     // if (isAuthenticated) return dispatch(getCart());
     if (!isAuthenticated) return dispatch(getCartGuest());
-    
     if (isAuthenticated) {
       dispatch(getUserProfile());
       return dispatch(getCartGuest()); 
@@ -34,6 +37,27 @@ const Cart = () => {
 
   if (!hasMounted) {
     return null;
+  }
+
+  // check/compare states of cartItems and products. The purpose is to replace cart if products where removed from the shop
+  let match = [];
+  let currentLS = localStorage.getItem('__cart');
+  let currentLocalStorage;
+  if (currentLS) currentLocalStorage = JSON.parse(currentLS);
+  if (productIds.length > 0 && cartItems.length > 0 && hasMounted) {
+    for(let i = 0; i < cartItems.length; i++) {
+      for(let j = 0; j < productIds.length; j++) {
+        if (cartItems[i].product.product_id === productIds[j].id) {
+          match.push(cartItems[i]);
+          break
+        }
+      }
+    };
+    if (currentLocalStorage.length > 0) {
+      if (match.length !== currentLocalStorage.length) {
+        dispatch(resetCartOnProductDelete(match));
+      };
+    };
   }
 
   const checkoutHandler = () => {
@@ -64,13 +88,10 @@ const Cart = () => {
     );
   price.grandTotal = (Number(price.subTotal) + Number(price.tax) + Number(price.shippingTotal)).toFixed(2);
 
-  // {/* ) : error.length >= 1 ? ( */}
   return (
     <>
     {loading ? (
-      <div className="">Loading Cart</div>
-    ) : error.length >= 1 ? (
-      <div className="">Error in loading cart.</div>
+      <div className="">Loading Cart...</div>
     ) : (
       <section className="carts">
         <div className="carts__header">
@@ -96,7 +117,6 @@ const Cart = () => {
             <h4 className="carts__total-header">Order Summary</h4>
             <div className="carts__totals">
               <div className="carts__subtotal">
-                {/* $ {cartSubTotal()} */}
                 Sub-Total: $ {price.subTotal}
               </div>
               <div className="carts__tax-total">

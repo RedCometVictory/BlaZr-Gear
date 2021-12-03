@@ -6,6 +6,7 @@ import { listProductDetails } from '../../redux/actions/productActions';
 import { addItemToCartGuest } from '../../redux/actions/cartActions';
 import ReviewForm from '../review/ReviewForm';
 import Review from '../review/Review';
+import Spinner from '../layouts/Spinner';
 
 const ProductDetail = () => {
   const { prod_id } = useParams();
@@ -52,9 +53,7 @@ const ProductDetail = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Information</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="product">
         <div className="product__title">

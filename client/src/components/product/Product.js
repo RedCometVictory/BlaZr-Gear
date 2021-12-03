@@ -4,15 +4,13 @@ import { useParams, Link } from 'react-router-dom';
 import ProductItem from './ProductItem';
 import { listAllCategories, listAllProducts } from '../../redux/actions/productActions';
 import Paginate from '../layouts/Paginate';
+import Spinner from '../layouts/Spinner';
 
 const Product = () => {
   const dispatch = useDispatch();
   const { keyword } = useParams();
-  // const keyword = query.get("keyword");
   const allProducts = useSelector(state => state.product);
-  const { loading, errors, categories, products, page, pages } = allProducts;
-  // const userAuth = useSelector(state => state.auth);
-  // const { isAuthenticated } = userAuth;
+  const { loading, categories, products, page, pages } = allProducts;
   const [hasMounted, setHasMounted] = useState(false);
   let [currentPage, setCurrentPage] = useState(page || 1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -48,19 +46,14 @@ const Product = () => {
   };
 
   const pageChange = (chosenPage) => {
-    // setIsLoading(true);
     setCurrentPage(chosenPage);
     window.scrollTo({ behavior: "smooth", top: 0 });
-    // setIsLoading(false);
   };
 
-  // TODO -- set category via dropdown select menu
   return (
     <>
     {loading ? (
-      <div className="">Loading Info</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <>
       <section className="products">

@@ -4,6 +4,7 @@ import {
   CART_GET_ALL_FAILURE,
   CART_ADD_ITEM,
   CART_ADD_ITEM_GUEST,
+  CART_UPDATE_LIST,
   CART_UPDATE_ITEM,
   CART_ADD_ITEM_FAILURE,
   CART_ADD_ITEM_GUEST_FAILURE,
@@ -20,7 +21,7 @@ const initialState = {
   shippingAddress: localStorage.getItem('__shippingAddress') ? JSON.parse(localStorage.getItem('__shippingAddress')): {},
   total: 0,
   loading: true,
-  error: {}
+  errors: []
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -38,6 +39,12 @@ const cartReducer = (state = initialState, action) => {
         loading: false,
         // cartItems
         // cartItems: payload
+      }
+    case CART_UPDATE_LIST:
+      return {
+        ...state,
+        loading: false,
+        cartItems: payload
       }
     case CART_ADD_ITEM:
     case CART_ADD_ITEM_GUEST:
@@ -84,7 +91,7 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        error: payload
+        errors: payload
       }
     default:
       return state;

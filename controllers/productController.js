@@ -1,5 +1,25 @@
 const pool = require("../config/db");
 const cloudinary = require('cloudinary').v2;
+const { removeOnErr } = require('../middleware/cloudinary');
+
+exports.getProductIds = async (req, res, next) => {
+  try {
+    const productIds = await pool.query(
+      'SELECT id FROM products;'
+    );
+
+    console.log(productIds.rows);
+    return res.status(200).json({
+      status: "Product ids retrieved.",
+      data: {
+        productIds: productIds.rows,
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
 
 exports.getCategories = async (req, res, next) => {
   try {
@@ -217,6 +237,10 @@ exports.createProduct = async (req, res, next) => {
 
   // TODO --- save category into db as a array like so ['video games', 'electronics', 'console'] this way a product can fit into multiple categories where appropriate
   try {
+    if (!name || !brand || !category || !description || !price || !count_in_stock) {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
+    }
     // provided via multer cloudinary
     if (req.file && req.file.path) {
       productImgUrl = req.file.path;
@@ -373,6 +397,10 @@ exports.updateProduct = async (req, res, next) => {
   let updateProduct;
 
   try {
+    if (!name || !brand || !category || !description || !price || !count_in_stock) {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
+    }
     // provided via multer cloudinary
     if (req.file && req.file.path) {
       productImgUrl = req.file.path;

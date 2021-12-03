@@ -100,6 +100,7 @@
     justify-content: flex-start;
     align-items: center;
     position: relative;
+    height: 40px;
   }
   &__edit-submit {
     border: 1px solid white;
@@ -117,6 +118,11 @@
       color: white;
       background: none;
     }
+  }
+  &__btns {
+    // display: flex;
+    // flex-direction: column;
+    margin: 31px 0 0 0;
   }
   &__edit {
     border: 1px solid white;
@@ -157,6 +163,8 @@
     color: white;
     white-space: nowrap;
     transition: background-color 230ms ease-in;
+    margin: 56px 0 0 0;
+    width: 100%;
   }
   &__delete-btns {
     padding: 0 6px 0 12px;
@@ -200,10 +208,36 @@
   }
 }
 
+@media (min-width: 330px) {
+  .review {
+    &__delete-confirm {
+      width: initial;
+    }
+  }
+}
+
+@media (min-width: 460px) {
+  .review {
+    &__header {
+      height: initial;
+      align-items: initial;
+    }
+    &__btns {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    &__delete-confirm {
+      margin: initial;
+    }
+  }
+}
+
 @media (min-width: 544px) {
   .reviews {
     &__header {
       flex-direction: row;
+      margin: 0 0 1.2rem 0;
     }
     &__form-collapse {
       &.right-comp {
@@ -220,10 +254,6 @@
 @media (min-width: 820px) {
   .reviews {
     &__header {
-      // display: flex;
-      // justify-content: space-between;
-      // align-items: center;
-      // transition: 200ms ease;
       h2 {
         transition: 200ms ease;
         text-align: center;
@@ -303,114 +333,4 @@
       }
     }
   }
-
-  // .review {
-  //   border: 1px solid white;
-  //   border-radius: 3px;
-  //   padding: 8px;
-  //   margin-bottom: 12px;
-  //   &__header {
-  //     display: flex;
-  //     justify-content: flex-start;
-  //     align-items: center;
-  //     position: relative;
-  //   }
-  //   &__edit-submit {
-  //     border: 1px solid white;
-  //     border-radius: 3px;
-  //     position: absolute;
-  //     padding: 2px;
-  //     right: 134px;
-  //     font-size: 14px;
-  //     background-color: darkcyan;
-  //     cursor: pointer;
-  //     height: 24.4px;
-  //     input {
-  //       border: none;
-  //       cursor: pointer;
-  //       color: white;
-  //       background: none;
-  //     }
-  //   }
-  //   &__edit {
-  //     border: 1px solid white;
-  //     border-radius: 3px;
-  //     position: absolute;
-  //     padding: 2px;
-  //     right: 30px;
-  //     font-size: 14px;
-  //     cursor: pointer;
-  //     height: 24.4px;
-  //   }
-  //   &__delete {
-  //     cursor: pointer;
-  //     height: 24.4px;
-  //     border-radius: 3px;
-  //     position: absolute;
-  //     right: 0;
-  //     padding: 0 6px;
-  //     border: 1px solid white;
-  //     background-color: var(--danger-color);
-  //     color: white;
-  //     font-weight: 700;
-  //     transition: background-color 230ms ease-in;
-  //     &:hover {
-  //       background-color: rgb(255, 40, 40);
-  //     }
-  //   }
-  //   &__delete-confirm {
-  //     display: flex;
-  //     flex-direction: row;
-  //     height: 24.4px;
-  //     border-radius: 3px;
-  //     position: absolute;
-  //     right: 0;
-  //     padding: 0 6px;
-  //     border: 1px solid white;
-  //     background-color: var(--danger-color);
-  //     color: white;
-  //     white-space: nowrap;
-  //     transition: background-color 230ms ease-in;
-  //   }
-  //   &__delete-btns {
-  //     padding: 0 6px 0 12px;
-  //     .btns {
-  //       cursor: pointer;
-  //       background-color: rgb(250, 156, 156);
-  //       border-radius: 3px;
-  //       border: none;
-  //       transition: background-color 230ms ease-in;
-  //     }
-  //     .del-secondary {
-  //       &:hover {
-  //         background-color: rgb(255, 206, 206);
-  //       }
-  //     }
-  //     .del-primary {
-  //       margin-right: 8px;
-  //       &:hover {
-  //         background-color: rgb(255, 206, 206);
-  //       }
-  //     }
-  //   }
-  //   &__username {
-  //     margin: 0 0 0 1rem;
-  //   }
-  //   p {
-  //     margin: 0 0.6rem 0 0.6rem;
-  //   }
-  //   &__created-date {
-  //     margin: 0 0 0.6rem 1rem;
-  //     font-size: 0.7rem;
-  //   }
-  //   &__title {
-  //     margin: 0 1rem 0 1rem;
-  //     font-size: 1.1em;
-  //     font-weight: 600;
-  //   }
-  //   &__text {
-  //     font-size: 0.85em;
-  //     margin: 0 1rem 0 1rem;
-  //   }
-  // }
 }

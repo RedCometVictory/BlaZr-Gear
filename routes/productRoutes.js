@@ -15,7 +15,12 @@ const upload = multer({
 }); //3MB
 const { createPostValidator, validatorResult } = require('../middleware/validator');
 
-const { getCategories, getAllProducts, createProductReview, getTopProducts, getProductById, createProduct, updateProduct, updateProductReview, deleteProduct, deleteProductReview } = require('../controllers/productController'); 
+const { getProductIds, getCategories, getAllProducts, createProductReview, getTopProducts, getProductById, createProduct, updateProduct, updateProductReview, deleteProduct, deleteProductReview } = require('../controllers/productController'); 
+
+// @route    GET /products/product-ids
+// @desc     Get all product ids, compare to cartItems on checkout.
+// @access   Public
+router.get('/product-ids', getProductIds);
 
 // @route    GET /products/categories
 // @desc     Get all product categories.

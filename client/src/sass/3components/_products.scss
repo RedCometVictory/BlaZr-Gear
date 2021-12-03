@@ -169,7 +169,8 @@
     // &__header {}
     &__container {
       display: grid;
-      grid-template-columns: 24% 24% 24% 24%;
+      // grid-template-columns: 24% 24% 24% 24%;
+      grid-template-columns: 22% 24% 24% 22%;
       // grid-template-columns: 25% 25% 25% 25%;
       // grid-template-columns: 320px 320px 320px 320px;
       // grid-template-rows: repeat(3, 360px);

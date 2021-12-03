@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getAllImages } from '../../../redux/actions/imageActions';
 import AdminImageItem from './AdminImageItem';
 import Paginate from '../../layouts/Paginate';
+import Spinner from '../../layouts/Spinner';
 
 const AdminImageList = () => {
   const dispatch = useDispatch();
@@ -17,8 +18,6 @@ const AdminImageList = () => {
   useEffect(() => {
     setIsLoading(true);
     dispatch(getAllImages(currentPage, itemsPerPage));
-    // dispatch(listAllProducts(keyword, category !== 'All' ? category : '', currentPage, itemsPerPage));
-  // }, [dispatch]);
   }, [dispatch, currentPage, itemsPerPage]);
 
   useEffect(() => {
@@ -48,13 +47,11 @@ const AdminImageList = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Info</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="admProducts">
         <div className="admProducts__header">
-          <h2 className="admProducts__title">Images [View or Delete]</h2>
+          <h2 className="admProducts__title image-item">Images</h2>
           <div className="admProducts__header-options">
             <div className="admProducts__items-page">
               <span>Items per Page:{" "}</span>
@@ -71,7 +68,6 @@ const AdminImageList = () => {
           </div>
         </div>
         <div className="admProducts__content">
-          {/* <div className="admProducts__list"> */}
           <section className="admImage">
             <>
             {images.map(image => (

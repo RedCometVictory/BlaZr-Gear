@@ -79,7 +79,7 @@ const AdminProductCreate = () => {
   return (
     <section className="">
       <form className="admForm" onSubmit={onSubmit} >
-        <h2>Create Product</h2>
+        <h2 className="admForm__header prod-item">Create Product</h2>
         <div className="admForm__section create-form">
           <div className="admForm__group">
             <label htmlFor="image_url" className="admForm_label">
@@ -137,7 +137,6 @@ const AdminProductCreate = () => {
             <div className="admForm__group">
               <label htmlFor="category" className="admForm__label">Category: </label>
               <select name="category" value={category} onChange={e => onChange(e)}>
-                {/* <option value="all">All</option> */}
                 <option value="Video Games">Video Games</option>
                 <option value="Electronics">Electronics</option>
                 <option value="Sneakers">Sneakers</option>

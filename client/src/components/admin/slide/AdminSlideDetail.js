@@ -3,6 +3,7 @@ import { Link, useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSlideDetails, deleteSlide } from '../../../redux/actions/slideActions'
 import AdminSlideUpdate from './AdminSlideUpdate';
+import Spinner from '../../layouts/Spinner';
 
 const AdminSlideDetail = () => {
   const { slide_id } = useParams();
@@ -35,16 +36,21 @@ const AdminSlideDetail = () => {
 
   const scrollToUpdateForm = () => myRef.current.scrollIntoView({ behavior: 'smooth'});
 
-    // ) : errors ? (
-    // <div className="">{errors}</div>
   return (
     <>
     {loading ? (
-      <div className="">Loading Information</div>
+      <Spinner />
     ) : (
       <section className="admProductDetail">
         <div className="admProductDetail__title">
           <h2>{slide.title}</h2>
+          <div className="list-menu">
+            <Link to='/admin/slide/list'>
+              <div className="btn btn-secondary update-btn">
+                Slide List
+              </div>
+            </Link>
+          </div>
         </div>
         {confirmDelete && (
           <div className="admProductDetail__delete-confirm">
@@ -52,11 +58,9 @@ const AdminSlideDetail = () => {
               <p>Are you sure you want to delete this slide from the slideshow? Please confirm.</p>
             </div>
             <div className="admProductDetail__delete-btns">
-              {/* <div className="btns"> */}
-                <button className="btn btns del-primary" onClick={e => dispatch(deleteSlide(slide.id, history))}>Yes</button>
-                <button className="btn btns del-secondary" onClick={() => setConfirmDelete(false)}>No</button>
-              </div>
-            {/* </div> */}
+              <button className="btn btns del-primary" onClick={e => dispatch(deleteSlide(slide.id, history))}>Yes</button>
+              <button className="btn btns del-secondary" onClick={() => setConfirmDelete(false)}>No</button>
+            </div>
           </div>
         )}
         <div className="admProductDetail__details">

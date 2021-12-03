@@ -1,6 +1,6 @@
 require('dotenv').config();
 const pool = require('../config/db');
-const { cloudinary } = require('../middleware/cloudinary');
+const { cloudinary, removeOnErr } = require('../middleware/cloudinary');
 
 // *** Works in App
 // /slides/all
@@ -94,6 +94,7 @@ exports.createSlide = async (req,res, next) => {
     );
 
     if (createdSlide.rowCount === 0 || !createdSlide.rows[0]) {
+      if (req.file) await removeOnErr(req.file.filename);
       return res.status(403).json({ errors: [{ msg: "Failed to build slide." }] });
     }
 
@@ -149,6 +150,7 @@ exports.updateSlide = async (req,res, next) => {
     );
 
     if (findSlideIfExists.rowCount === 0 || !findSlideIfExists) {
+      if (req.file) await removeOnErr(req.file.filename);
       return res.status(400).json({ errors: [{ msg: "Slide does not exist." }] });
     }
 
@@ -177,6 +179,7 @@ exports.updateSlide = async (req,res, next) => {
     };
 
     if (updateSlide.rowCount === 0 || !updateSlide.rows[0]) {
+      if (req.file) await removeOnErr(req.file.filename);
       return res.status(403).json({ errors: [{ msg: "Failed to update slide." }] });
     }
 

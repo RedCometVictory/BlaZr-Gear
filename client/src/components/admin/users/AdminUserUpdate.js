@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 // import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserAdmin } from '../../../redux/actions/userActions';
+import Spinner from '../../layouts/Spinner';
 
 const initialState = {f_name: '', l_name: '', username: '', user_email: '', role: ''};
 
@@ -45,9 +46,7 @@ const AdminUserUpdate = ({stateChanger}) => {
   return (
     <>
     {loading ? (
-      <div className="">Loading update page...</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="">
         <form className="admForm" onSubmit={onSubmit} >

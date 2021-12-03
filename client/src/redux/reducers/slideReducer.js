@@ -22,7 +22,7 @@ const initialState = {
   slides: [],
   slide: {},
   loading: true,
-  errors: {},
+  errors: [],
 };
 
 const slideReducer = (state = initialState, action) => {

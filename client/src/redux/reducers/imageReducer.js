@@ -16,7 +16,7 @@ const initialState = {
   page: null,
   pages: null,
   loading: true,
-  errors: {},
+  errors: [],
 };
 
 const imageReducer = (state = initialState, action) => {

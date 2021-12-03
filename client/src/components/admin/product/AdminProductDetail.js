@@ -3,6 +3,7 @@ import { Link, useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { listProductDetails, deleteProduct } from '../../../redux/actions/productActions';
 import AdminProductUpdate from './AdminProductUpdate';
+import Spinner from '../../layouts/Spinner';
 
 const AdminProductDetail = () => {
   const { prod_id } = useParams();
@@ -42,9 +43,7 @@ const AdminProductDetail = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Information</div>
-    ) : errors ? (
-      <div className="">{errors}</div>
+      <Spinner />
     ) : (
       <section className="admProductDetail">
         <div className="admProductDetail__title">
@@ -56,11 +55,9 @@ const AdminProductDetail = () => {
               <p>Are you sure you want to delete this product from the online store? Please confirm.</p>
             </div>
             <div className="admProductDetail__delete-btns">
-              {/* <div className="btns"> */}
-                <button className="btn btns del-primary" onClick={e => dispatch(deleteProduct(productById.productInfo.product_id, history))}>Yes</button>
-                <button className="btn btns del-secondary" onClick={() => setConfirmDelete(false)}>No</button>
-              </div>
-            {/* </div> */}
+              <button className="btn btns del-primary" onClick={e => dispatch(deleteProduct(productById.productInfo.product_id, history))}>Yes</button>
+              <button className="btn btns del-secondary" onClick={() => setConfirmDelete(false)}>No</button>
+            </div>
           </div>
         )}
         <div className="admProductDetail__details">

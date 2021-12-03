@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-// import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSlide } from '../../../redux/actions/slideActions';
+import Spinner from '../../layouts/Spinner';
 
 const initialState = {title: '', image_url: '', description: '', theme: '', category: ''};
 
@@ -87,13 +87,11 @@ const AdminSlideUpdate = ({stateChanger}) => {
     fileInputText.current.value = ""; // upon submit clear field for image file upload
     stateChanger(false);
   }
-  // ) : errors ? (
-  //   <div className="">{errors}</div>
 
   return (
     <>
     {loading ? (
-      <div className="">Loading update page...</div>
+      <Spinner />
     ) : (
       <section className="">
         <form className="admForm" onSubmit={onSubmit} >
@@ -126,16 +124,15 @@ const AdminSlideUpdate = ({stateChanger}) => {
               <div className="admForm__group">
                 <label htmlFor="category" className="admForm__label">Category: </label>
                 <select name="category" value={category} onChange={e => onChange(e)}>
-                {/* <option value="all">All</option> */}
-                <option value="Video Games">Video Games</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Sneakers">Sneakers</option>
-                <option value="Sports">Sports</option>
-                <option value="Camping">Camping</option>
-                <option value="Desktop">Desktop</option>
-                <option value="Laptops">Laptops</option>
-                <option value="Clothes">Clothes</option>
-              </select>
+                  <option value="Video Games">Video Games</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Sneakers">Sneakers</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Camping">Camping</option>
+                  <option value="Desktop">Desktop</option>
+                  <option value="Laptops">Laptops</option>
+                  <option value="Clothes">Clothes</option>
+                </select>
               </div>
             </div>
             <div className="admForm__section prod-image">
