@@ -14,10 +14,9 @@ import {
 
 export const getAllImages = (pageNumber, itemsPerPage) => async dispatch => {
   try {
-    console.log("ACTION: retrieving all images");
     dispatch({type: IMAGE_LIST_REQUEST});
     const res = await api.get(`/images/all?pageNumber=${pageNumber}&offsetItems=${itemsPerPage}`);
-    
+
     dispatch({
       type: IMAGE_LIST_SUCCESS,
       payload: res.data.data
@@ -35,13 +34,10 @@ export const getAllImages = (pageNumber, itemsPerPage) => async dispatch => {
 
 export const getImageDetails = (image_id) => async dispatch => {
   try {
-    console.log("ACTION: image details")
-    console.log(image_id)
     dispatch({type: IMAGE_LIST_DETAILS_REQUEST});
     const res = await api.get(`/images/${image_id}`);
     let result = res.data.data.image;
-    console.log("result")
-    console.log(result)
+
     dispatch({
       type: IMAGE_LIST_DETAILS_SUCCESS,
       payload: result
@@ -49,7 +45,7 @@ export const getImageDetails = (image_id) => async dispatch => {
   } catch (err) {
     dispatch(setAlert('Failed to list image details.', 'danger'));
     const errors = err.response.data.errors;
-    
+
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -58,12 +54,10 @@ export const getImageDetails = (image_id) => async dispatch => {
 };
 
 export const deleteImage = (image_id, history) => async dispatch => {
-  console.log("===ACTION: deleting image ===");
-  console.log(image_id);
   try {
     dispatch({type: IMAGE_DELETE_REQUEST});
     await api.delete(`/images/${image_id}`);
-    
+
     dispatch({
       type: IMAGE_DELETE_SUCCESS
     })
@@ -73,7 +67,7 @@ export const deleteImage = (image_id, history) => async dispatch => {
   } catch (err) {
     dispatch(setAlert('Failed to delete image.', 'danger'));
     const errors = err.response.data.errors;
-    
+
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }

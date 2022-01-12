@@ -12,7 +12,6 @@ const AdminSlideList = () => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    // setIsLoading(true);
     dispatch(getAllSlides());
   }, [dispatch]);
   

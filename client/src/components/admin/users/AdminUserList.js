@@ -7,7 +7,7 @@ import Spinner from '../../layouts/Spinner';
 const AdminUserList = () => {
   const dispatch = useDispatch();
   const usersDetail = useSelector(state => state.user);
-  const { loading, errors, users } = usersDetail;
+  const { loading, users } = usersDetail;
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const AdminUserList = () => {
           <h2 className="admProducts__title">Users</h2>
           <div className="admProducts__header-options">
             <div className="admProducts__total-items user-item">
-              {users.length} Users
+              {users?.length} Users
             </div>
           </div>
         </div>

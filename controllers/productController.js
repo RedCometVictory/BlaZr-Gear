@@ -4,11 +4,8 @@ const { removeOnErr } = require('../middleware/cloudinary');
 
 exports.getProductIds = async (req, res, next) => {
   try {
-    const productIds = await pool.query(
-      'SELECT id FROM products;'
-    );
+    const productIds = await pool.query('SELECT id FROM products;');
 
-    console.log(productIds.rows);
     return res.status(200).json({
       status: "Product ids retrieved.",
       data: {
@@ -23,12 +20,9 @@ exports.getProductIds = async (req, res, next) => {
 
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await pool.query(
-      'SELECT DISTINCT(category) FROM products;'
-    );
+    const categories = await pool.query('SELECT DISTINCT(category) FROM products;');
 
     categories.rows.unshift({category: "All"});
-    console.log(categories.rows);
     return res.status(200).json({
       status: "Category data retrieved.",
       data: {
@@ -48,7 +42,7 @@ exports.getCategories = async (req, res, next) => {
 exports.getAllProducts = async (req, res, next) => {
   let { keyword, category, pageNumber, offsetItems } = req.query;
   let page = Number(pageNumber) || 1;
-  if (page < 1) page = 1;
+  // if (page < 1) page = 1;
   let totalProducts;
   let products;
   let limit = Number(offsetItems) || 12;
@@ -71,20 +65,14 @@ exports.getAllProducts = async (req, res, next) => {
     if (keyword.length > 0 && keyword !== 'null') {
       let keywordTrimmed = keyword.trim();
       if (category === '' || category === 'null' || !category) {
-        // console.log("using keyword, no category, querying products");
-        totalProducts = await pool.query(
-          'SELECT COUNT(id) FROM products WHERE name ILIKE $1;', ['%' + keywordTrimmed + '%']
-        )
+        totalProducts = await pool.query('SELECT COUNT(id) FROM products WHERE name ILIKE $1;', ['%' + keywordTrimmed + '%']);
         products = await pool.query(
           'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.name ILIKE $1 GROUP BY I.id, P.id LIMIT $2 OFFSET $3;', ['%' + keywordTrimmed + '%', limit, offset]
         );
       }
       
       if (category && category.length > 0) {
-        // console.log("using keyword, with category, querying products");
-        totalProducts = await pool.query(
-          'SELECT COUNT(id) FROM products WHERE name ILIKE $1 AND category = $2;', ['%' + keywordTrimmed + '%', category]
-        )
+        totalProducts = await pool.query('SELECT COUNT(id) FROM products WHERE name ILIKE $1 AND category = $2;', ['%' + keywordTrimmed + '%', category]);
         products = await pool.query(
           'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.name ILIKE $1 AND category = $2 GROUP BY I.id, P.id LIMIT $3 OFFSET $4;', ['%' + keywordTrimmed + '%', category, limit, offset]
         );
@@ -93,20 +81,14 @@ exports.getAllProducts = async (req, res, next) => {
 
     if (keyword === '' || keyword.length === 0 || !keyword) {
       if (category === '' || category === 'null' || !category) {
-        // console.log("querying products, no keyword, no category");
-        totalProducts = await pool.query(
-          'SELECT COUNT(id) FROM products;'
-        )
+        totalProducts = await pool.query('SELECT COUNT(id) FROM products;');
         products = await pool.query(
           'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id GROUP BY I.id, P.id LIMIT $1 OFFSET $2;', [limit, offset]
         );
       };
       
       if (category && category.length > 0) {
-        // console.log("querying products, no keyword, with category");
-        totalProducts = await pool.query(
-          'SELECT COUNT(id) FROM products WHERE category = $1;', [category]
-        )
+        totalProducts = await pool.query('SELECT COUNT(id) FROM products WHERE category = $1;', [category]);
         products = await pool.query(
           'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.category = $1 GROUP BY I.id, P.id LIMIT $2 OFFSET $3;', [category, limit, offset]
         );
@@ -136,12 +118,8 @@ exports.getAllProducts = async (req, res, next) => {
        status: "Product data retrieved.",
        data: {
          products: products.rows,
-        // products: productInfo.rows
          page: page,
-        //  pages: pages
          pages: count
-        //  pages: Math.ceil(count / pageSize)
-        //  pages: Math.ceil(count / limit)
        }
     });
   } catch (err) {
@@ -156,9 +134,7 @@ exports.getAllProducts = async (req, res, next) => {
 exports.getProductById = async (req, res, next) => {
   const { prod_id } = req.params;
   try {
-    const product = await pool.query(
-      'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]
-    );
+    const product = await pool.query('SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]);
 
     if (product.rowCount === 0 || !product) {
       return res.status(404).json({ errors: [{ msg: "Product not found." }] });
@@ -189,8 +165,6 @@ exports.getProductById = async (req, res, next) => {
     return res.status(200).json({
       status: "Success.",
       data: {
-        // productInfo: productById,
-        // product: product.rows[0],
         productInfo: product.rows[0],
         productRating: productRating.rows[0],
         productReviews: productReviews.rows
@@ -205,16 +179,12 @@ exports.getProductById = async (req, res, next) => {
 //  Insomnia tested / Passed
 // /products/top
 // Public
+// show top rated products by highest rated average
 exports.getTopProducts = async (req, res, next) => {
-  // only show top rated products by highest rated average
   try {
     const products = await pool.query(
       'SELECT P.*, I.*, TRUNC(AVG(R.rating), 2) AS review_avg, COUNT(R.*) FROM products AS P JOIN images AS I ON P.id = I.product_id JOIN reviews AS R ON P.id = R.product_id GROUP BY I.id, P.id ORDER BY review_avg DESC LIMIT 12;'
     );
-
-    // if (products.rowCount === 0 || products.rows === [] || !products) {
-    //   res.status(404).json({ errors: [{ msg: "Products not found." }] });
-    // }
 
     return res.status(200).json({
       status: "Success.",
@@ -231,16 +201,36 @@ exports.getTopProducts = async (req, res, next) => {
 // Private / Admin
 exports.createProduct = async (req, res, next) => {
   const { name, brand, category, description, price, count_in_stock } = req.body;
-
+  
   let productImgUrl = '';
   let productImgFilename = '';
 
-  // TODO --- save category into db as a array like so ['video games', 'electronics', 'console'] this way a product can fit into multiple categories where appropriate
   try {
     if (!name || !brand || !category || !description || !price || !count_in_stock) {
       if (req.file) await removeOnErr(req.file.filename);
       return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
-    }
+    };
+
+    if (name.length > 110) {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(409).json({ errors: [{ msg: "Name is too long." }] });
+    };
+
+    if (brand.length > 255) {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(409).json({ errors: [{ msg: "Brand is too long." }] });
+    };
+
+    if (count_in_stock === 0 || count_in_stock === '0') {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(409).json({ errors: [{ msg: "Count in stock must be at least 1 or more." }] });
+    };
+
+    if (price.startsWith("-")) {
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(409).json({ errors: [{ msg: "Price number cannot be negative." }] });
+    };
+
     // provided via multer cloudinary
     if (req.file && req.file.path) {
       productImgUrl = req.file.path;
@@ -293,27 +283,26 @@ exports.createProductReview = async (req, res, next) => {
   try {
     if (!description) {
       return res.status(401).json({ errors: [{ msg: 'Description field is required.' }] });
-    }
-    const productExists = await pool.query(
-      'SELECT * FROM products WHERE id = $1;', [prod_id]
-    );
+    };
+
+    if (title.length > 120) {
+      return res.status(409).json({ errors: [{ msg: "Title is too long." }] });
+    };
+
+    const productExists = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
 
     if (productExists.rowCount === 0 || !productExists) {
       return res.status(400).json({ errors: [{ msg: "Product does not exist." }] });
     };
-    
+
     // check if user has not already reviewed the product
-    const reviewExists = await pool.query(
-      'SELECT * FROM reviews WHERE user_id = $1 AND product_id = $2;', [id, prod_id]
-    );
+    const reviewExists = await pool.query('SELECT * FROM reviews WHERE user_id = $1 AND product_id = $2;', [id, prod_id]);
 
     if (reviewExists.rowCount !== 0) {
       return res.status(400).json({ errors: [{ msg: "Unauthorized! User product review already exists." }] });
     };
 
-    const userInfo = await pool.query(
-      'SELECT username FROM users WHERE id = $1;', [id]
-    );
+    const userInfo = await pool.query('SELECT username FROM users WHERE id = $1;', [id]);
 
     if (userInfo.rowCount === 0 || !userInfo) {
       return res.status(404).json({ errors: [{ msg: "User does not exist." }] });
@@ -335,7 +324,6 @@ exports.createProductReview = async (req, res, next) => {
       status: "Success! Product review created.",
       data: {
         review: {username, ...createReview.rows[0]}
-        // productReviews: createReview.rows[0]
       }
     })
   } catch (err) {
@@ -351,11 +339,9 @@ exports.createProductReviewComment = async (req, res, next) => {
   const { prod_id, review_id } = req.params;
   const { title, description } = req.body;
 
-  // TODO check if admin already made comment on review, create ability to update admin comment on post, and give user ability to edit their original review and possibly respond c=back to the original admin comment to pusrue a conversation (though it may be good to prevent conversation from happening in order to keep the review page consise and consistent)
+  // TODO: check if admin already made comment on review, create ability to update admin comment on post, and give user ability to edit their original review and possibly respond c=back to the original admin comment to pusrue a conversation (though it may be good to prevent conversation from happening in order to keep the review page consise and consistent)
   try {
-    const product = await pool.query(
-      'SELECT * FROM products WHERE id = $1;' [prod_id]
-    );
+    const product = await pool.query('SELECT * FROM products WHERE id = $1;' [prod_id]);
 
     if (!product) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
@@ -392,6 +378,7 @@ exports.createProductReviewComment = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
   const { prod_id } = req.params;
   const { name, brand, category, description, price, count_in_stock } = req.body;
+
   let productImgUrl = '';
   let productImgFilename = '';
   let updateProduct;
@@ -400,26 +387,33 @@ exports.updateProduct = async (req, res, next) => {
     if (!name || !brand || !category || !description || !price || !count_in_stock) {
       if (req.file) await removeOnErr(req.file.filename);
       return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
-    }
+    };
+
+    if (name.length > 110) {
+      return res.status(409).json({ errors: [{ msg: "Name is too long." }] });
+    };
+
+    if (brand.length > 255) {
+      return res.status(409).json({ errors: [{ msg: "Brand is too long." }] });
+    };
+
     // provided via multer cloudinary
     if (req.file && req.file.path) {
       productImgUrl = req.file.path;
       productImgFilename = req.file.filename;
-    }
+    };
 
     // if using diskstorage multer
     if (productImgUrl.startsWith('dist\\')) {
       let editProductImgUrl = productImgUrl.slice(4);
       productImgUrl = editProductImgUrl;
-    }
+    };
 
-    const findProduct = await pool.query(
-      'SELECT * FROM products WHERE id = $1;', [prod_id]
-    );
+    const findProduct = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
       
     if (findProduct.rowCount === 0 || !findProduct) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
-    }
+    };
 
     // attempting to update the product, new img update
     if (productImgUrl !== '') {
@@ -442,9 +436,7 @@ exports.updateProduct = async (req, res, next) => {
         'UPDATE images SET product_image_url = $1, product_image_filename = $2 WHERE product_id = $3;', [productImgUrl, productImgFilename, prod_id]
       );
 
-      updateProduct = await pool.query(
-        'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]
-      );
+      updateProduct = await pool.query('SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]);
     }
 
     // updating product info, no new image
@@ -453,9 +445,7 @@ exports.updateProduct = async (req, res, next) => {
         'UPDATE products SET name = $1, brand = $2, category = $3, description = $4, price = $5, count_in_stock = $6 WHERE id = $7;', [name, brand, category, description, price, count_in_stock, prod_id]
       );
 
-      updateProduct = await pool.query(
-        'SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]
-      );
+      updateProduct = await pool.query('SELECT P.*, I.* FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;', [prod_id]);
     }
 
     if (updateProduct.rowCount < 1) {
@@ -489,26 +479,28 @@ exports.updateProductReview = async (req, res, next) => {
   const { title, description, rating } = req.body;
 
   try {
-    const userInfo = await pool.query(
-      'SELECT username FROM users WHERE id = $1;', [id]
-    );
+    if (title.length > 120) {
+      return res.status(409).json({ errors: [{ msg: "Title is too long." }] });
+    };
+
+    if (!description) {
+      return res.status(401).json({ errors: [{ msg: 'Description field is required.' }] });
+    }
+
+    const userInfo = await pool.query('SELECT username FROM users WHERE id = $1;', [id]);
 
     if (userInfo.rowCount === 0 || !userInfo) {
       return res.status(404).json({ errors: [{ msg: "User does not exist." }] });
     };
 
-    const product = await pool.query(
-      'SELECT * FROM products WHERE id = $1;', [prod_id]
-    );
+    const product = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
 
     if (product.rowCount === 0 || !product) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
     };
     
     // check if user review still exists
-    const reviewExists = await pool.query(
-      'SELECT * FROM reviews WHERE product_id = $1 AND user_id = $2 AND id = $3;', [prod_id, id, review_id]
-    );
+    const reviewExists = await pool.query('SELECT * FROM reviews WHERE product_id = $1 AND user_id = $2 AND id = $3;', [prod_id, id, review_id]);
       
     if (reviewExists.rowCount === 0 || !reviewExists) {
       return res.status(404).json({ errors: [{ msg: "Product review does not exist." }] });
@@ -547,18 +539,14 @@ exports.updateProductReviewComment = async (req, res, next) => {
   const { title, description } = req.body;
 
   try {
-    const product = await pool.query(
-      'SELECT * FROM products WHERE id = $1;' [prod_id]
-    );
+    const product = await pool.query('SELECT * FROM products WHERE id = $1;' [prod_id]);
 
     if (!product) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
     };
     
     // check if user review still exists
-    const reviewExists = await pool.query(
-      'SELECT * FROM reviews WHERE product_id = $1 AND id = $2;' [prod_id, review_id]
-    );
+    const reviewExists = await pool.query('SELECT * FROM reviews WHERE product_id = $1 AND id = $2;' [prod_id, review_id]);
       
     if (!reviewExists) {
       return res.status(404).json({ errors: [{ msg: "Product review does not exist." }] });
@@ -586,55 +574,43 @@ exports.updateProductReviewComment = async (req, res, next) => {
 // Private / Admin
 exports.deleteProduct = async (req, res, next) => {
   const { prod_id } = req.params;
-  
   try {
-    const findProduct = await pool.query(
-      'SELECT * FROM products WHERE id = $1;', [prod_id]
-    );
+    const findProduct = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
 
     if (findProduct.rowCount === 0 || !findProduct) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
     }
 
     // *** new products w/images table query ****
-    // TODO untested
-    const findImage = await pool.query(
-      'SELECT * FROM images WHERE product_id = $1;', [prod_id]
-    );
+    // Consider not deleting product image from cloudinary in order to keep image in users' order history. Admin would have to delete image from cloudinary account via dashboard.
+    // const findImage = await pool.query('SELECT * FROM images WHERE product_id = $1;', [prod_id]);
 
+    // let currProdImgFilename = findImage.rows[0].product_image_filename;
 
-    let currProdImgFilename = findImage.rows[0].product_image_filename;
-
-    // TODO --- consider not deleting product from cloudinary in order to keep image in users' order history? Admin would have to manually delete product image from cloudinary account
     // if (currProdImgFilename) {
     //   await cloudinary.uploader.destroy(currProdImgFilename);
     // }
 
-    // TODO --- comments may not be implemented
+    // comments may not be implemented
     // const deleteProductReviewComments = await pool.query(
     //   'DELETE FROM comments WHERE product_id = $1;' [findProduct.rows[0].id]
     // );
-    const deleteProductReviews = await pool.query(
-      'DELETE FROM reviews WHERE product_id = $1;', [findProduct.rows[0].id]
-    );
-    const deleteProductCartItems = await pool.query(
-      'DELETE FROM cart_items WHERE product_id = $1;', [findProduct.rows[0].id]
-    );
+
+    // delete Product Reviews
+    await pool.query('DELETE FROM reviews WHERE product_id = $1;', [findProduct.rows[0].id]);
+
+    // delete Product Cart Items
+    await pool.query('DELETE FROM cart_items WHERE product_id = $1;', [findProduct.rows[0].id]);
     // const deleteProductOrderItems = await pool.query(
     //   'DELETE FROM order_items WHERE product_id = $1;', [findProduct.rows[0].id]
     // );
-    // delete product from db, but not cloudinary
-    const deleteProduct = await pool.query(
-      // 'DELETE FROM products WHERE id = $1;', [prod_id]
-      'DELETE FROM products WHERE id = $1;', [prod_id]
-      // 'DELETE FROM products WHERE id = $1 RETURING *;' [prod_id]
-    );
 
-    // if (!deleteProduct)
+    // delete Product
+    await pool.query('DELETE FROM products WHERE id = $1;', [prod_id]);
+
     return res.status(200).json({
       status: "Success. Product deleted.",
       data: {message: "This product has been deleted."}
-      // data: {product: deleteProduct.rows[0]}
     })
   } catch (err) {
     console.error(err.message);
@@ -648,10 +624,6 @@ exports.deleteProduct = async (req, res, next) => {
 exports.deleteProductReview = async (req, res, next) => {
   const { id } = req.user;
   const { prod_id, review_id } = req.params;
-  
-  // console.log("deleting product review")
-  // console.log(prod_id)
-  // console.log(review_id)
   try {
     const findProduct = await pool.query(
       'SELECT * FROM products WHERE id = $1;', [prod_id]
@@ -694,7 +666,6 @@ exports.deleteProductReview = async (req, res, next) => {
 exports.deleteProductReviewComment = async (req, res, next) => {
   const { id } = req.user;
   const { prod_id, review_id } = req.params;
-  
   try {
     const findProduct = await pool.query(
       'SELECT * FROM products WHERE id = $1;' [prod_id]
@@ -712,7 +683,8 @@ exports.deleteProductReviewComment = async (req, res, next) => {
       return res.status(404).json({ errors: [{ msg: "Comment does not exist." }] });
     };
 
-    const deleteProductReviewComments = await pool.query(
+    // delete Product Review Comments
+    await pool.query(
       'DELETE FROM comments WHERE review_id = $1 AND id = $1;' [review_id, id]
     );
 

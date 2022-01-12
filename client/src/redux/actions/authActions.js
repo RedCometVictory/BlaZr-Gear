@@ -30,9 +30,9 @@ import {
   AUTH_NEW_PASSWORD_REQUEST,
   AUTH_NEW_PASSWORD_SUCCESS,
   AUTH_NEW_PASSWORD_FAILURE,
-  // TOKEN_REQUEST,
-  // TOKEN_RECEIVED,
-  // TOKEN_FAILURE
+  TOKEN_REQUEST,
+  TOKEN_RECEIVED,
+  TOKEN_FAILURE
 } from '../constants/authConstants';
 import { USER_DETAILS_RESET } from '../constants/userConstants';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -42,12 +42,13 @@ export const loadUser = () => async dispatch => {
   try {
     const res = await api.get('/auth');
     let result = res.data.data;
-    // console.log("stripeCustId upon user loaded")
-    // console.log(result)
-    // console.log("--------------------")
-    // console.log(result.stripeCustId)
-    if (result.stripeCustId) {
-      await dispatch(addCardToUser(result.stripeCustId));
+    console.log("stripeCustId upon user loaded")
+    console.log(result.userInfo)
+    console.log("--------------------")
+    console.log(result.userInfo.stripe_cust_id)
+    if (result.userInfo.stripe_cust_id) {
+      console.log("attempting to fetch user stripe client secret")
+      await dispatch(addCardToUser(result.userInfo.stripe_cust_id));
     }
 
     dispatch({
@@ -134,7 +135,7 @@ export const deleteUser = (history) => async dispatch => {
     dispatch({type: CART_CLEAR_ITEMS});
     dispatch({type: USER_DETAILS_RESET});
     dispatch({type: AUTH_USER_DELETE_REQUEST});
-    // let servicedData = await registerForm(formRegData);
+
     await api.delete('/auth/remove');
 
     // payload is token, place token into LS
@@ -229,3 +230,55 @@ export const resetPassword = (token, email, passwords, history) => async dispatc
     dispatch({type: AUTH_FORGOT_PASSWORD_FAILURE});
   }
 };
+
+export const refreshAccessToken = (newAccessToken) => async (dispatch, getState) => {
+  try {
+    // dispatch({type: TOKEN_REQUEST});
+    dispatch({
+      type: TOKEN_RECEIVED,
+      payload: newAccessToken
+    });
+    localStorage.setItem("token", getState().auth.token);
+  } catch (err) {
+    dispatch(setAlert("Failed to refresh token.", "danger"));
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    // dispatch({type: TOKEN_FAILURE});
+  }
+};
+/*
+export const refreshToken = (dispatch) => {
+  var freshTokenPromise = fetchJWTToken()
+    .then(t => {
+      dispatch({
+        type: DONE_REFRESHING_TOKEN
+      });
+      dispatch(saveAppToken(t.token));
+        return t.token ? Promise.resolve(t.token) : Promise.reject({
+          message: 'could not refresh token'
+        });
+    })
+    .catch(e => {
+      console.log('error refreshing token', e);
+      dispatch({
+        type: DONE_REFRESHING_TOKEN
+      });
+      return Promise.reject(e);
+  });
+  dispatch({
+    type: REFRESHING_TOKEN,
+    // we want to keep track of token promise in the state so that we don't try to refresh
+    // the token again while refreshing is in process
+    freshTokenPromise
+  });
+  return freshTokenPromise;
+}
+*/
+
+/*
+Object { url: "auth/refresh-token", method: "post", headers: {…}, baseURL: "http://localhost:5000/api", transformRequest: (1) […], transformResponse: (1) […], timeout: 0, adapter: xhrAdapter(config), xsrfCookieName: "XSRF-TOKEN", xsrfHeaderName: "X-XSRF-TOKEN", … }
+api.js:43
+
+*/

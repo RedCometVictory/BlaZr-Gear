@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaRegEye } from 'react-icons/fa';
 
-// id is image.id
 const AdminProductItem = ({
   product: {
     id, name, product_image_url, brand, category, description, price, count_in_stock, created_at, review_avg, count, product_id

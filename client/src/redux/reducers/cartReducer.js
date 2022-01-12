@@ -48,14 +48,12 @@ const cartReducer = (state = initialState, action) => {
       }
     case CART_ADD_ITEM:
     case CART_ADD_ITEM_GUEST:
-    case CART_UPDATE_ITEM: // TODO, may need to change to update cart item by various amounts of qty
+    case CART_UPDATE_ITEM:
       const item = payload;
       const existItem = state.cartItems.find(i => i.product.id === item.product.id);
-      // const existItem = state.cartItems.find(i => i.product === item.product);
       if (existItem) {
         return {
           ...state,
-          // cartItems: state.cartItems.map(i => i.product === existItem.product ? item : i)
           cartItems: state.cartItems.map(i => i.product.id === existItem.product.id ? item : i)
         }
       } else {

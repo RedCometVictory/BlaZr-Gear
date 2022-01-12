@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '../../redux/actions/alertActions';
 import { verifyPassword, resetPassword } from '../../redux/actions/authActions';
-
+import Spinner from '../layouts/Spinner';
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -15,7 +15,7 @@ const ResetPassword = () => {
   const email = query.get("email");
   const token = query.get("token");
   const resetStatus = useSelector(state => state.auth);
-  const { loading, error, allowReset } = resetStatus;
+  const { loading, allowReset } = resetStatus;
   const [passwordSent, setPasswordSent] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,9 +52,7 @@ const ResetPassword = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Information...</div>
-    ) : error ? (
-      <div className="">{error}</div>
+      <Spinner />
     ) : !allowReset ? (
       <section className="form-page-wrapper">
         <div className="form-container">
@@ -63,6 +61,9 @@ const ResetPassword = () => {
             <p>
               <i className="fas fa-user" /> Token has expired. Please attempt to reset password again.
             </p>
+            <Link to="/forgot-password" className="forgot-password-container">
+              <div className="btn btn-secondary forgot-password-btn">Forgot Password</div>
+            </Link>
           </div>
         </div>
       </section>

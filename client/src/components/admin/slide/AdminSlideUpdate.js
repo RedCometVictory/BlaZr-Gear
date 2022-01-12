@@ -11,7 +11,7 @@ const AdminSlideUpdate = ({stateChanger}) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const slideDetail = useSelector(state => state.slide);
-  const { loading, errors, slide } = slideDetail;
+  const { loading, slide } = slideDetail;
   const [hasMounted, setHasMounted] = useState(false);
   const [formProductData, setFormProductData] = useState(initialState);
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -48,7 +48,6 @@ const AdminSlideUpdate = ({stateChanger}) => {
     checkFileType(fileToUpload);
     // check file size
     checkFileSize(fileToUpload);
-    // setImage(e.target.files[0]);
 
     setFormProductData({
       ...formProductData,

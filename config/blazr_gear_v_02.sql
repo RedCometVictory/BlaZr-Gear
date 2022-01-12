@@ -36,6 +36,9 @@
 -- );
 -- END; $SYNTAX_CHECK$;
 
+-- ALTER TABLE table_name
+-- ADD COLUMN new_column_name data_type constraint;
+
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -49,6 +52,7 @@ CREATE TABLE users(
   -- user_avatar VARCHAR(300),
   -- user_avatar_filename VARCHAR(600),
   refresh_token TEXT,
+  stripe_cust_id VARCHAR(180),
   role VARCHAR(10) NOT NULL DEFAULT 'visitor',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -194,19 +198,27 @@ CREATE TABLE comments(
 -- ############################################################
   -- order_items_id UUID,
   -- FOREIGN KEY (order_items_id) REFERENCES users(id) ON DELETE CASCADE
+  -- alter table orders alter column tax_price type numeric(6, 2);
+  -- consider adding a order status column to reflect processing status as 'shipped, processing, refunded, or delivered
+  -- if delivered_at is null, then order is 'shipped or processing'
 CREATE TABLE orders(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   payment_method VARCHAR(360),
   amount_subtotal NUMERIC(6,2) NOT NULL DEFAULT 0.0,
-  tax_price NUMERIC (4,2) NOT NULL DEFAULT 0.0,
+  tax_price NUMERIC (6,2) NOT NULL DEFAULT 0.0,
   shipping_price NUMERIC(5,2) NOT NULL DEFAULT 0.0,
   total_price NUMERIC(7,2) NOT NULL DEFAULT 0.0,
+  -- total_price NUMERIC(8,2) NOT NULL DEFAULT 0.0,
   is_paid BOOLEAN NOT NULL DEFAULT false,
   paid_at VARCHAR(120),
   is_delivered BOOLEAN NOT NULL DEFAULT false,
   delivered_at VARCHAR(120),
+  is_refunded BOOLEAN NOT NULL DEFAULT false,
+  refunded_at VARCHAR(120),
+  order_status VARCHAR(100),
   stripe_payment_id VARCHAR(140),
   paypal_order_id VARCHAR(140),
+  paypal_capture_id VARCHAR(140),
   user_id UUID,
   -- payment_result_id UUID,
   -- shipping_address_id UUID,
@@ -238,6 +250,7 @@ CREATE TABLE shipping_addresses(
   address VARCHAR(255) NOT NULL,
   city VARCHAR(255) NOT NULL,
   postal_code VARCHAR(255) NOT NULL,
+  state VARCHAR(255) NOT NULL,
   country VARCHAR(255) NOT NULL,
   order_id UUID,
   user_id UUID,

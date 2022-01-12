@@ -26,13 +26,13 @@ const App = () => {
   }, []);
   const [hasMounted, setHasMounted] = useState(false);
 
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  // useEffect(() => {
+  //   setHasMounted(true);
+  // }, []);
 
-  if (!hasMounted) {
-    return null;
-  }
+  // if (!hasMounted) {
+  //   return null;
+  // }
   return (
     <Provider store={store} >
       <Router>

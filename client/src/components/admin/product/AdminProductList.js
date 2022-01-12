@@ -9,7 +9,7 @@ import Spinner from '../../layouts/Spinner';
 const AdminProductList = () => {
   const dispatch = useDispatch();
   const ProductDetail = useSelector(state => state.product);
-  const { loading, errors, categories, products, page, pages } = ProductDetail;
+  const { loading, categories, products, page, pages } = ProductDetail;
   const [hasMounted, setHasMounted] = useState(false);
   let [currentPage, setCurrentPage] = useState(page || 1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -38,11 +38,10 @@ const AdminProductList = () => {
   };
 
   const itemCountChange = (e) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     if (e.target.value > itemsPerPage) {
       setCurrentPage(currentPage = currentPage - 1);
     }
-    // setItemsPerPage(e.target.value); // 12 or 20, dropdown
     setItemsPerPage(Number(e.target.value)); // 12 or 20, dropdown
   };
 

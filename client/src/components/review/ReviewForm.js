@@ -11,13 +11,27 @@ const initialState = {
 const ReviewForm = ({prodId}) => {
   const dispatch = useDispatch();
   const userAuth = useSelector(state => state.auth);
-  const { isAuthenticated } = userAuth;
+  const productInfoReviews = useSelector(state => state.product);
+  const { isAuthenticated, userInfo } = userAuth;
+  const { productById } = productInfoReviews;
   const [reviewForm, setReviewForm] = useState(false);
   const [rating, setRating] = useState(1);
   const [reviewFormData, setReviewFormData] = useState(initialState);
 
   const { title, description } = reviewFormData;
 
+  let userId = userInfo ? userInfo.id : '';
+  const findCurrentUserReview = (id) => {
+    let listedReviews = productById.productReviews;
+    let userReview = listedReviews.filter(review => review.user_id === id);
+    if (userReview.length > 0) {
+      let review = userReview[0].user_id;
+      return review;
+    }
+    return '';
+  };
+
+  let userReviewExists = findCurrentUserReview(userId);
   const onChangeHandler = (e) => {
     setReviewFormData({ ...reviewFormData, [e.target.name]: e.target.value });
   };
@@ -42,13 +56,17 @@ const ReviewForm = ({prodId}) => {
             <div className="reviews__form-collapse" onClick={() => setReviewForm(true)}>
               <Link className="" to={"/login"}>Sign In to Review</Link>
             </div>
-          ) : !reviewForm ?(
+          ) : !reviewForm && userId !== userReviewExists ? (
             <div className="reviews__form-collapse" onClick={() => setReviewForm(true)}>
               <div className="">Add Review</div>
             </div>
-          ) : (
+          ) : reviewForm && userId !== userReviewExists ? (
             <div className="reviews__form-collapse form-submit">
               <input type="submit" form="review-form" value="Submit Review" />
+            </div>
+          ) : (
+            <div className="reviews__form-collapse form-submit transparent">
+              <></>
             </div>
           )}
         </div>
@@ -77,6 +95,7 @@ const ReviewForm = ({prodId}) => {
               type="text"
               name="title"
               value={title}
+              maxLength={120}
               onChange={e => onChangeHandler(e)}
               placeholder="Review Title" aria-required="true" 
             />

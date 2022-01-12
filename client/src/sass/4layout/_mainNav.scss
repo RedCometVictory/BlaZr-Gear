@@ -6,7 +6,7 @@
   background-color: var(--navbar-color);
   justify-content: space-between;
   position: fixed;
-  z-index: 100;
+  z-index: 200;
   &__logo {
     padding: 0 0 0 10px;
     transition: 450ms ease-in-out;
@@ -373,6 +373,7 @@
     &__caret {
       left: 58px;
       top: 9px;
+      visibility: hidden;
     }
     &__cart {
       margin-right: 24px;

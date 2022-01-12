@@ -12,7 +12,7 @@ const ProductDetail = () => {
   const { prod_id } = useParams();
   const dispatch = useDispatch();
   const productDetails = useSelector(state => state.product);
-  const { loading, errors, productById } = productDetails;
+  const { loading, productById } = productDetails;
   const [hasMounted, setHasMounted] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -72,7 +72,7 @@ const ProductDetail = () => {
                   count={5}
                   size={18}
                   edit={false}
-                  value={Number(productById?.productRating?.review)}
+                  value={productById?.productRating?.review ? Number(productById?.productRating?.review) : 0}
                   activeColor='#e4d023'
                 />
                 <div className="product__review">{productById.productReviews?.length} Reviews</div>

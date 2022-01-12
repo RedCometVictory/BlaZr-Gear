@@ -1,34 +1,101 @@
 const pool = require("../config/db");
-const { calculateTotalAmount } = require('./paymentController');
 
-// *** Insomnia tested / Passed
+// *** Tested / Works in App
+const calculateTotalAmount = async (cartItems) => {
+  if (cartItems.length === 0) {
+    return ['error', `cartItems length is ${cartItems.length}. Please add items to cart to proceed with an order.`];
+  };
+
+  try {
+    const queryPromise = (query, ...values) => {
+      return new Promise((resolve, reject) => {
+        pool.query(query, values, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        })
+      });
+    };
+
+    let cartItemProdIds = []
+    for (let i = 0; i < cartItems.length; i++) {
+      cartItemProdIds.push(cartItems[i].product.product_id);
+    }
+
+    let prodItems = [];
+    let serverProdPayItems = [];
+    for (let i = 0; i < cartItemProdIds.length; i++) {
+      const productFromCart = 'SELECT id, price, name, count_in_stock FROM products WHERE id = $1;';
+
+      const productConfirm = await queryPromise(productFromCart, cartItemProdIds[i]);
+      prodItems = productConfirm.rows[0];
+      serverProdPayItems[i] = {...serverProdPayItems[i], ...prodItems};
+    };
+    
+    for (let i = 0; i < serverProdPayItems.length; i++) {
+      // TODO: consider changing to how it is set up in payment controller
+      if (serverProdPayItems[i].count_in_stock === 0) {
+        return ['error', `${serverProdPayItems[i].name} not in stock. Please remove it from cart and checkout again.`]
+      }
+      serverProdPayItems[i].qty = cartItems[i].qty;
+    };
+
+    let price = {};
+    price.subTotal = serverProdPayItems.reduce((acc, item) => acc += item.price * item.qty, 0).toFixed(2);
+    price.tax = Number(price.subTotal * 0.11).toFixed(2);
+    price.shippingTotal = 
+      price.subTotal < 50 && price.subTotal > 0.01 ? (
+        3.00
+      ) : price.subTotal > 50 && price.subTotal < 100 ? (
+        Number(price.subTotal * 0.069).toFixed(2)
+      ) : (
+        0
+      );
+    price.grandTotal = (Number(price.subTotal) + Number(price.tax) + Number(price.shippingTotal)).toFixed(2);
+    return price;
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
+
+// *** Tested / Insomnia tested - passed/ Works in App
 // Users get all their orders / order history for review
 // /orders/my-orders
 // Private
 exports.getMyOrders = async (req, res, next) => {
-  console.log("searching")
   const { id } = req.user;
-  const { pageNumber } = req.query;
-  // create orders page pagination
-  const page = Number(pageNumber) || 1;
-  const threshHold = 1;
-  const limit = 12 * threshHold;
+  const { pageNumber, offsetItems } = req.query;
+  let page = Number(pageNumber) || 1;
+  if (page < 1) page = 1;
+  const limit = Number(offsetItems) || 12;
   const offset = (page - 1) * limit;
+  let totalOrders;
+  let count;
 
   try {
+    totalOrders = await pool.query(
+      'SELECT COUNT(id) FROM orders WHERE user_id = $1;', [id]
+    );
+
     const orders = await pool.query(
-      'SELECT * FROM orders WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3;', [id, limit, offset]
+      'SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;', [id, limit, offset]
     );
 
     if (orders.rowCount === 0 || !orders) {
       return res.status(404).json({ errors: [{ msg: "You have not made any orders." }] });
     }
 
+    count = totalOrders.rows[0].count;
+
     res.status(200).json({
       status: "Success. User orders found.",
       data: {
         orderItems: orders.rows,
-        // orderTotalItems: orders.rowCount
+        page: page,
+        pages: count
       }
     });
   } catch (err) {
@@ -37,30 +104,35 @@ exports.getMyOrders = async (req, res, next) => {
   }
 };
 
-// *** Insomnia tested / Passed
+// *** Tested /  Insomnia tested - Passed / Works in App
 // Admin, get all user orders / order history for review
 // /orders
 // Private / Admin
 exports.getAllOrders = async (req, res, next) => {
-  const { id } = req.user;
-  const { pageNumber } = req.query;
-  // create orders page pagination
+  const { pageNumber, offsetItems } = req.query;
   const page = Number(pageNumber) || 1;
-  const threshHold = 1;
-  const limit = 12 * threshHold;
+  const limit = Number(offsetItems) || 12;
   const offset = (page - 1) * limit;
+  let allOrdersCount;
+  let count;
 
   try {
-    const orders = await pool.query(
-      'SELECT * FROM orders ORDER BY id DESC LIMIT $1 OFFSET $2;', [limit, offset]
+    allOrdersCount = await pool.query(
+      'SELECT COUNT(*) FROM orders;'
     );
 
-    //if rowcount 0, say no user orders exist
+    const orders = await pool.query(
+      'SELECT * FROM orders ORDER BY created_at DESC LIMIT $1 OFFSET $2;', [limit, offset]
+    );
+
+    count = allOrdersCount.rows[0].count;
+
     res.status(200).json({
       status: "Success. Admin got all user orders for review.",
       data: {
         orderItems: orders.rows,
-        // orderTotalItems: orders.rowCount
+        page: page,
+        pages: count
       }
     });
   } catch (err) {
@@ -69,24 +141,29 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
-// *** Insomnia tested / Passed
+// *** Tested / Insomnia tested - Passed / Works in App
 // /orders/:order_id
 // Private
 exports.getOrderById = async (req, res, next) => {
   const { id } = req.user;
   const { order_id } = req.params;
+
   try {
     const order = await pool.query(
-      // 'SELECT * FROM orders WHERE id = $1;' [order_id]
-      // 'SELECT P.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
-      // *** new products w/images table query ****
-      // TODO untested
       'SELECT O.*, P.*, I.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id JOIN images AS I ON I.product_id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
     );
 
     if (order.rowCount === 0 || !order) {
       return res.status(404).json({ errors: [{ msg: "Order not found." }] });
     }
+    
+    if (order.rowCount >= 1) {
+      for (let i = 0; i < order.rows.length; i++) {
+        let created_at = order.rows[i].created_at;
+        let newCreatedAt = created_at.toISOString().slice(0, 10);
+        order.rows[i].created_at = newCreatedAt;
+      }
+    };
 
     res.status(200).json({
       status: "Success. Order found.",
@@ -100,60 +177,109 @@ exports.getOrderById = async (req, res, next) => {
   }
 };
 
-// *** Insomnia tested / Passed... did not implement stripeID yet
+// *** Tested / Insomnia tested - Passed / Works in App
+// /orders/:order_id
+// admin
+exports.getOrderByIdAdmin = async (req, res, next) => {
+  const { id } = req.user;
+  const { order_id } = req.params;
+
+  try {
+    const order = await pool.query(
+      'SELECT * FROM orders WHERE id = $1;', [order_id]
+    );
+    
+    if (order.rowCount === 0 || !order) {
+      return res.status(404).json({ errors: [{ msg: "Order not found." }] });
+    }
+    
+    if (order.rowCount >= 1) {
+      for (let i = 0; i < order.rows.length; i++) {
+        let created_at = order.rows[i].created_at;
+        let newCreatedAt = created_at.toISOString().slice(0, 10);
+        order.rows[i].created_at = newCreatedAt;
+      }
+    };
+    
+    let orderItems = await pool.query(
+      'SELECT O.id, P.*, I.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id JOIN images AS I ON I.product_id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
+    );
+
+    if (orderItems.rowCount >= 1) {
+      for (let i = 0; i < orderItems.rows.length; i++) {
+        let created_at = orderItems.rows[i].created_at;
+        let newCreatedAt = created_at.toISOString().slice(0, 10);
+        orderItems.rows[i].created_at = newCreatedAt;
+      }
+    };
+    
+    let userInfo;
+    let userId = order.rows[0].user_id;
+    let userInfoQuery = await pool.query(
+      'SELECT id, f_name, l_name, user_email, role, stripe_cust_id FROM users WHERE id = $1;', [userId]
+    );
+
+    userInfo = userInfoQuery.rows[0];
+
+    res.status(200).json({
+      status: "Success. Order found.",
+      data: {
+        userOrder: { orderInfo: order.rows[0], orderItems: orderItems.rows, userInfo }
+      }
+    })
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
+
+// *** Tested / Insomnia tested - Passed / Works in App
 // Create new order
-// /orders
+// POST /orders
 // Private
 exports.createOrder = async (req, res, next) => {
   const { id, cartID } = req.user;
-  // const { orderItems, shippingAddress, paymentMethod, subtotal, taxPrice, shippingPrice, totalPrice, stripePaymentId } = req.body;
-  // const { orderItems, subTotal, shippingPrice, taxPrice, totalPrice, shippingAddress, paymentInfo } = req.body;
   const { orderItems, shippingAddress, paymentInfo } = req.body;
-  // think of as stripePaymentId;
+
+  console.log("req.body")
+  console.log(req.body)
+  console.log("shipping address")
+  console.log(shippingAddress)
+
   let order;
   let orderPaymentId;
-  let orderPaymentStatus;
+  let orderCaptureId = '';
+  // let orderPaymentStatus;
   let orderType;
 
-  console.log("orderItems");
-  console.log(orderItems);
-  // TODO --- if stripe payment id is true set the payment method to 'stripe'
   if (orderItems.length === 0 || !shippingAddress || !paymentInfo || !id || !cartID) {
     return res.status(406).json({ errors: [{ msg: "All fields are required." }] });
   };
+
   orderPaymentId = paymentInfo.id;
-  orderPaymentStatus = paymentInfo.status;
+  if (paymentInfo.captureId) {
+    orderCaptureId = paymentInfo.captureId;
+  };
+  // orderPaymentStatus = paymentInfo.status;
   orderType = paymentInfo.orderType;
+
   try {
-    // const findUserAddress = await pool.query(
-    //   'SELECT * FROM shipping_addresses WHERE user_id = $1;', [id]
-    // );
-    // if (findUserAddress.rowCount === 0 || !findUserAddress) {
-    //    return res.status(404).json({ errors: [{ msg: "User address not found." }] });
-    //  };
-    // insert shipping information
-    // await pool.query(
-      // 'INSERT INTO shipping_addresses (address) VALUES ($1) RETURNING *;' [shippingAddress]
-      // 'INSERT INTO shipping_addresses (address) VALUES ($1) RETURNING *;' [shippingAddress]
-    // );
-
     let price = await calculateTotalAmount(orderItems);
-    console.log("returned calculated price");
-    console.log(price);
-    const grandTotal = Math.round(price.grandTotal * 100);
-
+    if (price.length > 1 && price[0] === 'error') {
+      return res.status(404).json({ errors: [{ msg: `${price[1]}` }] });
+    }
     // generate payment time
     const paidAtDate = new Date().toISOString().slice(0, 10);
 
     if (orderType === "Stripe") {
       order = await pool.query(
-        'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, stripe_payment_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;', [price.subTotal, price.tax, price.shippingTotal, price.grandTotal, true, paidAtDate, orderPaymentId, id]
+        'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, order_status, stripe_payment_id, payment_method, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;', [price.subTotal, price.tax, price.shippingTotal, price.grandTotal, true, paidAtDate, 'processing', orderPaymentId, orderType, id]
       );
     }
     
     if (orderType === "PayPal") {
       order = await pool.query(
-        'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, paypal_order_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;', [price.subTotal, price.tax, price.shippingTotal, price.grandTotal, true, paidAtDate, orderPaymentId, id]
+        'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, order_status, paypal_order_id, paypal_capture_id, payment_method, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *;', [price.subTotal, price.tax, price.shippingTotal, price.grandTotal, true, paidAtDate, 'processing', orderPaymentId, orderCaptureId, orderType, id]
       );
     }
 
@@ -162,6 +288,12 @@ exports.createOrder = async (req, res, next) => {
     };
 
     const orderID = order.rows[0].id;
+
+    // order Shipping Info
+    await pool.query(
+      'INSERT INTO shipping_addresses (address, city, postal_code, state, country, order_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7);', [shippingAddress.address, shippingAddress.city, shippingAddress.zipcode, shippingAddress.state, shippingAddress.country, orderID, id]
+    );
+
     // ^^^^^^^^^^^^^CART INFO^^^^^^^^^^^^^^^^^^^^^^^^
     // orderITems are from the cart
     // const cartItems = await pool.query(
@@ -183,7 +315,6 @@ exports.createOrder = async (req, res, next) => {
     //   'INSERT INTO order_items (quantity, order_id, product_id) SELECT quantity, $1, product_id FROM cart_items WHERE cart_id = $2 RETURNING *;', [orderID, cartID]
     // );
     // ^^^^^^^^^^^^^CART INFO^^^^^^^^^^^^^^^^^^^^^^^^
-    // TODO info from order items to pass: qty, order_id, name, price, image_id from images table using product_id as reference
     const queryPromise = (query, ...values) => {
       return new Promise((resolve, reject) => {
         pool.query(query, values, (err, res) => {
@@ -196,50 +327,56 @@ exports.createOrder = async (req, res, next) => {
       });
     };
 
+    let orderItemsDB = [];
     let cartToOrderItems = [];
-    let orderItemsToDB = [];
     for (let i = 0; i < orderItems.length; i++) {
-      const productImgQuery = 'SELECT P.id, P.price, P.name, P.count_in_stock, I.id FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;';
-      let orderItemsDB = await queryPromise(productImgQuery, orderItems[i].product.id);
-      console.log('checking stock')
-      if (orderItemsDB.rows[0].count_in_stock === 0) {
-        return res.status(404).json({ errors: [{ msg: `${orderItemsDB.rows[0].name} not in stock. Please remove it from cart and checkout again.` }] });
+      const productImgQuery = 'SELECT P.id AS product_id, P.price, P.name, P.count_in_stock, I.id FROM products AS P JOIN images AS I ON P.id = I.product_id WHERE P.id = $1;';
+      // let orderItemsDB = await queryPromise(productImgQuery, orderItems[i].product.product_id);
+      let orderItemsConfirm = await queryPromise(productImgQuery, orderItems[i].product.product_id);
+      orderItemsDB = orderItemsConfirm.rows[0];
+      cartToOrderItems[i] = {...cartToOrderItems[i], ...orderItemsDB};
+    };
+
+    for (let i = 0; i < cartToOrderItems.length; i++) {
+      if (cartToOrderItems[i].count_in_stock === 0) {
+        return res.status(404).json({ errors: [{ msg: `${cartToOrderItems[i].product.name} not in stock. Please remove it from cart and checkout again.` }] });
       }
-      console.log(`iteration ${i}:`)
-      console.log(orderItemsDB.rows[0]);
-      console.log(`ADDING QUANTITY TO PRODUCT`)
-      orderItemsDB.rows[0].qty = orderItems[i].qty;
-      console.log(orderItemsDB.rows[0]);
-      // TODO place results into arry, spread oper for both loops
-      cartToOrderItems.push(orderItemsDB.rows[i]);
     };
-    
-    console.log("orderItemsDB.rows");
-    console.log(orderItemsDB.rows);
-    console.log("===============================");
-    console.log(cartToOrderItems);
-    console.log("init inserting products into order items")
 
-    for (let i = 0; i < orderItemsDB.rows.length; i++) {
+    for (let i = 0; i < orderItems.length; i++) {
+      const productStockQuery = 'UPDATE products SET count_in_stock = $1 WHERE id = $2 RETURNING id, name, count_in_stock;';
+      let currentStockQuantity = cartToOrderItems[i].count_in_stock;
+      let purchasedQuantity = orderItems[i].qty;
+      let updatedStockQuantity;
+
+      updatedStockQuantity = currentStockQuantity - purchasedQuantity;
+      if (updatedStockQuantity < 0) {
+        return res.status(404).json({ errors: [{ msg: `An error occurred. The product may be out of stock.` }] });
+      }
+
+      // updated Product Stock
+      await queryPromise(
+        productStockQuery, updatedStockQuantity, cartToOrderItems[i].product_id
+      );
+    }
+
+    let itemOrdered = [];
+    let orderItemsToDB = [];
+    for (let i = 0; i < cartToOrderItems.length; i++) {
       let name = cartToOrderItems[i].name;
-      let quantity = cartToOrderItems[i].quantity;
+      let quantity = cartToOrderItems[i].count_in_stock;
       let price = cartToOrderItems[i].price;
-      let productID = cartToOrderItems[i].price;
-      let imageID = cartToOrderItems[i].price;
+      let productID = cartToOrderItems[i].product_id;
+      let imageID = cartToOrderItems[i].id;
 
-      const setOrderItemsDBQuery = 'INSERT INTO order_items (name, quantity, price, order_id, product_id, image_id) VALUES ($1, $2, $3, $4 $5, $6) RETURNING;'
+      const setOrderItemsDBQuery = 'INSERT INTO order_items (name, quantity, price, order_id, product_id, image_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;'
       
-      let setOrderItemsDB = await queryPromise(setOrderItemsDBQuery, [name, quantity, price, productID, orderID, imageID]);
-      console.log('checking stock')
-      console.log(`iteration ${i}:`);
-      console.log(setOrderItemsDB.rows[0]);
+      let setOrderItemsDB = await queryPromise(setOrderItemsDBQuery, name, quantity, price, orderID, productID, imageID);
+      itemOrdered = setOrderItemsDB.rows[0];
 
-      orderItemsToDB.push(setOrderItemsDB.rows[i])
+      orderItemsToDB[i] = {...orderItemsToDB[i], ...itemOrdered};
     };
-    console.log(`final reseult`)
-    console.log(orderItemsToDB);
 
-    // console.log("removing items from cart")
     // upon submission / processing of order, clear cart_items belonging to user
     // await pool.query(
     //   'DELETE FROM cart_items WHERE cart_id = $1;', [cartID]
@@ -248,8 +385,6 @@ exports.createOrder = async (req, res, next) => {
     res.status(200).json({
       status: "Success. Order processed.",
       data: {
-        // createdOrder: order.rows,
-        // createdOrderItems: orderItems.rows
         createdOrder: cartToOrderItems,
         createdOrderItems: orderItemsToDB
       }
@@ -261,12 +396,12 @@ exports.createOrder = async (req, res, next) => {
 };
 
 // /orders/:order_id/pay
-// Private
+// Admin
 // TODO - may delete updateOrderToPaid
+// order statuses: ['processing', 'shipped', 'delivered', 'refunded', 'lost', 'unknown']
 exports.updateOrderToPaid = async (req, res, next) => {
   const { id } = req.user;
   const { order_id } = req.params;
-  // const { status, email, paymentMethod, stripePayID } = req.body;
   const { paymentMethod, stripePayID } = req.body;
   try {
     const order = await pool.query(
@@ -284,7 +419,6 @@ exports.updateOrderToPaid = async (req, res, next) => {
       orderResult.isPaid = true;
       orderResult.paidAt = Date.now();
       orderResult.stripe_payment_id = stripePayID;
-      // orderResult.user_id = id;
     }
     
     const updateOrder = await pool.query(
@@ -295,10 +429,9 @@ exports.updateOrderToPaid = async (req, res, next) => {
       return res.status(404).json({ errors: [{ msg: "Failed to update order." }] });
     };
 
-    res.json({
+    res.status(200).json({
       status: "Success",
       data: {
-        // order: orderResult,
         order: updateOrder
       }
     })
@@ -307,40 +440,42 @@ exports.updateOrderToPaid = async (req, res, next) => {
     res.status(500).send("Server error...");
   }
 };
-// exports.updateOrderToDelivered = async (req, res, next) => {
-// const updateOrderToPaid = asyncHandler(async (req, res) => {
-//   const order = await Order.findById(req.params.id)
 
-//   if (order) {
-//     order.isPaid = true
-//     order.paidAt = Date.now()
-//     order.paymentResult = {
-//       id: req.body.id,
-//       status: req.body.status,
-//       update_time: req.body.update_time,
-//       email_address: req.body.payer.email_address,
-//     }
-
-//     const updatedOrder = await order.save()
-
-//     res.json(updatedOrder)
-//   } else {
-//     res.status(404)
-//     throw new Error('Order not found')
-//   }
-// })
-// };
+// *** Insomnia tested / Passed
+// /orders/:order_id/status-to-shipped
+// Private/Admin
+exports.updateOrderToShipped = async (req, res, next) => {
+  const { order_id } = req.params;
+  try {
+    const order = await pool.query(
+      'UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *;', ['shipped', order_id]
+    );
+    
+    if (order.rowCount === 0 || !order) {
+      return res.status(404).json({ errors: [{ msg: "No order found." }] });
+    }
+    res.status(200).json({
+      status: "Success. Order processed.",
+      //  userOrder: { orderInfo: order.rows[0], orderItems: orderItems.rows, userInfo }
+      data: {
+        orderInfo: order.rows[0]
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
 
 // *** Insomnia tested / Passed
 // /orders/:order_id/deliver
 // Private/Admin
 exports.updateOrderDeliveredStatus = async (req, res, next) => {
-  const { id } = req.user;
   const { order_id } = req.params;
   try {
-    const deliveredAtDate = new Date().toString();
+    const deliveredAtDate = new Date().toString().slice(0, 10);
     const order = await pool.query(
-      'UPDATE orders SET is_delivered = $1, delivered_at = $2 WHERE id = $3 RETURNING *;', [true, deliveredAtDate, order_id]
+      'UPDATE orders SET is_delivered = $1, delivered_at = $2, order_status = $3 WHERE id = $4 RETURNING *;', [true, deliveredAtDate, 'delivered', order_id]
     );
     
     if (order.rowCount === 0 || !order) {
@@ -349,50 +484,7 @@ exports.updateOrderDeliveredStatus = async (req, res, next) => {
     res.status(200).json({
       status: "Success. Order processed.",
       data: {
-        updatedOrder: order.rows[0]
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error...");
-  }
-};
-
-
-// original ordercontroller
-
-/*
-const pool = require("../config/db");
-// const cloudinary = require('cloudinary').v2;
-
-// *** Insomnia tested / Passed
-// Users get all their orders / order history for review
-// /orders/my-orders
-// Private
-exports.getMyOrders = async (req, res, next) => {
-  console.log("searching")
-  const { id } = req.user;
-  const { pageNumber } = req.query;
-  // create orders page pagination
-  const page = Number(pageNumber) || 1;
-  const threshHold = 1;
-  const limit = 12 * threshHold;
-  const offset = (page - 1) * limit;
-
-  try {
-    const orders = await pool.query(
-      'SELECT * FROM orders WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3;', [id, limit, offset]
-    );
-
-    if (orders.rowCount === 0 || !orders) {
-      return res.status(404).json({ errors: [{ msg: "You have not made any orders." }] });
-    }
-
-    res.status(200).json({
-      status: "Success. User orders found.",
-      data: {
-        orderItems: orders.rows,
-        // orderTotalItems: orders.rowCount
+        orderInfo: order.rows[0]
       }
     });
   } catch (err) {
@@ -402,241 +494,63 @@ exports.getMyOrders = async (req, res, next) => {
 };
 
 // *** Insomnia tested / Passed
-// Admin, get all user orders / order history for review
-// /orders
-// Private / Admin
-exports.getAllOrders = async (req, res, next) => {
-  const { id } = req.user;
-  const { pageNumber } = req.query;
-  // create orders page pagination
-  const page = Number(pageNumber) || 1;
-  const threshHold = 1;
-  const limit = 12 * threshHold;
-  const offset = (page - 1) * limit;
-
-  try {
-    const orders = await pool.query(
-      'SELECT * FROM orders ORDER BY id DESC LIMIT $1 OFFSET $2;', [limit, offset]
-    );
-
-    //if rowcount 0, say no user orders exist
-    res.status(200).json({
-      status: "Success. Admin got all user orders for review.",
-      data: {
-        orderItems: orders.rows,
-        // orderTotalItems: orders.rowCount
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error...");
-  }
-};
-
-// *** Insomnia tested / Passed
-// /orders/:order_id
-// Private
-exports.getOrderById = async (req, res, next) => {
-  const { id } = req.user;
+// /orders/:order_id/refund
+// Private/Admin
+exports.updateOrderRefund = async (req, res, next) => {
   const { order_id } = req.params;
   try {
+    const refundedAtDate = new Date().toString().slice(0, 10);
     const order = await pool.query(
-      // 'SELECT * FROM orders WHERE id = $1;' [order_id]
-      // 'SELECT P.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
-      // *** new products w/images table query ****
-      // TODO untested
-      'SELECT O.*, P.*, I.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id JOIN images AS I ON I.product_id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
+      'UPDATE orders SET is_refunded = $1, refunded_at = $2, order_status = $3 WHERE id = $4 RETURNING *;', [true, refundedAtDate, 'refunded', order_id]
     );
-
+    
     if (order.rowCount === 0 || !order) {
-      return res.status(404).json({ errors: [{ msg: "Order not found." }] });
+      return res.status(404).json({ errors: [{ msg: "No order found." }] });
     }
-
     res.status(200).json({
-      status: "Success. Order found.",
+      status: "Success. Order processed.",
       data: {
-        userOrder: order.rows
+        orderInfo: order.rows[0]
       }
-    })
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error...");
   }
 };
 
-// *** Insomnia tested / Passed... did not implement stripeID yet
-// Create new order
-// /orders
-// Private
-exports.createOrder = async (req, res, next) => {
-  const { id, cartID } = req.user;
-  // const { subtotal, taxPrice, shippingPrice, totalPrice, stripePaymentId } = req.body;
-  const { orderItemsList, shippingAddress, subtotal, taxPrice, shippingPrice, totalPrice } = req.body;
-
-  // TODO --- if stripe payment id is true set the payment method to 'stripe'
-  if (!subtotal || !taxPrice || !totalPrice || !cartID || !id) {
-    return res.status(406).json({ errors: [{ msg: "All fields are required."}] });
-  };
-  // TODO --- consider removing stripepaymentid, derived from resulting stripe payment being processed, do not use during route testing
+// *** Tested /  Insomnia tested - Passed / Works in App
+// /orders/:order_id/remove
+// Private/Admin
+exports.deleteOrder = async (req, res, next) => {
+  const { order_id } = req.params;
   try {
-    // const findUserAddress = await pool.query(
-    //   'SELECT * FROM shipping_addresses WHERE user_id = $1;', [id]
-    // );
-    // if (findUserAddress.rowCount === 0 || !findUserAddress) {
-    //    return res.status(404).json({ errors: [{ msg: "User address not found." }] });
-    //  };
-    // insert shipping information
-    // await pool.query(
-      // 'INSERT INTO shipping_addresses (address) VALUES ($1) RETURNING *;' [shippingAddress]
-      // 'INSERT INTO shipping_addresses (address) VALUES ($1) RETURNING *;' [shippingAddress]
-    // );
-
-    // generate payment time
-    const paidAtDate = new Date().toISOString().slice(0, 10);
-
-    const order = await pool.query(
-      // 'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, stripe_payment_id, user_id) VALUES ($1, $2, $3, $4) RETURNING *;', [subtotal, taxPrice, shippingPrice, totalPrice, true, paidAtDate, stripePaymentId, id]
-      'INSERT INTO orders (amount_subtotal, tax_price, shipping_price, total_price, is_paid, paid_at, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;', [subtotal, taxPrice, shippingPrice, totalPrice, true, paidAtDate, id]
+    const findOrder = await pool.query(
+      'SELECT * FROM orders WHERE id = $1;', [order_id]
     );
 
-    if (order.rowCount === 0 || !order) {
-      return res.status(404).json({ errors: [{ msg: "Failed to create order / No order found." }] });
+    if (findOrder.rowCount === 0 || !findOrder) {
+      return res.status(404).json({ errors: [{ msg: "Order does not exist. "}] });
     };
 
-    const orderID = order.rows[0].id;
-    // orderITems are from the cart
-    // const cartItems = await pool.query(
-      // 'SELECT * FROM cart_items WHERE cart_id = $1;' [cartID]
-    // );
-
-    // if (!cartItems) {
-    //   return res.status(404).json({ errors: [{ msg: "No cart items found." }] });
-    // }
-
-    // const cartItemsID = cartItems.rows[0].id;
-    // const cartItemsProdID = cartItems.rows[0].product_id;
-    // const cartItemsQTY = cartItems.rows[0].quantity;
-
-    // console.log("inserting cart items into order items")
-    const orderItems = await pool.query(
-      // 'INSERT INTO order_items (quantity, order_id, product_id) VALUES ($1, $2, $3) RETURNING *;' [cartItemsQTY, orderID, cartItemsProdID]
-      'INSERT INTO order_items (quantity, order_id, product_id) SELECT quantity, $1, product_id FROM cart_items WHERE cart_id = $2 RETURNING *;', [orderID, cartID]
-    );
-
-    // console.log("removing items from cart")
-    // upon submission / processing of order, clear cart_items belonging to user
     await pool.query(
-      'DELETE FROM cart_items WHERE cart_id = $1;', [cartID]
+      'DELETE FROM order_items WHERE order_id = $1;', [order_id]
+    );
+
+    await pool.query(
+      'DELETE FROM shipping_addresses WHERE order_id = $1;', [order_id]
+    );
+
+    await pool.query(
+      'DELETE FROM orders WHERE id = $1;', [order_id]
     );
 
     res.status(200).json({
-      status: "Success. Order processed.",
-      data: {
-        createdOrder: order.rows,
-        createdOrderItems: orderItems.rows
-      }
+      status: "Success. Order deleted.",
+      data: { message: "Order has been deleted." }
     });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error...");
   }
 };
-
-// /orders/:order_id/pay
-// Private
-// TODO - may delete updateOrderToPaid
-exports.updateOrderToPaid = async (req, res, next) => {
-  const { id } = req.user;
-  const { order_id } = req.params;
-  // const { status, email, paymentMethod, stripePayID } = req.body;
-  const { paymentMethod, stripePayID } = req.body;
-  try {
-    const order = await pool.query(
-      'SELECT * FROM orders WHERE id = $1;', [order_id]
-    );
-    
-    if (order.rowCount === 0 || !order) {
-      return res.status(404).json({ errors: [{ msg: "No order found." }] });
-    };
-
-    const orderResult = order.rows[0];
-
-    if (orderResult) {
-      orderResult.paymentMethod = paymentMethod;
-      orderResult.isPaid = true;
-      orderResult.paidAt = Date.now();
-      orderResult.stripe_payment_id = stripePayID;
-      // orderResult.user_id = id;
-    }
-    
-    const updateOrder = await pool.query(
-      'UPDATE orders SET payment_method = $1, is_paid = $2, paid_at = $3, stripe_payment_id = $4 WHERE id = $5;', [orderResult.paymentMethod, orderResult.isPaid, orderResult.paidAt, orderResult.stripe_payment_id, id]
-    );
-
-    if (updateOrder.rowCount === 0 || !updateOrder) {
-      return res.status(404).json({ errors: [{ msg: "Failed to update order." }] });
-    };
-
-    res.json({
-      status: "Success",
-      data: {
-        // order: orderResult,
-        order: updateOrder
-      }
-    })
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error...");
-  }
-};
-// exports.updateOrderToDelivered = async (req, res, next) => {
-// const updateOrderToPaid = asyncHandler(async (req, res) => {
-//   const order = await Order.findById(req.params.id)
-
-//   if (order) {
-//     order.isPaid = true
-//     order.paidAt = Date.now()
-//     order.paymentResult = {
-//       id: req.body.id,
-//       status: req.body.status,
-//       update_time: req.body.update_time,
-//       email_address: req.body.payer.email_address,
-//     }
-
-//     const updatedOrder = await order.save()
-
-//     res.json(updatedOrder)
-//   } else {
-//     res.status(404)
-//     throw new Error('Order not found')
-//   }
-// })
-// };
-
-// *** Insomnia tested / Passed
-// /orders/:order_id/deliver
-// Private/Admin
-exports.updateOrderDeliveredStatus = async (req, res, next) => {
-  const { id } = req.user;
-  const { order_id } = req.params;
-  try {
-    const deliveredAtDate = new Date().toString();
-    const order = await pool.query(
-      'UPDATE orders SET is_delivered = $1, delivered_at = $2 WHERE id = $3 RETURNING *;', [true, deliveredAtDate, order_id]
-    );
-    
-    if (order.rowCount === 0 || !order) {
-      return res.status(404).json({ errors: [{ msg: "No order found." }] });
-    }
-    res.status(200).json({
-      status: "Success. Order processed.",
-      data: {
-        updatedOrder: order.rows[0]
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error...");
-  }
-};
-*/

@@ -125,7 +125,6 @@ export const createUserProfile = (profileForm) => async dispatch => {
     const res = await api.post(`/users/profile`, profileForm);
 
     let result = res.data.data;
-    console.log(result);
 
     dispatch({
       type: USER_CREATE_PROFILE_SUCCESS,

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaRegEye } from 'react-icons/fa';
 
 const AdminImageItem = ({
   image: {

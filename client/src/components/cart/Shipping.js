@@ -5,15 +5,6 @@ import { setAlert } from '../../redux/actions/alertActions';
 import { shippingAddressForCart } from '../../redux/actions/cartActions';
 import { getUserProfile } from '../../redux/actions/userActions';
 
-// TODO --- get shipping address info from LS if exists already and pass the use usestates as init values
-// if (localStorage.getItem('__shippingAddress')) {
-//   let shippingAddress = JSON.parse(localStorage.getItem('__shippingAddress'));
-// }
-//  else {
-//   // let shippingAddress = {};
-//   let shippingAddress = { fullname: '', email: '', address: '', zipcode: '', city: '', state: '', country: '' }
-// }
-
 const Shipping = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -21,9 +12,8 @@ const Shipping = () => {
   const userDetail = useSelector(state => state.user);
   const cartDetails = useSelector(state => state.cart);
   const { userInfo, isAuthenticated } = userAuth;
-  const { loading, errors, userById } = userDetail;
+  const { userById } = userDetail;
   const { shippingAddress } = cartDetails;
-  // const { user_email } = userInfo;
   const [hasMounted, setHasMounted] = useState(false);
   let [fullname, setFullName] = useState(shippingAddress.fullname || '');
   let [fName, setFName] = useState('');
@@ -41,9 +31,7 @@ const Shipping = () => {
       return history.push('/login');
     }
     if(isAuthenticated && (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress)) {
-      console.log("Attempting to retrieve shipping address information from user profile.");  
       dispatch(getUserProfile());
-      // dispatch(shippingAddressForCart({ fullname, email,address, zipcode, city, state, country }))
     };
   }, [dispatch]);
 
@@ -58,26 +46,22 @@ const Shipping = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     if (isAuthenticated) {
-      if (!fullname) {
-        // fullname = `${userInfo.f_name} ${userInfo.l_name}`;
-        setFullName(`${userInfo.f_name} ${userInfo.l_name}`);
-            }
+      if (fullname === '' || !fullname) {
+        let fullName = `${userInfo.f_name} ${userInfo.l_name}`;
+        setFullName(fullname = fullName);
+      }
       if (!email) {
-        // email = userInfo.user_email;
-        setEmail(userInfo.user_email);
+        setEmail(email = userInfo.user_email);
       }
     }
     if (!isAuthenticated) {
-      if (!fullname) {
-        fullname = `${fName} ${lName}`;
+      if (fullname === '' || !fullname) {
+        let fullName = `${fName} ${lName}`;
+        setFullName(fullname = fullName);
       }
     }
 
     dispatch(shippingAddressForCart({ fullname, email, address, zipcode, city, state, country }));
-    // if (!isAuthenticated) {
-      // dispatch((setAlert('Please login / create account to continue with checkout.', 'danger')));
-      // history.push('/login');
-    // }
     history.push('/confirm-order');
   };
 
@@ -96,6 +80,7 @@ const Shipping = () => {
                   name="firstName"
                   onChange={e => setFName(e.target.value)}
                   value={fName}
+                  maxLength={60}
                   required
                 />
               </div>
@@ -108,6 +93,7 @@ const Shipping = () => {
                   name="lastName"
                   onChange={e => setLName(e.target.value)}
                   value={lName}
+                  maxLength={60}
                   required
                 />
               </div>
@@ -147,6 +133,7 @@ const Shipping = () => {
                 name="zipcode"
                 minLength="2"
                 maxLength="5"
+                pattern='[0-9]*'
                 onChange={e => setZipcode(e.target.value)}
                 value={zipcode}
                 required

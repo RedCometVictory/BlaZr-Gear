@@ -96,7 +96,8 @@ exports.deleteImage = async (req, res, next) => {
       await cloudinary.uploader.destroy(currImageImgFilename);
     };
 
-    const imageById = await pool.query(
+    // image By Id
+    await pool.query(
       'DELETE FROM images WHERE id = $1;', [image_id]
     );
     return res.status(200).json({

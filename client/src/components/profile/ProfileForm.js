@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { createUserProfile, updateUserProfile } from '../../redux/actions/userActions';
 import { shippingAddressForCart } from '../../redux/actions/cartActions';

@@ -1,28 +1,28 @@
-// require('dotenv').config();
 import Axios from 'axios';
-// import store from '../redux/store';
-// import { LOGOUT } from '../redux/constants/authConstants';
+import history from './history';
+import store from '../redux/store';
+import { logout, refreshAccessToken } from '../redux/actions/authActions';
 
 const api = Axios.create({
   baseURL: 'http://localhost:5000/api',
   // baseURL: `${process.env.HEROKU_DOMAIN}/api`,
   // baseURL: `https://squadupsocial.herokuapp.com/api`,
-  // baseURL: '/api',
-  // baseURL: '/',
+  // 'Content-Type': 'multipart/form-data'
   // headers: {
-    // "Authorization": "Bearer "+localStorage.getItem("token"),
-    // "Authorization": "Bearer "+localStorage.token && JSON.parse(localStorage.token)
+    // "Authorization": "Bearer " + localStorage.getItem("token"),
     // 'X-Content-Type-Options': "nosniff",
+    // "Accept": "application/json",
+    // "Accept": 'multipart/form-data',
+    // "Content-Type": 'multipart/form-data',
     // 'Content-Type': 'application/json',
-    // 'Content-Type': 'multipart/form-data'
   // },
-  credentials: 'include',
+  withCredentials: true
 });
-// intercept err responses from api, check if the token is no longer valid. if expired / unauthenticated, attempt token refresh, if fails, logout user axios attempts these actions BEFORE actually making a req to the api server
 
 api.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
+    //checking if accessToken exists
     if (token) {
       config.headers["Authorization"] = "Bearer " + token;
     }
@@ -32,6 +32,7 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 // api.interceptors.response.use(
 //   res => res,
 //   err => {
@@ -41,4 +42,45 @@ api.interceptors.request.use(
 //     return Promise.reject(err);
 //   }
 // );
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    //extracting response and config objects
+    const { response, config } = error;
+    //checking if error is Aunothorized error
+    let originalRequest = config;
+
+    if (response.status === 401 && originalRequest.url.includes("auth/refresh-token")) {
+      // stop loop
+      store.dispatch(logout(history));
+      return Promise.reject(error);
+    // } else if (response.status === 401 && !originalRequest._retry) {
+    }
+    if (response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refResponse = await api.get("/auth/refresh-token");
+        let accessToken = refResponse.data.data.token;
+        if (accessToken) {
+          store.dispatch(refreshAccessToken(accessToken));
+
+          config.headers["Authorization"] = "Bearer " + accessToken;
+        }
+        //with new token retry original request
+
+        return api(originalRequest);
+        // }
+      } catch (err) {
+        // console.log(err);
+        // store.dispatch(logout())
+        if (err.response && err.response.data) {
+          return Promise.reject(err.response.data);
+        }
+        return Promise.reject(err);
+      }
+    }
+    return Promise.reject(error)
+  }
+);
 export default api;

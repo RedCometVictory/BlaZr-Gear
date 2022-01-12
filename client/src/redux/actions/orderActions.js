@@ -23,37 +23,30 @@ import {
   ORDER_DELIVER_SUCCESS,
   ORDER_DELIVER_FAILURE,
   // ORDER_DELIVER_RESET
+  ORDER_REFUND_REQUEST,
+  ORDER_REFUND_SUCCESS,
+  ORDER_REFUND_FAILURE,
+  ORDER_DELETE_REQUEST,
+  ORDER_DELETE_SUCCESS,
+  ORDER_DELETE_FAILURE
 } from '../constants/orderConstants';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants';
 
 export const createOrder = (orderFormData) => async dispatch => {
   try {
-    console.log("ACTION: creating order");
-    console.log("orderformdata");
-    console.log(orderFormData);
-    console.log("------------------");
-    // console.log("cartItems");
-    // console.log(cartItems);
-    console.log("------------------");
-    // let formData = {...orderForm, ...cartItems};
-    // let formData = [...orderForm, ...cartItems];
-    // console.log("formData");
-    // console.log(formData);
-    // console.log("------------------");
     dispatch({type: ORDER_CREATE_REQUEST});
     const res = await api.post('/orders', orderFormData);
-    // const res = await api.post('/orders', formData);
     let result = res.data.data;
-    console.log(result);
 
     dispatch({
       type: ORDER_CREATE_SUCCESS,
       payload: result
     })
+
     dispatch ({
-      type: CART_CLEAR_ITEMS,
-      // payload: result
+      type: CART_CLEAR_ITEMS
     })
+
     localStorage.removeItem('__cart');
   } catch (err) {
     dispatch(setAlert('Failed to create order.', 'danger'));
@@ -66,17 +59,15 @@ export const createOrder = (orderFormData) => async dispatch => {
   }
 };
 
-export const getAllUserOrders = () => async dispatch => {
+export const getAllUserOrders = (pageNumber, itemsPerPage) => async dispatch => {
   try {
     dispatch({type: ORDER_LIST_MY_REQUEST});
-    const res = await api.get('/orders/my-orders');
+    const res = await api.get(`/orders/my-orders?pageNumber=${pageNumber}&offsetItems=${itemsPerPage}`);
 
     dispatch({
       type: ORDER_LIST_MY_SUCCESS,
       payload: res.data.data
     })
-    
-    // localStorage.removeItem('cartItems');
   } catch (err) {
     dispatch(setAlert('Failed to list orders.', 'danger'));
     const errors = err.response.data.errors;
@@ -89,17 +80,16 @@ export const getAllUserOrders = () => async dispatch => {
 };
 
 // get all users' orders - ADMIN
-export const getAllOrdersAdmin = () => async dispatch => {
+export const getAllAdminOrders = (pageNumber, itemsPerPage) => async dispatch => {
   try {
     dispatch({type: ORDER_LIST_REQUEST});
-    const res = await api.get('/orders');
+    const res = await api.get(`/orders?pageNumber=${pageNumber}&offsetItems=${itemsPerPage}`);
 
     dispatch({
       type: ORDER_LIST_SUCCESS,
       payload: res.data.data
     })
-    
-    // localStorage.removeItem('cartItems');
+
   } catch (err) {
     dispatch(setAlert('Failed to list orders.', 'danger'));
     const errors = err.response.data.errors;
@@ -133,7 +123,30 @@ export const getOrderDetails = (order_id) => async dispatch => {
   }
 };
 
+// ADMIN - get order details
+export const getOrderDetailAdmin = (order_id) => async dispatch => {
+  try {
+    dispatch({type: ORDER_DETAILS_REQUEST});
+    const res = await api.get(`/orders/admin/${order_id}`);
+
+    dispatch({
+      type: ORDER_DETAILS_SUCCESS,
+      payload: res.data.data
+    })
+
+  } catch (err) {
+    dispatch(setAlert('Failed to list order.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: ORDER_DETAILS_FAILURE});
+  }
+};
+
 // pay for order
+// TODO consider delete as order is paid via stripw or paypal before order is even created
 export const payOrder = (order_id, paymentResult) => async dispatch => {
   try {
     dispatch({type: ORDER_PAY_REQUEST});
@@ -155,6 +168,29 @@ export const payOrder = (order_id, paymentResult) => async dispatch => {
   }
 };
 
+// order shipping status update
+export const updateOrderStatusToShipped = (order_id) => async dispatch => {
+  try {
+    dispatch({type: ORDER_DELIVER_REQUEST});
+    const res = await api.get(`/orders/${order_id}/status-to-shipped`);
+
+    dispatch({
+      type: ORDER_DELIVER_SUCCESS,
+      payload: res.data.data
+    })
+    
+    dispatch(setAlert('Order has been shipped.', 'success'));
+  } catch (err) {
+    dispatch(setAlert('Failed to change shipping status of order.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: ORDER_DELIVER_FAILURE});
+  }
+};
+
 // order delivery status
 export const deliverOrder = (order_id) => async dispatch => {
   try {
@@ -166,6 +202,7 @@ export const deliverOrder = (order_id) => async dispatch => {
       payload: res.data.data
     })
 
+    dispatch(setAlert('Order delivered.', 'success'));
   } catch (err) {
     dispatch(setAlert('Failed to change delivery status of order.', 'danger'));
     const errors = err.response.data.errors;
@@ -174,5 +211,74 @@ export const deliverOrder = (order_id) => async dispatch => {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
     dispatch({type: ORDER_DELIVER_FAILURE});
+  }
+};
+
+// order REFUND status
+export const refundOrder = (order_id) => async dispatch => {
+  try {
+    dispatch({type: ORDER_REFUND_REQUEST});
+    const res = await api.get(`/orders/${order_id}/refund`);
+
+    dispatch({
+      type: ORDER_REFUND_SUCCESS,
+      payload: res.data.data
+    })
+
+    dispatch(setAlert('Order refunded.', 'success'));
+  } catch (err) {
+    dispatch(setAlert('Failed to change order status to refund.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: ORDER_REFUND_FAILURE});
+  }
+};
+
+export const refundPayPalOrder = (orderId, userId, paypalPaymentId, paypalCaptureId, amount) => async dispatch => {
+  try {
+    const chargeData = { orderId, userId, paypalPaymentId, paypalCaptureId, amount };
+
+    dispatch({type: ORDER_REFUND_REQUEST});
+    const res = await api.post(`/payment/refund-paypal/order/${orderId}`, chargeData);
+
+    dispatch({
+      type: ORDER_REFUND_SUCCESS,
+      payload: res.data.data
+    })
+
+    dispatch(setAlert('Order refunded.', 'success'));
+  } catch (err) {
+    dispatch(setAlert('Failed to change order status to refund.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: ORDER_REFUND_FAILURE});
+  }
+};
+
+export const deleteOrder = (order_id, history) => async dispatch => {
+  try {
+    dispatch({type: ORDER_DELETE_REQUEST});
+    await api.delete(`/orders/${order_id}/remove`);
+
+    dispatch({
+      type: ORDER_DELETE_SUCCESS
+    })
+
+    dispatch(setAlert('Order deleted.', 'success'));
+    history.push('/admin/order-list');
+  } catch (err) {
+    dispatch(setAlert('Failed to delete order.', 'danger'));
+    const errors = err.response.data.errors;
+    
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+    dispatch({type: ORDER_DELETE_FAILURE});
   }
 };

@@ -50,7 +50,8 @@ router.post('/reset-password', resetPasswordValidator, validatorResult, resetPas
 // @route    POST auth/refresh-token
 // @desc     Generate new access (upon expiration) & refresh token
 // @access   Public
-router.post('/refresh-token', authRefreshToken);
+// router.post('/refresh-token', authRefreshToken);
+router.get('/refresh-token', authRefreshToken);
 
 // @route    POST auth/logout
 // @desc     Logout, destroy or 'null' refresh token from db belonging to user

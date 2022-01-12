@@ -8,7 +8,6 @@ const initialState = {title: '', image_url: '', description: '', theme: '', cate
 const AdminSlideCreate = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  // const fileInputText = useRef();
   const [hasMounted, setHasMounted] = useState(false);
   const [formProductData, setFormProductData] = useState(initialState);
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -35,7 +34,6 @@ const AdminSlideCreate = () => {
     checkFileType(fileToUpload);
     // check file size
     checkFileSize(fileToUpload);
-    // setImage(e.target.files[0]);
 
     setFormProductData({
       ...formProductData,
@@ -73,7 +71,6 @@ const AdminSlideCreate = () => {
     e.preventDefault();
     setUploadingImage(true);
     dispatch(createSlide(formProductData, history));
-    // fileInputText.current.value = "";
   }
 
   return (
@@ -101,7 +98,6 @@ const AdminSlideCreate = () => {
               className="file-btn-input file-slim"
               name="image_url"
               onChange={handleImageChange}
-              // ref={fileInputText}
               required
             />
           </div>
@@ -129,7 +125,6 @@ const AdminSlideCreate = () => {
                 onChange={e => onChange(e)}
                 value={title}
                 maxLength="40"
-                // required
               />
             </div>
             <div className="admForm__group">
@@ -147,7 +142,7 @@ const AdminSlideCreate = () => {
             <div className="admForm__group">
               <label htmlFor="category" className="admForm__label">Category: </label>
               <select name="category" value={category} onChange={e => onChange(e)}>
-                {/* <option value="all">All</option> */}
+                <option>Select Category (optional)</option>
                 <option value="Video Games">Video Games</option>
                 <option value="Electronics">Electronics</option>
                 <option value="Sneakers">Sneakers</option>
@@ -170,7 +165,6 @@ const AdminSlideCreate = () => {
               onChange={e => onChange(e)}
               value={description}
               maxLength="120"
-              // required
             ></textarea>
           </div>
         </div>

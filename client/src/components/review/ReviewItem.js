@@ -102,6 +102,7 @@ const ReviewItem = ({ review }) => {
               type="text"
               name="title"
               value={title}
+              maxLength={120}
               onChange={e => onChangeHandler(e)}
               placeholder="Review Title" aria-required="true" 
             />

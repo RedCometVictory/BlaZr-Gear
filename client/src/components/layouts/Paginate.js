@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Pagination from 'react-js-pagination';
 
 const Paginate = ({ currentPage, itemsPerPage, pages, pageChange}) => {
+  const [hasMounted, setHasMounted] = useState(false);
 
-  // TODO: convert props from strings to numbers before placing into pagination comp
-  Number(currentPage);
-  Number(itemsPerPage);
-  Number(pages);
-  Number(pageChange);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
+  let itemsPerPageNum = Number(itemsPerPage);
+  let pagesNum = Number(pages);
+
   return (
     <div className="admProducts__paginate-menu">
       <Pagination
         activePage={currentPage}
-        itemsCountPerPage={itemsPerPage}
-        totalItemsCount={pages}
+        // activePage={currentPageNum}
+        itemsCountPerPage={itemsPerPageNum}
+        totalItemsCount={pagesNum}
         onChange={pageChange}
         nextPageText={'⟩'}
         prevPageText={'⟨'}

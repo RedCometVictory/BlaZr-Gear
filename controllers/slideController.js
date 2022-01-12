@@ -218,7 +218,8 @@ exports.deleteSlide = async (req,res, next) => {
       await cloudinary.uploader.destroy(currSlideImgFilename);
     };
 
-    const deleteSlide = await pool.query(
+    // delete Slide
+    await pool.query(
       'DELETE FROM slides WHERE id = $1;', [slide_id]
     );
 

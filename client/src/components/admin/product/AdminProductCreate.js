@@ -8,7 +8,6 @@ const initialState = {name: '', image_url: '', brand: '', category: '', descript
 const AdminProductCreate = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  // const fileInputText = useRef();
   const [hasMounted, setHasMounted] = useState(false);
   const [formProductData, setFormProductData] = useState(initialState);
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -16,7 +15,7 @@ const AdminProductCreate = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageData, setImageData] = useState(null);
   const [showImageData, isShowImageData] = useState(false);
-// const [category, setCategory] = useState('');
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -35,7 +34,6 @@ const AdminProductCreate = () => {
     checkFileType(fileToUpload);
     // check file size
     checkFileSize(fileToUpload);
-    // setImage(e.target.files[0]);
 
     setFormProductData({
       ...formProductData,
@@ -73,7 +71,6 @@ const AdminProductCreate = () => {
     e.preventDefault();
     setUploadingImage(true);
     dispatch(createProduct(formProductData, history));
-    // fileInputText.current.value = ""; // upon submit clear field for image file upload
   }
 
   return (
@@ -92,7 +89,6 @@ const AdminProductCreate = () => {
               className="file-btn-input file-slim"
               name="image_url"
               onChange={handleImageChange}
-              // ref={fileInputText}
               required
             />
           </div>
@@ -114,9 +110,10 @@ const AdminProductCreate = () => {
               <label htmlFor="name" className="admForm__label">Name: </label>
               <input
                 type="text"
-                placeholder="Sketchers Shoes - Men"
+                placeholder="Skechers Shoes - Men"
                 className=""
                 name="name"
+                maxLength={110}
                 onChange={e => onChange(e)}
                 value={name}
                 required
@@ -126,9 +123,10 @@ const AdminProductCreate = () => {
               <label htmlFor="brand" className="admForm__label">Brand: </label>
               <input
                 type="text"
-                placeholder="Sketchers"
+                placeholder="Skechers"
                 className=""
                 name="brand"
+                maxLength={255}
                 onChange={e => onChange(e)}
                 value={brand}
                 required
@@ -136,7 +134,8 @@ const AdminProductCreate = () => {
             </div>
             <div className="admForm__group">
               <label htmlFor="category" className="admForm__label">Category: </label>
-              <select name="category" value={category} onChange={e => onChange(e)}>
+              <select name="category" value={category} onChange={e => onChange(e)} required>
+                <option value="">Select Category</option>
                 <option value="Video Games">Video Games</option>
                 <option value="Electronics">Electronics</option>
                 <option value="Sneakers">Sneakers</option>
@@ -156,6 +155,8 @@ const AdminProductCreate = () => {
                 placeholder="70.00"
                 className=""
                 name="price"
+                // min={1}
+                step="0.01"
                 onChange={e => onChange(e)}
                 value={price}
                 required
@@ -168,6 +169,7 @@ const AdminProductCreate = () => {
                 placeholder="10"
                 className=""
                 name="count_in_stock"
+                min={1}
                 onChange={e => onChange(e)}
                 value={count_in_stock}
                 required

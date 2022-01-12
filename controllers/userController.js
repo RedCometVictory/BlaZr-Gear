@@ -1,5 +1,3 @@
-const axios = require('axios');
-const jwtGenerator = require('../middleware/jwtGenerator');
 const pool = require('../config/db');
 
 // *** Insomnia tested / Passed / Works in App
@@ -7,11 +5,8 @@ const pool = require('../config/db');
 // Private
 exports.getUserProfile = async (req, res, next) => {
   const { id } = req.user;
-  let userData;
   try {
-    const myUserProfile = await pool.query(
-      'SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE users.id = $1;', [id]
-    );
+    const myUserProfile = await pool.query('SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE users.id = $1;', [id]);
     
     if (myUserProfile.rowCount === 0 || !myUserProfile) {
       return res.status(400).json({ errors: [{ msg: "No info found from user." }] });
@@ -28,7 +23,6 @@ exports.getUserProfile = async (req, res, next) => {
       'SELECT id As profileId, address, address_2, phone, city, state, country, zipcode, company, user_id FROM profiles WHERE user_id = $1;', [id]
     );
 
-    // send existing profile to matched user
     res.status(200).json({
       status: "Success! Generated user profile for editing.",
       data: {
@@ -48,9 +42,7 @@ exports.getUserProfile = async (req, res, next) => {
 // Private / Admin
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const userProfiles = await pool.query(
-      'SELECT id, f_name, l_name, user_email, username, role, created_at FROM users;'
-    );
+    const userProfiles = await pool.query('SELECT id, f_name, l_name, user_email, username, role, created_at FROM users;');
 
     if (userProfiles.rowCount >= 1) {
       for (let i = 0; i < userProfiles.rows.length; i++) {
@@ -76,11 +68,7 @@ exports.getAllUsers = async (req, res, next) => {
 // Private / Admin
 exports.getUserById = async (req, res, next) => {
   const { user_id } = req.params;
-  let profileById;
-
   try {
-    // get user profile and socials
-    // join with socials, base on profile.user_id
     const userData = await pool.query(
       'SELECT id, f_name, l_name, username, user_email, role, created_at FROM users WHERE users.id = $1;', [user_id]
     );
@@ -110,16 +98,7 @@ exports.getUserById = async (req, res, next) => {
 // Private
 exports.createUserProfile = async (req, res, next) => {
   const { id } = req.user;
-  let {
-    address,
-    address2,
-    phone,
-    city,
-    state,
-    country,
-    zipcode,
-    company
-  } = req.body;
+  let { address, address2, phone, city, state, country, zipcode, company } = req.body;
 
   let profileDataCheck;
   
@@ -140,17 +119,13 @@ exports.createUserProfile = async (req, res, next) => {
 
   try {
     // check if user profile already exists
-    const userProfileExists = await pool.query(
-      'SELECT * FROM profiles WHERE user_id = $1;', [id]
-    );
+    const userProfileExists = await pool.query('SELECT * FROM profiles WHERE user_id = $1;', [id]);
       
     if(userProfileExists.rows.length > 0) {
       return res.status(403).json({ errors: [{ msg: "Unauthorized. Profile already exists." }] });
     }
 
-    const userData = await pool.query(
-      'SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]
-    );
+    const userData = await pool.query('SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]);
 
     if (userData.rowCount > 0) {
       let userById = userData.rows[0];
@@ -186,31 +161,20 @@ exports.createUserProfile = async (req, res, next) => {
 // Private
 exports.createUserShippingInfo = async (req, res, next) => {
   const { id } = req.user;
-  let {
-    fullname,
-    address,
-    zipcode,
-    city,
-    state,
-    country,
-  } = req.body;
+  let { fullname, address, zipcode, city, state, country } = req.body;
 
   if (!fullname || !address || !city || !state || !country || !zipcode) {
     return res.status(406).json({ errors: [{ msg: "All fields are required." }] });
   }
 
   try {
-    const userProfileExists = await pool.query(
-      'SELECT * FROM profiles WHERE user_id = $1;', [id]
-    );
+    const userProfileExists = await pool.query('SELECT * FROM profiles WHERE user_id = $1;', [id]);
       
     if(userProfileExists.rowCount > 0) {
       return res.status(403).json({ errors: [{ msg: "Unauthorized. Profile already exists." }] });
-    }
+    };
 
-    const userData = await pool.query(
-      'SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]
-    );
+    const userData = await pool.query('SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]);
 
     if (userData.rowCount > 0) {
       let userById = userData.rows[0];
@@ -223,15 +187,9 @@ exports.createUserShippingInfo = async (req, res, next) => {
       'INSERT INTO profiles (address, city, state, country, zipcode, user_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING address, city, state, country, zipcode, user_id;', [addressChk, cityChk, stateChk, countryChk, zipcodeChk, id]
     );
 
-    // if (createProfile.rows.length === 0) {
-    //   return res.status(400).json({ errors: [{ msg: "No profile was created." }] });
-    // }
-
     res.status(200).json({
       status: "Success! User profile created!",
       data: {
-        // userData: userData.rows[0],
-        // myProfileInfo: createProfile.rows[0]
         myShippingInfo: createProfile.rows[0]
       }
     });
@@ -239,7 +197,6 @@ exports.createUserShippingInfo = async (req, res, next) => {
     console.error(err.message);
     res.status(500).send("Server Error...");
   }
-
 }
 
 // *** Insomnia tested / Passed / Works in App
@@ -304,9 +261,7 @@ exports.updateUserInfo = async (req, res, next) => {
       usersDataUpdate.rows[0].created_at = date;
     }
 
-    const userProfile = await pool.query(
-      'SELECT id, address, address_2, phone, city, state, country, zipcode, company, user_id FROM profiles WHERE user_id = $1;', [id]
-    );
+    const userProfile = await pool.query('SELECT id, address, address_2, phone, city, state, country, zipcode, company, user_id FROM profiles WHERE user_id = $1;', [id]);
 
     res.status(200).json({
       status: "Success! Profile updated.",
@@ -357,17 +312,13 @@ exports.updateUserProfile = async (req, res, next) => {
   [addressChk, address2Chk, phoneChk, cityChk, stateChk, countryChk, zipcodeChk, companyChk] = profileChecked;
 
   try {
-    const profileExists = await pool.query(
-      'SELECT * FROM profiles WHERE user_id = $1;', [id]
-    );
+    const profileExists = await pool.query('SELECT * FROM profiles WHERE user_id = $1;', [id]);
 
     if (profileExists.rowCount === 0) {
       return res.status(404).json({ errors: [{ msg: 'Profile does not exist.' }] });
     }
 
-    myUserData = await pool.query(
-      'SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]
-    );
+    myUserData = await pool.query('SELECT id, f_name, l_name, username, user_email, created_at FROM users WHERE id = $1;', [id]);
 
     if (myUserData.rows.length < 1) {
       return res.status(400).json({ errors: [{ msg: "User data failed to update." }] });
@@ -410,9 +361,7 @@ exports.updateUser = async (req, res, next) => {
   const { user_id } = req.params;
   const { f_name, l_name, username, user_email, role } = req.body;
   try {
-    const userToUpdate = await pool.query(
-      'SELECT f_name, l_name, username, user_email, role FROM users WHERE id = $1;', [user_id]
-    );
+    const userToUpdate = await pool.query('SELECT f_name, l_name, username, user_email, role FROM users WHERE id = $1;', [user_id]);
 
     if (userToUpdate.rowCount === 0 || !userToUpdate) {
       return res.status(404).json({ errors: [{ msg: "User not found!" }] });

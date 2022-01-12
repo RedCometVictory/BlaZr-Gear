@@ -1,7 +1,6 @@
 const { check, validationResult } = require('express-validator');
 
-// authRoutes
-// authenticate users already in db (login) an get token (used to make req to provate routes)
+// authRoutes, authenticate users already in db (login) an get token (used to make req to private routes)
 exports.signinAuthValidator = [
   check('email', 'Please include a valid email address.').exists().isEmail().trim(),
   check('password', 'Password is required.').exists().isLength({min: 6, max: 16}).withMessage('Password must be between 6 to 16 characters.')

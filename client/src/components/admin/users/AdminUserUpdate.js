@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserAdmin } from '../../../redux/actions/userActions';
 import Spinner from '../../layouts/Spinner';
@@ -11,7 +10,7 @@ const AdminUserUpdate = ({stateChanger}) => {
   const { user_id } = useParams();
   const dispatch = useDispatch();
   const userDetail = useSelector(state => state.user);
-  const { loading, errors, userById } = userDetail;
+  const { loading, userById } = userDetail;
   const [hasMounted, setHasMounted] = useState(false);
   const [formUserData, setFormUserData] = useState(initialState);
 

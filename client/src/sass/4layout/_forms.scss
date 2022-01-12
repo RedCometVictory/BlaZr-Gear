@@ -5,6 +5,15 @@
   height: auto;
   margin: 0 auto;
 }
+.forgot-password-container {
+  display: flex;
+  justify-content: center;;
+  .forgot-password-btn {
+    margin: 2rem 0 0 0;
+      min-width: 6rem;
+      max-width: 9rem;
+  }
+}
 .form {
 	width: 100%;
 	height: auto;
@@ -24,11 +33,7 @@
     border-radius: 6px;
     &::file-selector-button { // firefox
       visibility: hidden;
-      // color: white;
       padding: 0px 0px 0px 16px;
-      // border-radius: 2px;
-      // border: 2px dashed yellow;
-      // background-color: none;
     }
     &::-webkit-file-upload-button { // chrome / edge
       visibility: hidden;
@@ -398,7 +403,7 @@
   }
   &__submit {
     border-radius: 3px;
-    padding: 0.3px 1rem 0.3rem;
+    padding: 6px 1rem;
     font-weight: 400;
     font-size: 0.85rem;
     border: none;

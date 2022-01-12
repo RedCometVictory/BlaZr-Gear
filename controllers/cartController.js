@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-
+// *** NOTE: originally user cart info was to be saved into backend. However it is handled in LS instead. This code is to be saved in case of change. Though tested, it will likely need to be updated.
 // *** Insomnia tested / Passed
 // get all current user cart items, toling tax, shipping, and price without adding item to cart
 // /cart

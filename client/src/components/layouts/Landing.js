@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import { Link, Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ProductItem from '../product/ProductItem';
 import { getAllSlides } from '../../redux/actions/slideActions';
@@ -17,7 +16,6 @@ const Landing = () => {
   const [index, setIndex] = useState(0);
   const length = slides.length;
   const timeout = useRef(null);
-  // let showSlide;
   let slideImgArr = [];
   let slideTitleArr = [];
   let slideDescArr = [];

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { getAllImages } from '../../../redux/actions/imageActions';
 import AdminImageItem from './AdminImageItem';
 import Paginate from '../../layouts/Paginate';
@@ -9,7 +8,7 @@ import Spinner from '../../layouts/Spinner';
 const AdminImageList = () => {
   const dispatch = useDispatch();
   const imageDetail = useSelector(state => state.image);
-  const { loading, errors, images, page, pages } = imageDetail;
+  const { loading, images, page, pages } = imageDetail;
   const [hasMounted, setHasMounted] = useState(false);
   let [currentPage, setCurrentPage] = useState(page || 1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -33,7 +32,6 @@ const AdminImageList = () => {
     if (e.target.value > itemsPerPage) {
       setCurrentPage(currentPage = currentPage - 1);
     }
-    // setItemsPerPage(e.target.value); // 12 or 20, dropdown
     setItemsPerPage(Number(e.target.value)); // 12 or 20, dropdown
   };
 

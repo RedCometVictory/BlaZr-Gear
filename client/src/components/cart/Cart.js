@@ -6,15 +6,16 @@ import { getUserProfile } from '../../redux/actions/userActions'
 import { setAlert } from '../../redux/actions/alertActions';
 import { getAllProductIds } from '../../redux/actions/productActions';
 import CartItem from './CartItem';
+import Spinner from '../layouts/Spinner';
 
 const Cart = () => {
-  // const { prod_id } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
   const userAuth = useSelector(state => state.auth);
   const productDetails = useSelector(state => state.product);
   const cartDetails = useSelector(state => state.cart);
   const [hasMounted, setHasMounted] = useState(false);
+  // const [updatingCart, setUpdatingCart] = useState(false);
   const { isAuthenticated } = userAuth;
   let { productIds } = productDetails;
   let { loading, cartItems, shippingAddress } = cartDetails;
@@ -23,10 +24,10 @@ const Cart = () => {
   useEffect(() => {
     dispatch(getAllProductIds());
 
-    // if (isAuthenticated) return dispatch(getCart());
     if (!isAuthenticated) return dispatch(getCartGuest());
     if (isAuthenticated) {
       dispatch(getUserProfile());
+      // dispatch(getCart());
       return dispatch(getCartGuest()); 
     }
   }, [dispatch, isAuthenticated]);
@@ -49,18 +50,23 @@ const Cart = () => {
       for(let j = 0; j < productIds.length; j++) {
         if (cartItems[i].product.product_id === productIds[j].id) {
           match.push(cartItems[i]);
-          break
+          break;
         }
       }
     };
+    // setUpdatingCart(true);
     if (currentLocalStorage.length > 0) {
       if (match.length !== currentLocalStorage.length) {
         dispatch(resetCartOnProductDelete(match));
       };
     };
+    // setUpdatingCart(false);
   }
 
+  // if (updatingCart) setUpdatingCart(false);
+
   const checkoutHandler = () => {
+    // if (updatingCart) return;
     if (!isAuthenticated) {
       dispatch((setAlert('Please login / create account to continue with checkout.', 'danger')));
       return history.push('/login');
@@ -68,14 +74,12 @@ const Cart = () => {
     // const orderPrice = localStorage.setItem('__orderPrice', JSON.stringify(price));
     if (Object.keys(shippingAddress).length === 0 || !shippingAddress) {
       dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
-      // history.push("/profile");
       history.push("/shipping-address");
     } else {
       history.push("/payment");
     }
   };
 
-  // let price = {};
   price.subTotal = cartItems.reduce((acc, item) => acc += item.product.price * item.qty, 0).toFixed(2);
   price.tax = Number(price.subTotal * 0.11).toFixed(2);
   price.shippingTotal = 
@@ -91,7 +95,7 @@ const Cart = () => {
   return (
     <>
     {loading ? (
-      <div className="">Loading Cart...</div>
+      <Spinner />
     ) : (
       <section className="carts">
         <div className="carts__header">

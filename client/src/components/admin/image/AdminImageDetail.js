@@ -7,7 +7,7 @@ import Spinner from '../../layouts/Spinner';
 const AdminImageDetail = () => {
   const { image_id } = useParams();
   const history = useHistory();
-  const myRef = useRef();
+  // const myRef = useRef();
   const dispatch = useDispatch();
   const imageDetail = useSelector(state => state.image);
   const { loading, image } = imageDetail;

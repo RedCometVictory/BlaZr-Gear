@@ -11,7 +11,7 @@ const AdminProductDetail = () => {
   const myRef = useRef();
   const dispatch = useDispatch();
   const productDetail = useSelector(state => state.product);
-  const { loading, errors, productById } = productDetail;
+  const { loading, productById } = productDetail;
   const [hasMounted, setHasMounted] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmUpdate, setConfirmUpdate] = useState(false);
@@ -62,7 +62,7 @@ const AdminProductDetail = () => {
         )}
         <div className="admProductDetail__details">
           <div className="admProductDetail__image">
-            <img className="admProductDetail__img" src={productById.productInfo.product_image_url} alt="forest view" />
+            <img className="admProductDetail__img" src={productById.productInfo.product_image_url} alt="product view" />
           </div>
           <div className="admProductDetail__info">
             <div className="admProductDetail__info-inner">

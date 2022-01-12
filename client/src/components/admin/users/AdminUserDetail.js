@@ -10,7 +10,7 @@ const AdminUserDetail = () => {
   const myRef = useRef();
   const dispatch = useDispatch();
   const userDetail = useSelector(state => state.user);
-  const { loading, errors, userById } = userDetail;
+  const { loading, userById } = userDetail;
   const [hasMounted, setHasMounted] = useState(false);
   const [confirmUpdate, setConfirmUpdate] = useState(false);
 

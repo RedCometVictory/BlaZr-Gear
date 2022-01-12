@@ -4,23 +4,29 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FaCaretDown, FaBars, FaShoppingCart } from 'react-icons/fa';
 import ModeButton from './ModeButton';
 import { logout } from '../../redux/actions/authActions';
+import { setAlert } from '../../redux/actions/alertActions';
 import Search from './Search';
-import useWindow from '../../hooks/useWindow';
+// import CartList from './CartList';
+// import useClickOutside from '../../hooks/useClickOutside';
+// import useWindow from '../../hooks/useWindow';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const caretToggleRef = useRef();
-  const { height, width } = useWindow();
+  // const cartIconRef = useRef();
+  // const { height, width } = useWindow();
   const userAuth = useSelector(state => state.auth);
   const cart = useSelector(state => state.cart);
   const { isAuthenticated, userInfo } = userAuth;
   const { cartItems } = cart;
   const [hasMounted, setHasMounted] = useState(false);
   const [caretChecked, setCaretChecked] = useState(false);
+  // const [showCart, setShowCart] = useState(false);
   const [caretCheckedDesktop, setCaretCheckedDesktop] = useState(false);
 
 
+  // useClickOutside(cartIconRef, () => setShowCart(true));
   // useEffect(() => {
   //   let quantity = cartItems.
   // }, [cartItems]);
@@ -47,6 +53,13 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout(history));
   }
+
+  // const showCartHandler = (value) => {
+  //   dispatch(setAlert(`Show Cart = ${value}`, 'success'));
+  //   // if (showCart) return;
+  //   if (!showCart) setShowCart(true);
+  //   // setShowCart(true);
+  // };
   // feed is for all posts of users followed and self
   const authLinks = (
     <>
@@ -75,6 +88,9 @@ const Navbar = () => {
     </li>
     <li className="nav__link-item--secondary">
       <Link to="/admin/order-list">Orders</Link>
+    </li>
+    <li className="nav__link-item--secondary">
+      <Link to="/orders">My Orders</Link>
     </li>
     <li className="nav__link-item--secondary">
       <Link to="/profile">{userInfo && (userInfo?.f_name)}</Link>
@@ -198,6 +214,7 @@ const Navbar = () => {
         <div className="nav__theme-select large" >
           <ModeButton />
         </div>
+        {/* <CartList ref={cartIconRef} showCart={showCart} setShowCart={setShowCart} cartItems={cartItems} /> */}
       </div>
     </header>
   )

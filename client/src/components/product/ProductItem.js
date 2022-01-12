@@ -10,7 +10,7 @@ const ProductItem = ({
   product: {
     id, name, product_image_url,
     brand, category, description,
-    price, review_avg, count, product_id
+    price, review_avg, count, count_in_stock, product_id
   }
 }) => {
   const dispatch = useDispatch();
@@ -21,12 +21,6 @@ const ProductItem = ({
   const [hasMounted, setHasMounted] = useState(false);
   const { isAuthenticated } = userAuth;
 
-  // ORIGINAL
-  // useEffect(() => {
-  //   let inCart = cartItems.find(item => item.product.id === id);
-  //   if (!inCart) return setItemInCart(false);
-  //   if (inCart) return setItemInCart(true);
-  // }, [id, cartItems]);
   useEffect(() => {
     let inCart = cartItems.find(item => item.product.product_id === product_id);
     if (!inCart) return setItemInCart(false);
@@ -83,7 +77,13 @@ const ProductItem = ({
           <div className="products_price">$ {price}</div>
         </div>
         <div className="products__buttons">
-          {!itemInCart ? (
+          {count_in_stock === 0 ? (
+            <div
+            className="btn btn-cart-card btn-primary"
+            >
+              Out of Stock
+            </div>
+          ) : !itemInCart ? (
             <div
             className="btn btn-cart-card btn-primary"
             onClick={() => addToCart(product_id, 1)}

@@ -6,7 +6,6 @@ const Search = () => {
   const history = useHistory();
   const [keyword, setKeyword] = useState('');
 
-  // TODO --- figure out a way to clear search bar upon submission
   const searchHandler = (e) => {
     e.preventDefault();
     if (keyword.trim()) {

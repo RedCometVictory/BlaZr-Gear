@@ -14,11 +14,11 @@ const HOST = process.env.HEROKU_DOMAIN;
 let whiteList;
 //  'https://www.sandbox.paypal.com'
 if (process.env.NODE_ENV === 'production') {
-  whiteList = [HOST, 'https://www.sandbox.paypal.com/'];
+  whiteList = [HOST, 'https://www.sandbox.paypal.com'];
 }
 
 if (process.env.NODE_ENV === 'development') {
-  whiteList = ['http://localhost:3000', 'https://www.sandbox.paypal.com/'];
+  whiteList = ['http://localhost:3000', 'https://www.sandbox.paypal.com'];
   app.use(morgan('dev'));
 }
 // server can interact with client
@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // const Environment = process.env.NODE_ENV === "production" ? paypalSDK.core.SandboxEnvironment : paypalSDK.core.SandboxEnvironment;
 // const paypalClient = new paypalSDK.core.PayPalHttpClient(
-//   new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET)
+//   new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET)
 // );
 
 // define routes (to controllers) - change proxy to reflect url

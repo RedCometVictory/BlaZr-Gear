@@ -40,6 +40,7 @@ const CartItem = ({
     dispatch(removeFromCartGuest(id));
   };
 
+  // className should be cartList when cart sidebar enabled
   return (
     <div className="cart">
       <div className="cart__list">

@@ -24,10 +24,9 @@ import { createUpdateSlideShowForm } from '../../utils/formDataServices';
 
 export const getAllSlides = () => async dispatch => {
   try {
-    console.log("ACTION: retrieving all slides");
     dispatch({type: SLIDE_LIST_REQUEST});
     const res = await api.get(`/slides/all`);
-    
+
     dispatch({
       type: SLIDE_LIST_SUCCESS,
       payload: res.data.data
@@ -45,13 +44,10 @@ export const getAllSlides = () => async dispatch => {
 
 export const getSlideDetails = (slide_id) => async dispatch => {
   try {
-    console.log("ACTION: slide details")
-    console.log(slide_id)
     dispatch({type: SLIDE_LIST_DETAILS_REQUEST});
     const res = await api.get(`/slides/${slide_id}`);
     let result = res.data.data.slideInfo;
-    console.log("result")
-    console.log(result)
+
     dispatch({
       type: SLIDE_LIST_DETAILS_SUCCESS,
       payload: result
@@ -72,13 +68,9 @@ export const createSlide = (slideForm, history) => async dispatch => {
     let servicedData = await createUpdateSlideShowForm(slideForm);
     dispatch({type: SLIDE_CREATE_REQUEST});
 
-    // const res = await api.post(`/products`, servicedData);
     await api.post(`/slides/add`, servicedData);
-    // let result = res.data.data.productInfo;
-    
     dispatch({
-      type: SLIDE_CREATE_SUCCESS,
-      // payload: result
+      type: SLIDE_CREATE_SUCCESS
     })
 
     dispatch(setAlert('Created slide.', 'success'));
@@ -96,15 +88,12 @@ export const createSlide = (slideForm, history) => async dispatch => {
 
 export const updateSlide = (slide_id, slideForm, history) => async dispatch=> {
   try {
-    console.log("===ACTION: updating slide===");
-    console.log(slide_id);
-    console.log(slideForm);
     let servicedData = await createUpdateSlideShowForm(slideForm);
     dispatch({type: SLIDE_UPDATE_REQUEST});
 
     const res = await api.put(`/slides/${slide_id}/update`, servicedData);
     let result = res.data.data.slide;
-    console.log(result);
+
     dispatch({
       type: SLIDE_UPDATE_SUCCESS,
       payload: result
@@ -124,8 +113,6 @@ export const updateSlide = (slide_id, slideForm, history) => async dispatch=> {
 };
 
 export const deleteSlide = (slide_id, history) => async dispatch => {
-  console.log("===ACTION: deleting product ===");
-  console.log(slide_id);
   try {
     dispatch({type: SLIDE_DELETE_REQUEST});
     await api.delete(`/slides/${slide_id}`);

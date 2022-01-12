@@ -6,7 +6,6 @@ import { registerUser } from '../../redux/actions/authActions';
 
 const Register = () => {
   const dispatch = useDispatch();
-  // access this part of state...
   const userAuth = useSelector(state => state.auth);
   const { isAuthenticated } = userAuth;
   const [formRegData, setFormRegData] = useState({
@@ -48,19 +47,19 @@ const Register = () => {
           <div className="form__inner-container">
             <div className="form__section">
               <div className="form__group">
-                <input type="email" name="email" value={email} onChange={onChange} placeholder="myemail123@mail.com " aria-required="true" required/>
+                <input type="email" name="email" value={email} onChange={onChange} maxLength={60} placeholder="myemail123@mail.com " aria-required="true" required/>
                 <label htmlFor="email" className="form__label">
                   <span className="form__label-name">E-Mail Address</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="password" name="password" value={password} onChange={onChange} placeholder="Must be 6 or more characters. " aria-required="true" required/>
+                <input type="password" name="password" value={password} onChange={onChange}  maxLength={60} placeholder="Must be 6 or more characters. " aria-required="true" required/>
                 <label htmlFor="password" className="form__label">
                   <span className="form__label-name">Password</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="password" name="password2" value={password2} onChange={onChange} placeholder="Repeat password to confirm. " aria-required="true" required/>
+                <input type="password" name="password2" value={password2} onChange={onChange} maxLength={60} placeholder="Repeat password to confirm. " aria-required="true" required/>
                 <label htmlFor="password2" className="form__label">
                   <span className="form__label-name">Confirm Password</span>
                 </label>
@@ -68,19 +67,19 @@ const Register = () => {
             </div>
             <div className="form__section section-two">
               <div className="form__group">
-                <input type="text" name="username" value={username} onChange={onChange} placeholder="White Owl-01 " aria-required="true" required/>
+                <input type="text" name="username" value={username} onChange={onChange} maxLength={120} placeholder="White Owl-01 " aria-required="true" required/>
                 <label htmlFor="username" className="form__label">
                   <span className="form__label-name">Username</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="text" name="firstName" value={firstName} onChange={onChange} placeholder="Jose" aria-required="true" required/>
+                <input type="text" name="firstName" value={firstName} onChange={onChange} maxLength={60} placeholder="Jose" aria-required="true" required/>
                 <label htmlFor="firstName" className="form__label">
                   <span className="form__label-name">First Name</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="text" name="lastName" value={lastName} onChange={onChange} placeholder="Price" aria-required="true" required/>
+                <input type="text" name="lastName" value={lastName} onChange={onChange} maxLength={60} placeholder="Price" aria-required="true" required/>
                 <label htmlFor="lastName" className="form__label">
                   <span className="form__label-name">Last Name</span>
                 </label>

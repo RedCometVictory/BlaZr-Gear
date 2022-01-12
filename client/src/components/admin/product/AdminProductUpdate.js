@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-// import Spinner from '../../layouts/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProduct } from '../../../redux/actions/productActions';
 import Spinner from '../../layouts/Spinner';
@@ -12,7 +11,7 @@ const AdminProductUpdate = ({stateChanger}) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const productDetail = useSelector(state => state.product);
-  const { loading, errors, productById } = productDetail;
+  const { loading, productById } = productDetail;
   const [hasMounted, setHasMounted] = useState(false);
   const [formProductData, setFormProductData] = useState(initialState);
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -20,7 +19,7 @@ const AdminProductUpdate = ({stateChanger}) => {
   const [imageData, setImageData] = useState(null);
 
   useEffect(() => {
-    setFormProductData({ // on comp load
+    setFormProductData({
       name: loading || !productById ? '' : productById.productInfo.name,
       image_url: loading || !productById ? '' : productById.productInfo.product_image_url,
       brand: loading || !productById ? '' : productById.productInfo.brand,
@@ -51,7 +50,6 @@ const AdminProductUpdate = ({stateChanger}) => {
     checkFileType(fileToUpload);
     // check file size
     checkFileSize(fileToUpload);
-    // setImage(e.target.files[0]);
 
     setFormProductData({
       ...formProductData,
@@ -105,9 +103,10 @@ const AdminProductUpdate = ({stateChanger}) => {
                 <label htmlFor="name" className="admForm__label">Name: </label>
                 <input
                   type="text"
-                  placeholder="Sketchers Shoes - Men"
+                  placeholder="Skechers Shoes - Men"
                   className=""
                   name="name"
+                  maxLength={110}
                   onChange={e => onChange(e)}
                   value={name}
                 />
@@ -116,9 +115,10 @@ const AdminProductUpdate = ({stateChanger}) => {
                 <label htmlFor="brand" className="admForm__label">Brand: </label>
                 <input
                   type="text"
-                  placeholder="Sketchers"
+                  placeholder="Skechers"
                   className=""
                   name="brand"
+                  maxLength={255}
                   onChange={e => onChange(e)}
                   value={brand}
                 />
@@ -145,6 +145,7 @@ const AdminProductUpdate = ({stateChanger}) => {
                   placeholder="70.00"
                   className=""
                   name="price"
+                  step="0.01"
                   onChange={e => onChange(e)}
                   value={price}
                 />
@@ -156,6 +157,7 @@ const AdminProductUpdate = ({stateChanger}) => {
                   placeholder="10"
                   className=""
                   name="count_in_stock"
+                  min={0}
                   onChange={e => onChange(e)}
                   value={count_in_stock}
                 />
