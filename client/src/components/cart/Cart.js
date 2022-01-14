@@ -73,7 +73,6 @@ const Cart = () => {
     }
     // const orderPrice = localStorage.setItem('__orderPrice', JSON.stringify(price));
     if (Object.keys(shippingAddress).length === 0 || !shippingAddress) {
-      dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
       history.push("/shipping-address");
     } else {
       history.push("/payment");

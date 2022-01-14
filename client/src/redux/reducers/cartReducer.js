@@ -80,7 +80,9 @@ const cartReducer = (state = initialState, action) => {
     case CART_CLEAR_ITEMS:
       return {
         ...state,
-        cartItems: []
+        cartItems: [],
+        paymentMethod: null,
+        shippingAddress: {}
       }
     case CART_GET_ALL_FAILURE:
     case CART_ADD_ITEM_FAILURE:

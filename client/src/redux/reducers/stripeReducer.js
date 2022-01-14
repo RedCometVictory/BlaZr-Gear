@@ -13,7 +13,8 @@ import {
   REMOVE_CARD_OF_USER_FAILURE,
   STRIPE_CHARGE_RETRIEVED_REQUEST,
   STRIPE_CHARGE_RETRIEVED_SUCCESS,
-  STRIPE_CHARGE_RETRIEVED_FAILURE
+  STRIPE_CHARGE_RETRIEVED_FAILURE,
+  CLEAR_CARD_INFO
 } from '../constants/stripeConstants';
 
 const initialState = {
@@ -68,6 +69,13 @@ const stripeReducer = (state = initialState, action) => {
         ...state,
         // cards: removedPM,
         loading: false
+      }
+    case CLEAR_CARD_INFO:
+      return {
+        intent: null,
+        cards: [],
+        cardToUse: {},
+        clientSecret: null
       }
     case CHARGE_COMPLETE_FAILURE:
     case SET_CARD_FAILURE:

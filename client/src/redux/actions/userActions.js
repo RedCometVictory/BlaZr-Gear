@@ -28,7 +28,6 @@ export const getUserProfile = () => async dispatch => {
     dispatch({type: USER_DETAILS_REQUEST});
 
     const res = await api.get('/users/me');
-    // let result = res.data.data.userById;
     let result = res.data.data;
     dispatch({
       type: USER_DETAILS_SUCCESS,
@@ -69,7 +68,7 @@ export const getUserProfileAdmin = (user_id) => async dispatch => {
 };
 
 // list all users
-export const getUsersAdmin = (user_id) => async dispatch => {
+export const getUsersAdmin = () => async dispatch => {
   try {
     dispatch({type: USER_LIST_REQUEST});
     

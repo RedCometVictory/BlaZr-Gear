@@ -30,7 +30,7 @@ const slideReducer = (state = initialState, action) => {
   
   switch (type) {
     case SLIDE_LIST_REQUEST:
-      return { loading: true, slides: [] }
+      return { ...state, loading: true, slides: [] }
     case SLIDE_LIST_DETAILS_REQUEST:
       return { ...state, loading: true}
     case SLIDE_CREATE_REQUEST:

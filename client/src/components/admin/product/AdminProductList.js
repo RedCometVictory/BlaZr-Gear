@@ -15,10 +15,8 @@ const AdminProductList = () => {
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState('All');
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(listAllCategories());
     dispatch(listAllProducts(keyword, category !== 'All' ? category : '', currentPage, itemsPerPage));
   }, [dispatch, keyword, category, currentPage, itemsPerPage]);
@@ -32,13 +30,11 @@ const AdminProductList = () => {
   }
 
   const categoryChange = (e) => {
-    setIsLoading(true);
     setCurrentPage(1);
     setCategory(e.target.value); // 12 or 20, dropdown
   };
 
   const itemCountChange = (e) => {
-    // setIsLoading(true);
     if (e.target.value > itemsPerPage) {
       setCurrentPage(currentPage = currentPage - 1);
     }
@@ -46,10 +42,8 @@ const AdminProductList = () => {
   };
 
   const pageChange = (chosenPage) => {
-    setIsLoading(true);
     setCurrentPage(chosenPage);
     window.scrollTo({ behavior: "smooth", top: 0 });
-    // setIsLoading(false);
   };
 
   return (

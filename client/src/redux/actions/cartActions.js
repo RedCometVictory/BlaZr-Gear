@@ -88,7 +88,6 @@ export const addItemToCart = (prod_id, qty) => async (dispatch, getState) => {
   try {
     // const res = await api.post('/cart/add', cartData);
     const res = await api.get(`/products/${prod_id}`, qty);
-    // const res = await api.put('/cart/update-quantity');
     dispatch({
       type: CART_ADD_ITEM,
       payload: res.data.data
@@ -109,7 +108,6 @@ export const addItemToCart = (prod_id, qty) => async (dispatch, getState) => {
 // add / subtract item qty from cart
 export const updateItemInCart = (prod_id, cartQty) => async (dispatch, getState) => {
   try {
-    // const res = await api.post('/cart/add', cartData);
     const res = await api.get(`/products/${prod_id}`);
     // const res = await api.put('/cart/update-quantity');
     dispatch({
@@ -129,9 +127,8 @@ export const updateItemInCart = (prod_id, cartQty) => async (dispatch, getState)
   }
 };
 
-export const removeFromCart = (prod_id) => async (dispatch, getState) => {
+export const removeFromCart = () => async (dispatch, getState) => {
   try {
-    // const res = await api.post('/cart/add', cartData);
     const res = await api.delete(`/cart/delete`);
 
     dispatch({
@@ -181,14 +178,12 @@ export const shippingAddressForCart = (shippingAddress) => async (dispatch, getS
 
 export const paymentMethodForCart = (formData) => async (dispatch, getState) => {
   try {
-    // const res = await api.post('/cart/add', cartData);
-    // const res = await api.delete(`/products/${prod_id}`);
     dispatch({
       type: CART_SAVE_PAYMENT_METHOD,
       payload: formData
     });
 
-    localStorage.setItem('__paymentMethod', JSON.stringify(formData));
+    localStorage.setItem('__paymentMethod', JSON.stringify(getState().cart.paymentMethod));
   } catch (err) {
     dispatch(setAlert('Failed to set payment method for cart.', 'danger'));
     const errors = err.response.data.errors;

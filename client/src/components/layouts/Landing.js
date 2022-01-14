@@ -48,7 +48,7 @@ const Landing = () => {
     setIndex(index === 0 ? length - 1 : index - 1);
   };
   const duration = 10000; // in ms ~ 10 secs
-  // const duration = 1000000; // in ms ~ 10 secs
+  // const duration = 1000000; // in ms ~ 10 mins
   useEffect(() => {
     const nextSlide = () => {
       setIndex(index => (index === length - 1 ? 0 : index + 1));

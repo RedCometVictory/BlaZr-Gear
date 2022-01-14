@@ -2,7 +2,7 @@ require('dotenv').config();
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
-const { refreshTokenString, resetTokenGenerator, accessTokenGenerator, refreshTokenGenerator, getAccessTokenFromHeaders, validateRefreshToken, validateResetToken, refreshTokenCookieOptions } = require('../middleware/jwtGenerator');
+const { refreshTokenString, resetTokenGenerator, accessTokenGenerator, refreshTokenGenerator, validateRefreshToken, validateResetToken, refreshTokenCookieOptions } = require('../middleware/jwtGenerator');
 const { signedUpMail, forgotPasswordMail, PasswordResetSuccessMail, bannedAccountMail } = require('../middleware/emailService');
 
 // req.user accessible via token (authJWT), used to access user id via state.auth.user.id
@@ -295,8 +295,6 @@ exports.resetPassword = async (req, res, next) => {
     if (verifToken.rowCount === 0 || !verifToken) {
       return res.status(403).json({ errors: [{ msg: 'Reset Token not found. Please try password reset again.' }] });
     };
-    // const resetTokenIDFromDB = verifToken.rows[0].id;
-    // const resetTokenFromDB = verifToken.rows[0].reset_token;
     const salt = await bcrypt.genSalt(11);
     const encryptedPassword = await bcrypt.hash(password, salt);
 
@@ -326,24 +324,15 @@ exports.resetPassword = async (req, res, next) => {
 exports.authRefreshToken = async (req, res, next) => {
   const { refresh } = req.cookies;
 
-  // const accessToken = getAccessTokenFromHeaders(req.headers);
   if (refresh === undefined || !refresh) {
-    // return res.send("no refresh cookie exists!").json({token: ''});
     return res.status(401).json({ errors: [{ msg: "No refresh cookie exists!" }] });
   }
   // check if access token delivered via headers
-  // if (!accessToken) {
-    // res.status(401).send("Token not valid!");
-  // }
-
-  // let parsedRefresh = JSON.parse(refresh);
   // verify token to get payload...
   const verifiedRefToken = validateRefreshToken(refresh);
-  // const verifiedRefToken = validateRefreshToken(parsedRefresh);
 
   if (verifiedRefToken === undefined || !verifiedRefToken) {
     res.status(401).send('Failed to verify refresh token.');
-    return; // maybe redirct / call logout
   }
 
   try {
@@ -381,14 +370,11 @@ exports.authRefreshToken = async (req, res, next) => {
       return res.status(401).json({ errors: [{ msg: "Unauthorized. Failed to update refresh token." }] });
     }
 
-    // updateRefTokenInDb.rows[0].user_password = undefined;
     // sign new reftokne id and create/update cookie
     const signedRefreshToken = refreshTokenGenerator(userId, userRole, newRefreshTokenId);
         
     const refreshOptions = refreshTokenCookieOptions();
 
-    // get the access token data via axios as:
-    // res.data.data.token
     res.cookie('refresh', signedRefreshToken, refreshOptions);
     res.json({
       status: "Sucessfully generated new access and refresh tokens!",
@@ -407,50 +393,30 @@ exports.authRefreshToken = async (req, res, next) => {
 // /auth/logout
 // Public
 exports.authLogout = async (req, res, next) => {
-  const { refresh } = req.cookies;
-  // remove access token from localstorage:
-  // console.log("attempting logout of user")
-  // if (!refresh) return "logout: no refresh cookie exists!"; 
+  const { refresh } = req.cookies; 
   // verify token to get payload...
-  // try {
-  //   res.send("you have a cookie!")
-  // } catch (err) {
-  //   res.send("no cookie");
-  // }
-  const verifiedRefToken = validateRefreshToken(refresh);
-
-  // if (verifiedRefToken === null) {
-  //   res.status(403).send('Failed to verify refresh token.');
-  //   return; // maybe redirect / call logout (handles bu authJWT middleware)
-  // }
-  // console.log("logging out:");
-  // console.log(verifiedRefToken);
-  // console.log("==============");
-  // console.log(verifiedRefToken.refreshTokenId);
-  // console.log(verifiedRefToken.refreshToken);
-
   try {
-    // console.log("refresh token cookie has been verified!");
-    // res.send("you have a cookie!")
+    const verifiedRefToken = validateRefreshToken(refresh);
+
+    // if (verifiedRefToken === null) {
+      // res.status(403).send('Failed to verify refresh token.');
+    // }
+
     // clear existing cookies:
     if (verifiedRefToken) {
-      const clearRefreshToken = await pool.query(
+      // clear Refresh Token 
+      await pool.query(
         'UPDATE users SET refresh_token = null WHERE refresh_token = $1 RETURNING *', [verifiedRefToken.refreshToken]
       );
       // if (clearRefreshToken.rows[0].refresh_token !== null) {
       //   return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to nullify refresh token." }] });
       // }
-        
-      // console.log(clearRefreshToken.rows[0].refresh_token);
-      // res.send("successfully nulled refresh token");
       // res.clearCookie('refresh'); // instead of deleting, override
       res.cookie('refresh', '', { expires: new Date(1) });
       // to effectively "delete" a cookie, one must set the expiration to essentially be maxAge=1
     };
     
-    res.send({ "success": "Logged out successfully!" });
-    // implement login redirects later
-    // return res.status(200).redirect("/login");
+    res.status(200).send({ "success": "Logged out successfully!" });
   } catch (err) {
     // res.send("no cookie?????");
     console.error(err.message);
@@ -475,10 +441,10 @@ exports.authDelete = async (req, res, next) => {
     // if user role = admin || staff remove comments they made
     if (role === 'staff' || role === 'admin') {
       // const deleteAllComments = await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
-      await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
       // if (!deleteAllComments) {
         // res.status(404).json({ errors: [{ msg: "Error. User comments found." }] });
       // }
+      await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
     }
     // delete All User Reviews
     await pool.query('DELETE FROM reviews WHERE user_id = $1;', [id]);

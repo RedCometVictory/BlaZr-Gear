@@ -19,9 +19,8 @@ const App = () => {
     store.dispatch(loadUser());
     // logout user from all tabs if logged out from one tab
     window.addEventListener('storage', () => {
-      if (!localStorage.token) {
-        store.dispatch(logout());
-      };
+      console.log("refresh logged me out")
+      if (!localStorage.token) store.dispatch(logout());
     });
   }, []);
   const [hasMounted, setHasMounted] = useState(false);
@@ -46,5 +45,4 @@ const App = () => {
     </Provider>
   )
 };
-
 export default App;

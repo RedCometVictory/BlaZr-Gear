@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FaCaretDown, FaBars, FaShoppingCart } from 'react-icons/fa';
 import ModeButton from './ModeButton';
 import { logout } from '../../redux/actions/authActions';
-import { setAlert } from '../../redux/actions/alertActions';
 import Search from './Search';
 // import CartList from './CartList';
 // import useClickOutside from '../../hooks/useClickOutside';
@@ -25,7 +24,7 @@ const Navbar = () => {
   // const [showCart, setShowCart] = useState(false);
   const [caretCheckedDesktop, setCaretCheckedDesktop] = useState(false);
 
-
+  // for use with cart list, if in the form of a sidebar
   // useClickOutside(cartIconRef, () => setShowCart(true));
   // useEffect(() => {
   //   let quantity = cartItems.
@@ -60,7 +59,6 @@ const Navbar = () => {
   //   if (!showCart) setShowCart(true);
   //   // setShowCart(true);
   // };
-  // feed is for all posts of users followed and self
   const authLinks = (
     <>
     <li className="nav__link-item--secondary">
@@ -116,13 +114,6 @@ const Navbar = () => {
       setCaretChecked(e.currentTarget.checked)
   };
 
-  // login/logout, cart, cart total count of items, account
-  // dropdown (for account link when clicked): username (not link), profile link, orders link, searchbar, CATERGories (drop down of categories), shop
-
-  // let loginStatus = isAuthenticated ? `${userInfo.name}` : 'Login';
-  // let loginStatus = userInfo && isAuthenticated ? `${userInfo.f_name}` : 'Login';
-  // let loginStatus = !isAuthenticated ? 'Login' : userInfo.role === 'admin' &&  isAuthenticated ? 'Admin' : `${userInfo.f_name}`
-  // let loginStatus = !isAuthenticated ? 'Login' : userInfo && userInfo?.role === 'admin' &&  isAuthenticated ? 'Admin' : `${userInfo.f_name}`
   return (
     <header className="nav">
       <div className="nav__logo">

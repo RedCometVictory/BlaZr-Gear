@@ -26,7 +26,8 @@ import {
   ORDER_REFUND_FAILURE,
   ORDER_DELETE_REQUEST,
   ORDER_DELETE_SUCCESS,
-  ORDER_DELETE_FAILURE
+  ORDER_DELETE_FAILURE,
+  ORDER_CLEAR_INFO
 } from '../constants/orderConstants';
 
 const initialState = {
@@ -92,6 +93,13 @@ const orderReducer = (state = initialState, action) => {
         },
         loading: false,
         success: true
+      }
+    case ORDER_CLEAR_INFO:
+      return {
+        order: {},
+        orders: [],
+        page: null,
+        pages: null
       }
     case ORDER_CREATE_FAILURE:
     case ORDER_DETAILS_FAILURE:

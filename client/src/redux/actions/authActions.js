@@ -1,8 +1,6 @@
 import api from '../../utils/api';
 import { setAlert } from './alertActions';
 import { addCardToUser } from './stripeActions';
-
-// actions pass data as object
 import {
   AUTH_REGISTER_REQUEST,
   AUTH_REGISTER_SUCCESS,
@@ -22,40 +20,42 @@ import {
   AUTH_VERIFY_PASSWORD_REQUEST,
   AUTH_VERIFY_PASSWORD_SUCCESS,
   AUTH_VERIFY_PASSWORD_FAILURE,
-  AUTH_VERIFY_PASSWORD_RESET,
+  // AUTH_VERIFY_PASSWORD_RESET,
   // AUTH_UPDATE_PASSWORD_REQUEST,
   // AUTH_UPDATE_PASSWORD_SUCCESS,
   // AUTH_UPDATE_PASSWORD_FAILURE,
   // AUTH_UPDATE_PASSWORD_RESET,
-  AUTH_NEW_PASSWORD_REQUEST,
-  AUTH_NEW_PASSWORD_SUCCESS,
-  AUTH_NEW_PASSWORD_FAILURE,
-  TOKEN_REQUEST,
+  // AUTH_NEW_PASSWORD_REQUEST,
+  // AUTH_NEW_PASSWORD_SUCCESS,
+  // AUTH_NEW_PASSWORD_FAILURE,
+  // TOKEN_REQUEST,
   TOKEN_RECEIVED,
-  TOKEN_FAILURE
+  // TOKEN_FAILURE,
+  AUTH_USER_LOADED_REQUEST,
+  // AUTH_USER_LOADED_FAILURE
 } from '../constants/authConstants';
 import { USER_DETAILS_RESET } from '../constants/userConstants';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
-
+import { CLEAR_CARD_INFO } from '../constants/stripeConstants';
+import { ORDER_CLEAR_INFO } from '../constants/orderConstants';
 // authTest controller
-export const loadUser = () => async dispatch => {
+export const loadUser = () => async (dispatch, getState) => {
   try {
+    dispatch({ type: AUTH_USER_LOADED_REQUEST })
     const res = await api.get('/auth');
     let result = res.data.data;
-    console.log("stripeCustId upon user loaded")
-    console.log(result.userInfo)
-    console.log("--------------------")
-    console.log(result.userInfo.stripe_cust_id)
+    
     if (result.userInfo.stripe_cust_id) {
-      console.log("attempting to fetch user stripe client secret")
       await dispatch(addCardToUser(result.userInfo.stripe_cust_id));
     }
-
+    
     dispatch({
       type: AUTH_USER_LOADED,
       payload: result
     })
+    localStorage.setItem("__userInfo", JSON.stringify(getState().auth.userInfo));
   } catch (err) {
+    // dispatch({ type: AUTH_USER_LOADED_FAILURE })
     dispatch({type: AUTH_ERROR});
     dispatch(setAlert('Failed to retrieve user info.', 'danger'));
   }
@@ -68,18 +68,15 @@ export const registerUser = (formRegData) => async dispatch => {
     const res = await api.post('/auth/register', formRegData);
     const result = res.data.data;
 
-    // payload is token, place token into LS
     dispatch({
       type: AUTH_REGISTER_SUCCESS,
       payload: result
     })
-    // load user information
     dispatch(loadUser());
     dispatch(setAlert('Successfully registered. Welcome.', 'success'));
   } catch (err) {
     dispatch(setAlert('Failed to Register', 'danger'));
     const errors = err.response.data.errors;
-    // pass msg and alert type
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -89,27 +86,21 @@ export const registerUser = (formRegData) => async dispatch => {
 
 export const loginUser = (formData) => async dispatch => {
   try {
-    // if (localStorage.getItem('__shippingAddress')) {
-    //   localStorage.removeItem('__shippingAddress');
-    // }
     dispatch({type: AUTH_LOGIN_REQUEST})
     const res = await api.post('/auth/login', formData);
 
     let result = res.data.data;
-    
-    // payload is token, place token into LS
+
     dispatch({
       type: AUTH_LOGIN_SUCCESS,
       payload: result
     })
-    // load user information
-    dispatch(loadUser());
 
+    dispatch(loadUser());
     dispatch(setAlert('Welcome!', 'success'));
   } catch (err) {
     dispatch(setAlert('Failed to login. Incorrect email or password.', 'danger'));
     const errors = err.response.data.errors;
-    // pass msg and alert type
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -118,11 +109,15 @@ export const loginUser = (formData) => async dispatch => {
 };
 
 export const logout = (history) => async dispatch => {
-  dispatch({type: USER_DETAILS_RESET})
-  dispatch({type: AUTH_USER_LOGOUT})
-  if (localStorage.getItem('__shippingAddress')) {
-    localStorage.removeItem('__shippingAddress');
-  }
+  dispatch({type: CART_CLEAR_ITEMS});
+  dispatch({type: CLEAR_CARD_INFO});
+  dispatch({type: USER_DETAILS_RESET});
+  dispatch({type: AUTH_USER_LOGOUT});
+  dispatch({type: ORDER_CLEAR_INFO});
+  if (localStorage.getItem('__cart')) localStorage.removeItem('__cart');
+  if (localStorage.getItem('__paymentMethod')) localStorage.removeItem('__paymentMethod');
+  if (localStorage.getItem('__shippingAddress')) localStorage.removeItem('__shippingAddress');
+  if (localStorage.getItem('__userInfo')) localStorage.removeItem('__userInfo');
 
   history.push('/');
   dispatch(setAlert('Logout successful.', 'success'));
@@ -138,18 +133,16 @@ export const deleteUser = (history) => async dispatch => {
 
     await api.delete('/auth/remove');
 
-    // payload is token, place token into LS
     dispatch({
       type: AUTH_USER_DELETE_SUCCESS,
       // payload: res.data.data
     })
-    // load user information
+
     history.push('/');
     dispatch(setAlert('Your user account has been deleted.', 'success'));
   } catch (err) {
     dispatch({type: AUTH_USER_DELETE_FAILURE});
     const errors = err.response.data.errors;
-    // pass msg and alert type
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -168,12 +161,11 @@ export const forgotPassword = (email) => async dispatch => {
       type: AUTH_FORGOT_PASSWORD_SUCCESS,
       payload: result
     })
-
     dispatch(setAlert('Password reset link sent to your email.', 'success'));
   } catch (err) {
     dispatch(setAlert('Failed to send reset link. Check email address and try again.', 'danger'));
     const errors = err.response.data.errors;
-    // pass msg and alert type
+
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -192,12 +184,10 @@ export const verifyPassword = (token, email, history) => async dispatch => {
       type: AUTH_VERIFY_PASSWORD_SUCCESS,
       payload: result
     })
-
     dispatch(setAlert('Reset link valid.', 'success'));
   } catch (err) {
-    // history.push("/login");
     const errors = err.response.data.errors;
-    // pass msg and alert type
+
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -223,7 +213,7 @@ export const resetPassword = (token, email, passwords, history) => async dispatc
   } catch (err) {
     dispatch(setAlert('Failed to reset password. Please try password reset again.', 'danger'));
     const errors = err.response.data.errors;
-    // pass msg and alert type
+
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
@@ -248,37 +238,3 @@ export const refreshAccessToken = (newAccessToken) => async (dispatch, getState)
     // dispatch({type: TOKEN_FAILURE});
   }
 };
-/*
-export const refreshToken = (dispatch) => {
-  var freshTokenPromise = fetchJWTToken()
-    .then(t => {
-      dispatch({
-        type: DONE_REFRESHING_TOKEN
-      });
-      dispatch(saveAppToken(t.token));
-        return t.token ? Promise.resolve(t.token) : Promise.reject({
-          message: 'could not refresh token'
-        });
-    })
-    .catch(e => {
-      console.log('error refreshing token', e);
-      dispatch({
-        type: DONE_REFRESHING_TOKEN
-      });
-      return Promise.reject(e);
-  });
-  dispatch({
-    type: REFRESHING_TOKEN,
-    // we want to keep track of token promise in the state so that we don't try to refresh
-    // the token again while refreshing is in process
-    freshTokenPromise
-  });
-  return freshTokenPromise;
-}
-*/
-
-/*
-Object { url: "auth/refresh-token", method: "post", headers: {…}, baseURL: "http://localhost:5000/api", transformRequest: (1) […], transformResponse: (1) […], timeout: 0, adapter: xhrAdapter(config), xsrfCookieName: "XSRF-TOKEN", xsrfHeaderName: "X-XSRF-TOKEN", … }
-api.js:43
-
-*/

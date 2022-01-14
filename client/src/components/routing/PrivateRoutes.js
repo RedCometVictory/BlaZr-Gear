@@ -20,7 +20,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       render={props =>
         loading ? (
           <Spinner />
-        ) : isAuthenticated ? (
+        ) : !loading && isAuthenticated ? (
           <Component {...props} />
         ) : (
           // when logging out redirect to...

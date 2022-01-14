@@ -9,7 +9,9 @@ import {
   AUTH_USER_DELETE_REQUEST,
   AUTH_USER_DELETE_SUCCESS,
   AUTH_USER_DELETE_FAILURE,
+  AUTH_USER_LOADED_REQUEST,
   AUTH_USER_LOADED,
+  AUTH_USER_LOADED_FAILURE,
   AUTH_ERROR,
   AUTH_FORGOT_PASSWORD_REQUEST,
   AUTH_FORGOT_PASSWORD_SUCCESS,
@@ -25,17 +27,17 @@ import {
   AUTH_NEW_PASSWORD_REQUEST,
   AUTH_NEW_PASSWORD_SUCCESS,
   AUTH_NEW_PASSWORD_FAILURE,
-  TOKEN_REQUEST,
+  // TOKEN_REQUEST,
   TOKEN_RECEIVED,
-  TOKEN_FAILURE
+  // TOKEN_FAILURE
 } from '../constants/authConstants';
 // import { ACCOUNT_DELETED } from '../constants/profileConstants';
 const initialState = {
   token: localStorage.getItem('token'),
-  isAuthenticated: null,
-  loading: null,
+  isAuthenticated: localStorage.getItem("__userInfo") ? true : false,
+  loading: false,
   // user: null,
-  userInfo: null,
+  userInfo: localStorage.getItem("__userInfo") ? JSON.parse(localStorage.getItem("__userInfo")) : {},
   errors: null,
   allowReset: false
 }
@@ -46,17 +48,21 @@ const authReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    // case TOKEN_REQUEST
+    // case TOKEN_REQUEST:
     case TOKEN_RECEIVED:
-    // case TOKEN_FAILURE:
       return {
         ...state,
         token: payload
       }
+    case AUTH_USER_LOADED_REQUEST:
+      return {
+        ...state,
+        loading: true
+      }
     case AUTH_REGISTER_REQUEST:
     case AUTH_LOGIN_REQUEST:
     case AUTH_USER_DELETE_REQUEST:
-      return { loading: true }
+      return { ...state, loading: true }
     case AUTH_FORGOT_PASSWORD_REQUEST:
     case AUTH_VERIFY_PASSWORD_REQUEST:
     case AUTH_NEW_PASSWORD_REQUEST:
@@ -70,11 +76,11 @@ const authReducer = (state = initialState, action) => {
     case AUTH_LOGIN_SUCCESS:
       return {
         ...state,
-        ...payload,
+        // ...payload,
         // token: payload,
         isAuthenticated: true,
         loading: false,
-        // userInfo: payload.userInfo
+        userInfo: payload.userInfo
       }
     case AUTH_VERIFY_PASSWORD_SUCCESS:
       return {
@@ -93,9 +99,19 @@ const authReducer = (state = initialState, action) => {
         status: payload
       }
     case AUTH_USER_DELETE_SUCCESS:
-      return { loading: false, success: true }
+    case AUTH_USER_LOGOUT:
+      return {
+        ...state,
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        userInfo: null,
+        // allowReset: false
+        // user: null
+      }
     case AUTH_REGISTER_FAILURE:
     case AUTH_LOGIN_FAILURE:
+    case AUTH_USER_LOADED_FAILURE:
     case AUTH_USER_DELETE_FAILURE:
     case AUTH_ERROR:
       return {
@@ -117,6 +133,7 @@ const authReducer = (state = initialState, action) => {
         // allowReset: payload.data.allowReset
         allowReset: false
       }
+    // case TOKEN_FAILURE:
     case AUTH_FORGOT_PASSWORD_FAILURE:
     case AUTH_NEW_PASSWORD_FAILURE:
       return {
@@ -130,16 +147,6 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         allowReset: false
-      }
-    case AUTH_USER_LOGOUT:
-      return {
-        ...state,
-        token: null,
-        isAuthenticated: false,
-        loading: false,
-        userInfo: null,
-        // allowReset: false
-        // user: null
       }
     default:
       return state

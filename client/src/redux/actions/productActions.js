@@ -43,18 +43,6 @@ import {
 } from '../constants/productConstants';
 import { createProductForm, updateProductForm } from '../../utils/formDataServices';
 
-// let token = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')) : ''
-let token = localStorage.getItem('token')
-// localStorage.getItem('_cart') ? JSON.parse(localStorage.getItem('_cart')) : []
-let authToken = token ? token : ''
-let formDataHeaders = {
-  // 'Authorization': `Bearer ${authToken}`,
-  headers: {
-    'Authorization': `Bearer ${authToken}`,
-    'content-type': 'multipart/form-data'
-  } 
-}
-
 export const getAllProductIds = () => async dispatch => {
   try {
     dispatch({type: PRODUCT_ID_REQUEST});

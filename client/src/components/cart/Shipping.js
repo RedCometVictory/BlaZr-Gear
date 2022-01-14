@@ -30,10 +30,17 @@ const Shipping = () => {
       dispatch((setAlert('Please login / create account to continue with checkout.', 'danger')));
       return history.push('/login');
     }
+    if (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress) {
+      dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
+    };
+  }, [dispatch, isAuthenticated]);
+
+  useEffect(() => {
     if(isAuthenticated && (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress)) {
+      console.log("looking for user inffo")
       dispatch(getUserProfile());
     };
-  }, [dispatch]);
+  }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     setHasMounted(true);

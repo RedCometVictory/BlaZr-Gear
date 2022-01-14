@@ -18,14 +18,14 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const userAuth = useSelector(state => state.auth);
-  const productDetails = useSelector(state => state.product);
+  // const productDetails = useSelector(state => state.product);
   const cartDetails = useSelector(state => state.cart);
   const [hasMounted, setHasMounted] = useState(false);
   // const [showCart, setShowCart] = useState(false);
   // const [updatingCart, setUpdatingCart] = useState(true);
   const [updatingCart, setUpdatingCart] = useState(false);
   const { isAuthenticated } = userAuth;
-  let { productIds } = productDetails;
+  // let { productIds } = productDetails;
   // let { loading, cartItems, shippingAddress } = cartDetails;
   let { loading, shippingAddress } = cartDetails;
   let price = {};
@@ -51,7 +51,8 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
     return null;
   }
 
-  // check/compare states of cartItems and products. The purpose is to replace cart if products where removed from the shop
+  // ------------------------------------
+  // check/compare states of cartItems and products. The purpose is to replace cart if products where removed from the shop, while such a process takes place, disable the checkout btn, so that the process may complete (work in process)
   // let match = [];
   // let currentLS = localStorage.getItem('__cart');
   // let currentLocalStorage;
@@ -75,14 +76,14 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
   // }
 
   // if (updatingCart) setUpdatingCart(false);
+  // ------------------------------------
   const showCartHandler = () => {
     dispatch(setAlert(`Show Cart = ${showCart}`, 'success'));
-    // setShowCart(!showCart);
     if (showCart) setShowCart(false);
   };
 
   const checkoutHandler = () => {
-    if (updatingCart) return;
+    // if (updatingCart) return;
     if (showCart) setShowCart(false);
     if (!isAuthenticated) {
       dispatch((setAlert('Please login / create account to continue with checkout.', 'danger')));
@@ -91,15 +92,12 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
 
     // const orderPrice = localStorage.setItem('__orderPrice', JSON.stringify(price));
     if (Object.keys(shippingAddress).length === 0 || !shippingAddress) {
-      dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
-      // history.push("/profile");
       history.push("/shipping-address");
     } else {
       history.push("/payment");
     }
   };
 
-  // let price = {};
   price.subTotal = cartItems.reduce((acc, item) => acc += item.product.price * item.qty, 0).toFixed(2);
   price.tax = Number(price.subTotal * 0.11).toFixed(2);
   price.shippingTotal = 
@@ -112,7 +110,6 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
     );
   price.grandTotal = (Number(price.subTotal) + Number(price.tax) + Number(price.shippingTotal)).toFixed(2);
 
-  // <section className="s" ref={sideBarRef}>
   return (
     <>
     {loading ? (

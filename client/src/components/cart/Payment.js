@@ -18,7 +18,7 @@ const Payment = () => {
   const userAuth = useSelector(state => state.auth);
   const cartDetails = useSelector(state => state.cart);
   const paymentDetails = useSelector(state => state.stripe);
-  const { isAuthenticated, userInfo } = userAuth;
+  const { isAuthenticated } = userAuth;
   const { cartItems, shippingAddress, paymentMethod } = cartDetails;
   const { cardToUse } = paymentDetails;
   const [hasMounted, setHasMounted] = useState(false);
@@ -33,11 +33,6 @@ const Payment = () => {
     if (!isAuthenticated) {
       dispatch(setAlert('Please sign in to continue with payment.', 'danger'));
       history.push('/login');
-    }
-    if (!paymentMethod) {
-      console.log("Payment: redirecting to confirm-order")
-      dispatch(setAlert('Please confirm method of payment.', 'danger'));
-      // return <Redirect to="/confirm-order" />
     }
   }, [dispatch]);
 
@@ -56,25 +51,8 @@ const Payment = () => {
           })
         },
         onApprove: async function (data, actions) {
-        /*
-        onApprove: function(data, actions) {
-          return actions.order.capture()
-            .then(function(details) {
-              console.log(JSON.stringify(details.purchase_units[0].payments.captures[0].id));
-
-              var transid = JSON.stringify(details.purchase_units[0].payments.captures[0].id)
-            });
-            6EX817436K7560255
-            8P54499175939881C
-        },
-        */
           return await actions.order.capture()
             .then((orderData) => {
-              console.log("orderData");
-              console.log(orderData);
-              console.log("orderData.purchase_units[0].payments.captures[0].id");
-              console.log(orderData.purchase_units[0].payments.captures[0].id);
-
               orderFormData.paymentInfo = {
                 id: orderData.id,
                 captureId: orderData.purchase_units[0].payments.captures[0].id,
@@ -88,7 +66,7 @@ const Payment = () => {
       })
       .render("#paypal")
     }
-  }, [paymentMethod, cartItems, hasMounted]);
+  }, [dispatch, paymentMethod, cartItems, hasMounted]);
 
   useEffect(() => {
     setHasMounted(true);
@@ -99,7 +77,6 @@ const Payment = () => {
   }
 
   if (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress) {
-    dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
     history.push("/shipping-address");
   }
 
@@ -228,11 +205,6 @@ const Payment = () => {
     }
   };
 
-  // const successPayPalPaymentHandler = (paymentResult) => {
-    // console.log(paymentResult);
-    // dispatch(payPayPalOrder(orderId, paymentResult));
-  // };
-
   const orderPaymentHandler = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
@@ -268,18 +240,14 @@ const Payment = () => {
         };
         description = "Purchase made with saved card.";
         paymentResult = await singleChargeCardPI(cardToUse, paymentData, description, orderFormData);
-        // paymentResult = dispatch(singleChargeCard(chosenCard, paymentData, description, orderFormData));
 
         const finalPaymentResult = await stripe.confirmCardPayment(paymentResult, {
           receipt_email: email,
           setup_future_usage: 'on_session',
           payment_method: cardToUse
         });
-
-        // if (finalPaymentResult.paymentIntent.status === "succeeded") dispatch(setAlert("Success. Payment complete!", 'success'));
         
         orderFormData.paymentInfo = {
-          // id: stripeResult.paymentIntent.id,
           id: finalPaymentResult.paymentIntent.id,
           orderType: "Stripe"
         }
@@ -326,17 +294,7 @@ const Payment = () => {
         }
       });
 
-      // check for error or stsatus success
-      // confirm payment for existing card, even if error
-      // if (finalPaymentResult.error) {
-      //   dispatch(setAlert(`${finalPaymentResult.error.message}`, 'danger'));
-      // }
-      
-      // if (finalPaymentResult.paymentIntent.status === "succeeded") {
-      //   dispatch(setAlert("Success. Payment complete!", 'success'));
-      // }
       orderFormData.paymentInfo = {
-        // id: stripeResult.paymentIntent.id,
         id: finalPaymentResult.paymentIntent.id,
         orderType: "Stripe"
       }
@@ -349,213 +307,215 @@ const Payment = () => {
       console.error(`Error Message: ${err}.`);
       // setChargeError(`There was an issue in processing your payment. Error: ${err} Try again.`);
       dispatch(setAlert(`There was an issue in processing your payment. Try again.`, 'danger'));
-      // dispatch(setAlert(`There was an issue in processing your payment. Error: ${err} Try again.`, 'danger'));
     }
   }
 
   return (
-  <form onSubmit={(e) => orderPaymentHandler(e)}>
-    <div className="payments__header">
-      <h2 className="payments__title">Make Payment</h2>
-      <div className="payments__total-items">
-        {cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items
-      </div>
-    </div>
-    <div className="payments__container">
-      {isAuthenticated && (
-        <div className="payments__header-information edit-btns">
-          <div className="option">
-            <Link to="/shipping-address">
-              <div className="btn btn-primary">
-                Edit Shipping
-              </div>
-            </Link>
-          </div>
-          <div className="option">
-            <Link to="/confirm-order">
-              <div className="btn btn-primary">
-                Edit Payment
-              </div>
-            </Link>
+    <>
+    {paymentMethod ? (
+      <form onSubmit={(e) => orderPaymentHandler(e)}>
+        <div className="payments__header">
+          <h2 className="payments__title">Make Payment</h2>
+          <div className="payments__total-items">
+            {cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items
           </div>
         </div>
-      )}
-      <div className="payments__header-information sidebar">
-        <div className="payments__header-set flex-position-1">
-          <h3>Shipping Information</h3>
-          <div className="">Name: {shippingAddress.fullname}</div>
-          <div className="">Shipping Address: {shippingAddress.address}</div>
-          <div className="">
-            {`${shippingAddress.city}, ${shippingAddress.state}, ${shippingAddress.country}`}
-          </div>
-          <div className="">Zipcode: {shippingAddress.zipcode}</div>
-        </div>
-        <div className="payments__header-set flex-position-2">
-          <h3>Payment Method</h3>
-          <div className="">{paymentMethod}</div>
-        </div>
-        <div className="payments__total pay-screen set-one">
-          <h4 className="payments__total-header">Order Summary</h4>
-          <div className="payments__totals">
-            <div className="payments__subtotal">
-              Sub-Total: $ {price.subTotal}
-            </div>
-            <div className="payments__tax-total">
-              Tax: $ {price.tax}
-            </div>
-            <div className="payments__shipping-total">
-              Shipping: $ {price.shippingTotal}
-            </div>
-            <div className="payments__grand-total">
-              <span>Grand Total: </span>
-              <span>$ {price.grandTotal}</span>
-            </div>
-          </div>
-        </div>
-        <div className="payments__pay-container">
-          {isAuthenticated && paymentMethod === 'Stripe' && (
-            <div className="payments__set-card">
-              <div className="payments__card-setting">
-                <label htmlFor="cardChoice">
-                  Don't Save Card
-                </label>
-                <input
-                  type="radio"
-                  id="cardChoice"
-                  name="paymentMethod"
-                  className=""
-                  onChange={() => guestCheck()}
-                  // value=""
-                  checked={guestCheckout}
-                  required
-                />
+        <div className="payments__container">
+          {isAuthenticated && (
+            <div className="payments__header-information edit-btns">
+              <div className="option">
+                <Link to="/shipping-address">
+                  <div className="btn btn-primary">
+                    Edit Shipping
+                  </div>
+                </Link>
               </div>
-              <div className="payments__card-setting">
-                <label htmlFor="cardChoice">
-                  Use Saved Card
-                </label>
-                <input
-                  type="radio"
-                  id="cardChoice"
-                  name="paymentMethod"
-                  className=""
-                  onChange={() => displaySavedCardsCheck()}
-                  // value=""
-                  checked={singlePay}
-                  required
-                />
-              </div>
-              <div className="payments__card-setting">
-                <label htmlFor="cardChoice">
-                  Save Card
-                </label>
-                <input
-                  type="radio"
-                  id="cardChoice"
-                  name="paymentMethod"
-                  className=""
-                  onChange={() => saveCardCheck()}
-                  // value=""
-                  checked={addCardAndPay}
-                  required
-                />
+              <div className="option">
+                <Link to="/confirm-order">
+                  <div className="btn btn-primary">
+                    Edit Payment
+                  </div>
+                </Link>
               </div>
             </div>
           )}
-          <section className="payments__card-list">
-            {!singlePay ? (
-              <></>
-            ) : (
-              <>
-              <h3 className="payments__card-list header">Cards:</h3>
-              <CardSelect guest={guestCheck} />
-              </>
-            )}
-            
-          </section>
-          <div className="payments__card-elem">
-            <>
-            {paymentMethod === 'Stripe' && !singlePay ? (
-              <div className={`show ${singlePay ? 'active' : ''}`}>
-                <CardElement options={cardStyle}></CardElement>
+          <div className="payments__header-information sidebar">
+            <div className="payments__header-set flex-position-1">
+              <h3>Shipping Information</h3>
+              <div className="">Name: {shippingAddress.fullname}</div>
+              <div className="">Shipping Address: {shippingAddress.address}</div>
+              <div className="">
+                {`${shippingAddress.city}, ${shippingAddress.state}, ${shippingAddress.country}`}
               </div>
-            
-            ) : (
-              <div className={`show ${singlePay ? 'active' : ''}`}>
-              <div className="payments__pay-display">
-                Pay ${price.grandTotal}
-              </div>
-              <div className="payments__paypal-container">
-                <div id="paypal"></div>
-              </div>
-              </div>
-            )}
-            </>
-          </div>
-          {paymentMethod === 'Stripe' ? (
-            <div className="">
-              <button className="payments__btn-checkout checkout btn btn-primary" type="submit" disabled={!stripe || isProcessing || sdkReady}>
-              {isProcessing ? (
-                <div className="">Processing Payment</div>
-              ) : (
-                `Pay $${price.grandTotal}`
-              )}
-              </button>
+              <div className="">Zipcode: {shippingAddress.zipcode}</div>
             </div>
-          ) : (
-            <></>
-          )}
-          {chargeError && (
-            <div className="payments__charge-err">{chargeError}</div>
-          )}
-        </div>
-      </div>
-      {/* Cart content list */}
-      <div className="payments__content">
-        <div className="payments__list-content">
-          {cartItems.length === 0 || !cartItems ? (
-            <div className="">
-              <div className="">Cart is Empty</div>
-              <Link to="/shop">
-                <div className="">
-                  Continue Shopping
+            <div className="payments__header-set flex-position-2">
+              <h3>Payment Method</h3>
+              <div className="">{paymentMethod}</div>
+            </div>
+            <div className="payments__total pay-screen set-one">
+              <h4 className="payments__total-header">Order Summary</h4>
+              <div className="payments__totals">
+                <div className="payments__subtotal">
+                  Sub-Total: $ {price.subTotal}
                 </div>
-              </Link>
+                <div className="payments__tax-total">
+                  Tax: $ {price.tax}
+                </div>
+                <div className="payments__shipping-total">
+                  Shipping: $ {price.shippingTotal}
+                </div>
+                <div className="payments__grand-total">
+                  <span>Grand Total: </span>
+                  <span>$ {price.grandTotal}</span>
+                </div>
+              </div>
             </div>
-          ) : (
-            cartItems.map((cart, index) => (
-              <div className="payments" key={index}>
-                <div className="payments__list">
-                  <div className="payments__list-item">
-                    <div className="payments__image">
-                      <img src={cart.product.product_image_url} alt="" className="payments__img" />
+            <div className="payments__pay-container">
+              {isAuthenticated && paymentMethod === 'Stripe' && (
+                <div className="payments__set-card">
+                  <div className="payments__card-setting">
+                    <label htmlFor="cardChoice">
+                      Don't Save Card
+                    </label>
+                    <input
+                      type="radio"
+                      id="cardChoice"
+                      name="paymentMethod"
+                      className=""
+                      onChange={() => guestCheck()}
+                      checked={guestCheckout}
+                      required
+                    />
+                  </div>
+                  <div className="payments__card-setting">
+                    <label htmlFor="cardChoice">
+                      Use Saved Card
+                    </label>
+                    <input
+                      type="radio"
+                      id="cardChoice"
+                      name="paymentMethod"
+                      className=""
+                      onChange={() => displaySavedCardsCheck()}
+                      checked={singlePay}
+                      required
+                    />
+                  </div>
+                  <div className="payments__card-setting">
+                    <label htmlFor="cardChoice">
+                      Save Card
+                    </label>
+                    <input
+                      type="radio"
+                      id="cardChoice"
+                      name="paymentMethod"
+                      className=""
+                      onChange={() => saveCardCheck()}
+                      checked={addCardAndPay}
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+              <section className="payments__card-list">
+                {!singlePay ? (
+                  <></>
+                ) : (
+                  <>
+                  <h3 className="payments__card-list header">Cards:</h3>
+                  <CardSelect guest={guestCheck} />
+                  </>
+                )}
+                
+              </section>
+              <div className="payments__card-elem">
+                <>
+                {paymentMethod === 'Stripe' && !singlePay ? (
+                  <div className={`show ${singlePay ? 'active' : ''}`}>
+                    <CardElement options={cardStyle}></CardElement>
+                  </div>
+                
+                ) : (
+                  <div className={`show ${singlePay ? 'active' : ''}`}>
+                  <div className="payments__pay-display">
+                    Pay ${price.grandTotal}
+                  </div>
+                  <div className="payments__paypal-container">
+                    <div id="paypal"></div>
+                  </div>
+                  </div>
+                )}
+                </>
+              </div>
+              {paymentMethod === 'Stripe' ? (
+                <div className="">
+                  <button className="payments__btn-checkout checkout btn btn-primary" type="submit" disabled={!stripe || isProcessing || sdkReady}>
+                  {isProcessing ? (
+                    <div className="">Processing Payment</div>
+                  ) : (
+                    `Pay $${price.grandTotal}`
+                  )}
+                  </button>
+                </div>
+              ) : (
+                <></>
+              )}
+              {chargeError && (
+                <div className="payments__charge-err">{chargeError}</div>
+              )}
+            </div>
+          </div>
+          {/* Cart content list */}
+          <div className="payments__content">
+            <div className="payments__list-content">
+              {cartItems.length === 0 || !cartItems ? (
+                <div className="">
+                  <div className="">Cart is Empty</div>
+                  <Link to="/shop">
+                    <div className="">
+                      Continue Shopping
                     </div>
-                    <div className="payments__detail">
-                      <div className="payments__detail-name">
-                        <h3 className="payments__item-name">
-                          <Link to={`/product/${cart.product.product_id}`}>{cart.product.name}</Link>
-                        </h3>
-                      </div>
-                      <div className="payments__detail-qty">
-                        <div className="payments__item-price">
-                          $ {cart.product.price}
+                  </Link>
+                </div>
+              ) : (
+                cartItems.map((cart, index) => (
+                  <div className="payments" key={index}>
+                    <div className="payments__list">
+                      <div className="payments__list-item">
+                        <div className="payments__image">
+                          <img src={cart.product.product_image_url} alt="" className="payments__img" />
                         </div>
-                        <div className="payments__qty-counter">
-                          <div className="payments__qty">
-                            <input type="number" className="payments__qty-input-count" value={cart.qty} readOnly/>
+                        <div className="payments__detail">
+                          <div className="payments__detail-name">
+                            <h3 className="payments__item-name">
+                              <Link to={`/product/${cart.product.product_id}`}>{cart.product.name}</Link>
+                            </h3>
+                          </div>
+                          <div className="payments__detail-qty">
+                            <div className="payments__item-price">
+                              $ {cart.product.price}
+                            </div>
+                            <div className="payments__qty-counter">
+                              <div className="payments__qty">
+                                <input type="number" className="payments__qty-input-count" value={cart.qty} readOnly/>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))
-          )}
+                ))
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </form>
+      </form>
+    ) : (
+      <Redirect to="/confirm-order" />
+    )}
+    </>
   )
 }
 export default Payment;
