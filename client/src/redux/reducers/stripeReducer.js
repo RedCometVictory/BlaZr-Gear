@@ -67,7 +67,6 @@ const stripeReducer = (state = initialState, action) => {
       state.cards.data = removedPM;
       return {
         ...state,
-        // cards: removedPM,
         loading: false
       }
     case CLEAR_CARD_INFO:

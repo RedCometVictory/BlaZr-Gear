@@ -63,7 +63,6 @@ const AdminProductUpdate = ({stateChanger}) => {
       });
       reader.readAsDataURL(fileToUpload);
     }
-    // *--------------------
   };
 
   // check file type
@@ -90,129 +89,125 @@ const AdminProductUpdate = ({stateChanger}) => {
     stateChanger(false);
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="">
-        <form className="admForm" onSubmit={onSubmit} >
-          <div className="admForm__inner-container">
-            <div className="admForm__section">
-              <div className="admForm__group">
-                <label htmlFor="name" className="admForm__label">Name: </label>
-                <input
-                  type="text"
-                  placeholder="Skechers Shoes - Men"
-                  className=""
-                  name="name"
-                  maxLength={110}
-                  onChange={e => onChange(e)}
-                  value={name}
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="brand" className="admForm__label">Brand: </label>
-                <input
-                  type="text"
-                  placeholder="Skechers"
-                  className=""
-                  name="brand"
-                  maxLength={255}
-                  onChange={e => onChange(e)}
-                  value={brand}
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="category" className="admForm__label">Category: </label>
-                <select name="category" value={category} onChange={e => onChange(e)}>
-                  <option value="Video Games">Video Games</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Sneakers">Sneakers</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Camping">Camping</option>
-                  <option value="Desktop">Desktop</option>
-                  <option value="Laptops">Laptops</option>
-                  <option value="Clothes">Clothes</option>
-                </select>
-              </div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="">
+      <form className="admForm" onSubmit={onSubmit} >
+        <div className="admForm__inner-container">
+          <div className="admForm__section">
+            <div className="admForm__group">
+              <label htmlFor="name" className="admForm__label">Name: </label>
+              <input
+                type="text"
+                placeholder="Skechers Shoes - Men"
+                className=""
+                name="name"
+                maxLength={110}
+                onChange={e => onChange(e)}
+                value={name}
+              />
             </div>
-            <div className="admForm__section">
-              <div className="admForm__group">
-                <label htmlFor="price" className="admForm__label">Price: </label>
-                <input
-                  type="number"
-                  placeholder="70.00"
-                  className=""
-                  name="price"
-                  step="0.01"
-                  onChange={e => onChange(e)}
-                  value={price}
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="count_in_stock" className="admForm__label">Stock Count of Product: </label>
-                <input
-                  type="number"
-                  placeholder="10"
-                  className=""
-                  name="count_in_stock"
-                  min={0}
-                  onChange={e => onChange(e)}
-                  value={count_in_stock}
-                />
-              </div>
+            <div className="admForm__group">
+              <label htmlFor="brand" className="admForm__label">Brand: </label>
+              <input
+                type="text"
+                placeholder="Skechers"
+                className=""
+                name="brand"
+                maxLength={255}
+                onChange={e => onChange(e)}
+                value={brand}
+              />
             </div>
-            <div className="admForm__section prod-image">
-              <div className="admForm__group">
-                <label htmlFor="image_url" className="admForm_label">
-                  Product Image
-                </label>
-                <input
-                  type="file"
-                  accept=".jpeg, .jpg, .png, .gif"
-                  placeholder=".jpeg, .jpg, .png, .gif formats only"
-                  className="file-btn-input file-slim"
-                  name="image_url"
-                  onChange={handleImageChange}
-                  ref={fileInputText}
-                />
-              </div>
-              {imageData && (
-                <div className="admForm__image">
-                  <img className="admForm__img" src={imageData} alt="Uploaded Product" />
-                </div>
-              )}
+            <div className="admForm__group">
+              <label htmlFor="category" className="admForm__label">Category: </label>
+              <select name="category" value={category} onChange={e => onChange(e)}>
+                <option value="Video Games">Video Games</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Sneakers">Sneakers</option>
+                <option value="Sports">Sports</option>
+                <option value="Camping">Camping</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Laptops">Laptops</option>
+                <option value="Clothes">Clothes</option>
+              </select>
             </div>
           </div>
           <div className="admForm__section">
             <div className="admForm__group">
-              <textarea
-                name="description"
-                cols="30"
-                rows="5"
-                placeholder="Create a post"
+              <label htmlFor="price" className="admForm__label">Price: </label>
+              <input
+                type="number"
+                placeholder="70.00"
+                className=""
+                name="price"
+                step="0.01"
                 onChange={e => onChange(e)}
-                value={description}
-                required
-              ></textarea>
+                value={price}
+              />
+            </div>
+            <div className="admForm__group">
+              <label htmlFor="count_in_stock" className="admForm__label">Stock Count of Product: </label>
+              <input
+                type="number"
+                placeholder="10"
+                className=""
+                name="count_in_stock"
+                min={0}
+                onChange={e => onChange(e)}
+                value={count_in_stock}
+              />
             </div>
           </div>
-          <div className="admForm__section">
-            {fileTypeError || fileSizeError ? (
-              <div className="admForm__error">
-                File type or size limit exceeded: jpg, jpeg, png, gif only and size must be less than 3mb.
-              </div>
-            ) : (
-              <div className="admForm__submit-update">
-                <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Submit Product Update" />
+          <div className="admForm__section prod-image">
+            <div className="admForm__group">
+              <label htmlFor="image_url" className="admForm_label">
+                Product Image
+              </label>
+              <input
+                type="file"
+                accept=".jpeg, .jpg, .png, .gif"
+                placeholder=".jpeg, .jpg, .png, .gif formats only"
+                className="file-btn-input file-slim"
+                name="image_url"
+                onChange={handleImageChange}
+                ref={fileInputText}
+              />
+            </div>
+            {imageData && (
+              <div className="admForm__image">
+                <img className="admForm__img" src={imageData} alt="Uploaded Product" />
               </div>
             )}
           </div>
-        </form>
-      </section>
-    )}
-    </>
+        </div>
+        <div className="admForm__section">
+          <div className="admForm__group">
+            <textarea
+              name="description"
+              cols="30"
+              rows="5"
+              placeholder="Create a post"
+              onChange={e => onChange(e)}
+              value={description}
+              required
+            ></textarea>
+          </div>
+        </div>
+        <div className="admForm__section">
+          {fileTypeError || fileSizeError ? (
+            <div className="admForm__error">
+              File type or size limit exceeded: jpg, jpeg, png, gif only and size must be less than 3mb.
+            </div>
+          ) : (
+            <div className="admForm__submit-update">
+              <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Submit Product Update" />
+            </div>
+          )}
+        </div>
+      </form>
+    </section>
   );
 };
 export default AdminProductUpdate;

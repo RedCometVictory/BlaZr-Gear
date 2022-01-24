@@ -1,8 +1,6 @@
 // Mobile First Design
 * {
   box-sizing: border-box;
-  // margin: 0;
-  // padding: 0;
 }
 
 h1 { font-size: 2em; font-weight: 800; }
@@ -13,14 +11,13 @@ h5 { font-size: .83em; }
 h6 { font-size: .75em; }
 body {
   background-color: var(--bg-primary);
-  // background-color: #bdbdbd;
   height: 100%;
   line-height: 1.4;
   font-size: 1rem;
   color: var(--color-text);
   // font-family: 'Roboto', Arial, Helvetica, sans-serif;
   font-family: 'Nunito Sans', Arial, Helvetica, sans-serif;
-  
+  transition: 300ms ease-in-out;
   .root-container {
     width: 100%;
     height: 100%;
@@ -30,17 +27,12 @@ body {
     .central {
       h1, h2, p {
         text-align: center;
-        // color: white;
-        // font-weight: 300;
       }
-      // justify-content: center;
       .info-card {
         border: 2px solid rgb(245, 58, 58);
         border-radius: 5px;
         max-height: 1000px;
         margin: 0 auto;
-        // align-items: center;
-        // justify-content: center;
         max-width: 50%;
         p {
           margin: 10px 20px 10px 20px;
@@ -56,17 +48,12 @@ body {
         border: 2px solid teal;
         border-radius: 5px;
         display: flex;
-        // align-content: center;
-        // justify-content: center;
-        // align-items: center;
         flex-direction: column;
         overflow: hidden;
         img {
           max-height: 100%;
           max-width: 100%;
           flex-shrink: 0;
-          // min-width: 100%;
-          // min-height: 100%
         }
       }
     }
@@ -83,48 +70,27 @@ ul {
 img {
   width: 100%;
 }
-// .container section {
-//   margin-top: 3.5rem;
-// }
 .container {
   width: 100%;
   overflow: hidden;
   margin: 0 auto;
   padding: 3.5rem 0rem 0rem;
   position: relative;
-  // margin-bottom: 3rem;
-  // height: 100vh;
-  // section {
-    // width: 80%;
-    // margin: 0 auto;
-  // }
 }
 .dash-header {
   padding: 3.5rem 0 0;
 }
 
-// **********
-// NOT FOUND
 .not-found-wrapper {
   padding: 3.5rem 0 1rem 0;
   .not-found-card {
     margin: 7rem auto 0;
     text-align: center;
   }
-  // .not-found-content {
-    // display: flex;
-    // align-items: center;
-    // justify-content: center;
-  // }
   .not-found-text {
     margin-bottom: 1rem;
   }
-  // .not-found-btn {
-  //   margin: 1rem 0 0 0;
-  // }
 }
-
-
 // for desktop
 @media (min-width: 820px) {
   .container {

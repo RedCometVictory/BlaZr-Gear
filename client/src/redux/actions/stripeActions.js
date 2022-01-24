@@ -14,9 +14,9 @@ import {
   REMOVE_CARD_OF_USER_REQUEST,
   REMOVE_CARD_OF_USER_SUCCESS,
   REMOVE_CARD_OF_USER_FAILURE,
-  STRIPE_CHARGE_RETRIEVED_REQUEST,
-  STRIPE_CHARGE_RETRIEVED_SUCCESS,
-  STRIPE_CHARGE_RETRIEVED_FAILURE
+  // STRIPE_CHARGE_RETRIEVED_REQUEST,
+  // STRIPE_CHARGE_RETRIEVED_SUCCESS,
+  // STRIPE_CHARGE_RETRIEVED_FAILURE
 } from '../constants/stripeConstants';
 
 export const setCard = (card) => async dispatch => {
@@ -204,8 +204,8 @@ export const refundCharge = (orderId, userId, stripePaymentId, amount) => async 
     dispatch({type: CHARGE_COMPLETE_REQUEST});
 
     const chargeData = { orderId, userId, stripePaymentId, amount };
-    const res = await api.post(`/payment/refund-charge/order/${orderId}`, chargeData);
-    let result = res.data.data;
+    await api.post(`/payment/refund-charge/order/${orderId}`, chargeData);
+    // let result = res.data.data;
 
     dispatch({
       type: CHARGE_COMPLETE_SUCCESS,

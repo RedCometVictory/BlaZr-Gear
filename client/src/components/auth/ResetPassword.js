@@ -49,76 +49,72 @@ const ResetPassword = () => {
     setPasswordSent(true)
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : !allowReset ? (
-      <section className="form-page-wrapper">
-        <div className="form-container">
+  return loading ? (
+    <Spinner />
+  ) : !allowReset ? (
+    <section className="form-page-wrapper">
+      <div className="form-container">
+        <div className="form__section-header">
+          <h1 className="form__header">Reset Password</h1>
+          <p>
+            <i className="fas fa-user" /> Token has expired. Please attempt to reset password again.
+          </p>
+          <Link to="/forgot-password" className="forgot-password-container">
+            <div className="btn btn-secondary forgot-password-btn">Forgot Password</div>
+          </Link>
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section className="form-page-wrapper">
+      <div className="form-container">
+        <form className="form" onSubmit={onSubmit}>
           <div className="form__section-header">
             <h1 className="form__header">Reset Password</h1>
             <p>
-              <i className="fas fa-user" /> Token has expired. Please attempt to reset password again.
+              <i className="fas fa-user" /> Provide password and confirm to reset password.
             </p>
-            <Link to="/forgot-password" className="forgot-password-container">
-              <div className="btn btn-secondary forgot-password-btn">Forgot Password</div>
-            </Link>
           </div>
-        </div>
-      </section>
-    ) : (
-      <section className="form-page-wrapper">
-        <div className="form-container">
-          <form className="form" onSubmit={onSubmit}>
-            <div className="form__section-header">
-              <h1 className="form__header">Reset Password</h1>
-              <p>
-                <i className="fas fa-user" /> Provide password and confirm to reset password.
-              </p>
-            </div>
-            <div className="form__inner-container">
-              <div className="form__section">
-                <div className="form__group">
-                  <input
-                    type="password"
-                    name="password"
-                    value={password}
-                    onChange={onChange}
-                    placeholder="Must be 6 or more characters. "
-                    aria-required="true"
-                    minLength="6"
-                    maxLength="16"
-                    required/>
-                  <label htmlFor="password" className="form__label">
-                    <span className="form__label-name">New Password</span>
-                  </label>
-                </div>
-                <div className="form__group">
-                  <input
-                    type="password"
-                    name="password2"
-                    value={password2}
-                    onChange={onChange}
-                    placeholder="Must be 6 or more characters." 
-                    aria-required="true"
-                    minLength="6"
-                    maxLength="16"
-                    required/>
-                  <label htmlFor="password2" className="form__label">
-                    <span className="form__label-name">Confirm Password</span>
-                  </label>
-                </div>
+          <div className="form__inner-container">
+            <div className="form__section">
+              <div className="form__group">
+                <input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={onChange}
+                  placeholder="Must be 6 or more characters. "
+                  aria-required="true"
+                  minLength="6"
+                  maxLength="16"
+                  required/>
+                <label htmlFor="password" className="form__label">
+                  <span className="form__label-name">New Password</span>
+                </label>
+              </div>
+              <div className="form__group">
+                <input
+                  type="password"
+                  name="password2"
+                  value={password2}
+                  onChange={onChange}
+                  placeholder="Must be 6 or more characters." 
+                  aria-required="true"
+                  minLength="6"
+                  maxLength="16"
+                  required/>
+                <label htmlFor="password2" className="form__label">
+                  <span className="form__label-name">Confirm Password</span>
+                </label>
               </div>
             </div>
-            <div className="form__footer">
-              <input type="submit" className="btn btn-primary btn-full-width form__submit" value="Reset Password" />
-            </div>
-          </form>
-        </div>
-      </section>
-    )}
-    </>
+          </div>
+          <div className="form__footer">
+            <input type="submit" className="btn btn-primary btn-full-width form__submit" value="Reset Password" />
+          </div>
+        </form>
+      </div>
+    </section>
   )
 }
 export default ResetPassword;

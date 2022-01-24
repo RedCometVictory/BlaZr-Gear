@@ -16,7 +16,6 @@ const Paginate = ({ currentPage, itemsPerPage, pages, pageChange}) => {
     <div className="admProducts__paginate-menu">
       <Pagination
         activePage={currentPage}
-        // activePage={currentPageNum}
         itemsCountPerPage={itemsPerPageNum}
         totalItemsCount={pagesNum}
         onChange={pageChange}

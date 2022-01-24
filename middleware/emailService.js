@@ -111,4 +111,58 @@ const bannedAccountMail = async (email) => {
   }
 };
 
-module.exports = { signedUpMail, forgotPasswordMail, PasswordResetSuccessMail, bannedAccountMail };
+// --------------- REFUND & PURCHASE --------------------------
+const purchaseRefundMail = async (email, orderId, firstName) => {
+  try {
+    let transport = await createTransporter();
+
+    const mailOptions = {
+      from: `Support At ${EMAIL_ADDRESS}`,
+      to: email,
+      subject: "Your Purchase Refund",
+      html: `<div>
+        <h2>Greetings ${firstName},</h2>
+        <p>Your purchase for Order# ${orderId} has been successfully refunded.</p>
+        <p>If you have any further questions please contact support services at blazrgear@gmail.com</p>
+      </div>`
+    };
+
+    await transport.sendMail(mailOptions)
+      .then(console.log('Success!'))
+      .catch(err => console.log(err));
+    // return res;
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
+
+const orderConfirmationMail = async (email, orderId, firstName) => {
+  try {
+    let transport = await createTransporter();
+
+    const mailOptions = {
+      from: `Support At ${EMAIL_ADDRESS}`,
+      to: email,
+      subject: "Order Confirmation",
+      html: `<div>
+        <h2>Greetings ${firstName},</h2>
+        <p>Order#: ${orderId}</p>
+        <p>Your purchase was successful. You can review it under "My Orders" when signed in under your account that made the purchase.</p>
+        <p>If you have any questions please contact support services at blazrgear@gmail.com</p>
+      </div>`
+    };
+
+    await transport.sendMail(mailOptions)
+      .then(console.log('Success!'))
+      .catch(err => console.log(err));
+    // return res;
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error...");
+  }
+};
+
+
+
+module.exports = { signedUpMail, forgotPasswordMail, PasswordResetSuccessMail, bannedAccountMail, purchaseRefundMail, orderConfirmationMail };

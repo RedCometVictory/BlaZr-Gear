@@ -12,9 +12,9 @@ exports.registerUserValidator = [
   check('email', 'Please include a valid email.').exists().isEmail().trim(),
   check('password', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
   check('password2', 'Password must be at least 6 to 16 characters long.').exists().isLength({min: 6, max: 16}),
-  check('username', 'Please create a username.').not().isEmpty().trim().isLength({min: 1, max: 120}).withMessage('Username must be between 1 to 12 characters.'),
-  check('firstName', "Please include first name,").not().isEmpty().isLength({min: 1, max: 60}),
-  check('lastName', "Please include last name,").not().isEmpty().isLength({min: 1, max: 60})
+  check('username', 'Please create a username between 1 to 20 characters.').not().isEmpty().trim().isLength({min: 1, max: 20}).withMessage('Username must be between 1 to 20 characters.'),
+  check('firstName', "Please include first name. Max 12 characters.").not().isEmpty().isLength({min: 1, max: 12}),
+  check('lastName', "Please include last name. Max 20 characters.").not().isEmpty().isLength({min: 1, max: 20})
   // min 8 char long.
   // At least one uppercase.
   // At least one lower case.
@@ -56,7 +56,10 @@ exports.createUpdateProfileValidator = [
 // slideRoutes
 // create / edit slides - list all required fields
 exports.createUpdateSlideValidator = [
-  check('description', 'Description text is required.').not().isEmpty()
+  check('image_url', 'Image is required.').not().isEmpty(),
+  check('title', 'Title should be under 40 characters.').isLength({max: 40}),
+  check('theme', 'Theme should be under 40 characters.').isLength({max: 40}),
+  check('description', 'Description text is required.').isLength({max: 120})
 ];
 
 // user/cartRoutes
@@ -82,9 +85,20 @@ exports.adminEditsUserValidator = [
   // check("password", "...").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
 ];
 
+exports.createUpdateProductValidator = [
+  check('image_url', 'Image is required.').not().isEmpty(),
+  check('name', 'Product name is required.').not().isEmpty(),
+  check('brand', 'Brand is required.').not().isEmpty(),
+  check('category', 'Category is required.').not().isEmpty(),
+  check('price', 'Price is required.').not().isEmpty(),
+  check('count_in_stock', 'Count in stock is required.').not().isEmpty(),
+  check('description', 'Description text is required.').not().isEmpty()
+];
+
 // postRoutes
-// create a post
+// create a review post for product
 exports.createPostValidator = [
+  check('title', 'Title limit should be under 120 characters.').isLength({max: 120}),
   check('description', 'Description text is required.').not().isEmpty()
 ];
 

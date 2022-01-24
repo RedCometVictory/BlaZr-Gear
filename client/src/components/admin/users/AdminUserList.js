@@ -22,30 +22,26 @@ const AdminUserList = () => {
     return null;
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="admProducts">
-        <div className="admProducts__header">
-          <h2 className="admProducts__title">Users</h2>
-          <div className="admProducts__header-options">
-            <div className="admProducts__total-items user-item">
-              {users?.length} Users
-            </div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="admProducts">
+      <div className="admProducts__header">
+        <h2 className="admProducts__title">Users</h2>
+        <div className="admProducts__header-options">
+          <div className="admProducts__total-items user-item">
+            {users?.length} Users
           </div>
         </div>
-        <div className="admProducts__content">
-          <div className="admProducts__list">
-            {users.map(user => (
-              <AdminUserItem key={user.id} user={user} />
-            ))}
-          </div>
+      </div>
+      <div className="admProducts__content">
+        <div className="admProducts__list">
+          {users.map(user => (
+            <AdminUserItem key={user.id} user={user} />
+          ))}
         </div>
-      </section>
-    )}
-    </>
+      </div>
+    </section>
   )
 }
 export default AdminUserList;

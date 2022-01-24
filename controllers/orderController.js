@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { orderConfirmationMail } = require("../middleware/emailService");
 
 // *** Tested / Works in App
 const calculateTotalAmount = async (cartItems) => {
@@ -241,11 +242,6 @@ exports.createOrder = async (req, res, next) => {
   const { id, cartID } = req.user;
   const { orderItems, shippingAddress, paymentInfo } = req.body;
 
-  console.log("req.body")
-  console.log(req.body)
-  console.log("shipping address")
-  console.log(shippingAddress)
-
   let order;
   let orderPaymentId;
   let orderCaptureId = '';
@@ -289,9 +285,11 @@ exports.createOrder = async (req, res, next) => {
 
     const orderID = order.rows[0].id;
 
+    if (shippingAddress.lat === '' || !shippingAddress.lat) shippingAddress.lat = 0.0;
+    if (shippingAddress.lng === '' || !shippingAddress.lng) shippingAddress.lng = 0.0;
     // order Shipping Info
     await pool.query(
-      'INSERT INTO shipping_addresses (address, city, postal_code, state, country, order_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7);', [shippingAddress.address, shippingAddress.city, shippingAddress.zipcode, shippingAddress.state, shippingAddress.country, orderID, id]
+      'INSERT INTO shipping_addresses (address, city, postal_code, state, country, lat, lng, order_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', [shippingAddress.address, shippingAddress.city, shippingAddress.zipcode, shippingAddress.state, shippingAddress.country, shippingAddress.lat, shippingAddress.lng, orderID, id]
     );
 
     // ^^^^^^^^^^^^^CART INFO^^^^^^^^^^^^^^^^^^^^^^^^
@@ -377,6 +375,12 @@ exports.createOrder = async (req, res, next) => {
       orderItemsToDB[i] = {...orderItemsToDB[i], ...itemOrdered};
     };
 
+    let userEmail = await pool.query(
+      'SELECT f_name, user_email FROM users WHERE id = $1;', [id]
+    );
+    let firstName = userEmail.rows[0].f_name;
+    let email = userEmail.rows[0].user_email;
+    await orderConfirmationMail(email, orderID,firstName);
     // upon submission / processing of order, clear cart_items belonging to user
     // await pool.query(
     //   'DELETE FROM cart_items WHERE cart_id = $1;', [cartID]

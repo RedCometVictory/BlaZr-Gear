@@ -3,7 +3,6 @@
   position: fixed;
   bottom: 20px;
   pointer-events: none;
-  // width: 50%;
   z-index: 1000;
 }
 .alert {
@@ -11,9 +10,6 @@
   margin: 0.5rem 0;
   opacity: 0.8;
   background-color: var(--light-color);
-  // position: absolute;
-  // bottom: 20px;
-  // left: 20px;
   color: #333333;
   border-radius: 5px;
   &.alert-light {

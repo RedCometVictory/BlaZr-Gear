@@ -31,6 +31,7 @@ const ConfirmOrder = () => {
     history.push('/shipping-address');
   };
 
+  if (cartDetails.cartItems.length === 0) history.push('/cart');
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(paymentMethodForCart(paymentMethod));

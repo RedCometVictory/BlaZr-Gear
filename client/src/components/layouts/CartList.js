@@ -90,7 +90,6 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
       return history.push('/login');
     }
 
-    // const orderPrice = localStorage.setItem('__orderPrice', JSON.stringify(price));
     if (Object.keys(shippingAddress).length === 0 || !shippingAddress) {
       history.push("/shipping-address");
     } else {
@@ -110,63 +109,59 @@ const CartList = ({showCart, setShowCart, cartItems}) => {
     );
   price.grandTotal = (Number(price.subTotal) + Number(price.tax) + Number(price.shippingTotal)).toFixed(2);
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className={`cartLists ${showCart ? "expand" : ""}`} ref={sideBarRef}>
-        <div className="cartLists__header">
-          <h2 className="cartLists__title">Your Cart</h2>
-          <div className="cartLists__total-items">{cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items</div>
-          <div className="cartLists__close" onClick={() => showCartHandler()}><span>X</span></div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className={`cartLists ${showCart ? "expand" : ""}`} ref={sideBarRef}>
+      <div className="cartLists__header">
+        <h2 className="cartLists__title">Your Cart</h2>
+        <div className="cartLists__total-items">{cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items</div>
+        <div className="cartLists__close" onClick={() => showCartHandler()}><span>X</span></div>
+      </div>
+      <div className="cartLists__content">
+        <div className="cartLists__list">
+          {cartItems.length === 0 || !cartItems ? (
+            <div className="">
+              <div className="">Cart is Empty</div>
+              <Link to="/shop">
+                <div className="">
+                  Continue Shopping
+                </div>
+              </Link>
+            </div>
+          ) : (
+            cartItems.map((cart, i) => <CartItem cart={cart} key={i}/>)
+          )}
         </div>
-        <div className="cartLists__content">
-          <div className="cartLists__list">
-            {cartItems.length === 0 || !cartItems ? (
-              <div className="">
-                <div className="">Cart is Empty</div>
-                <Link to="/shop">
-                  <div className="">
-                    Continue Shopping
-                  </div>
-                </Link>
+        <div className="cartLists__total">
+          <h4 className="cartLists__total-header">Order Summary</h4>
+          <div className="cartLists__totals">
+            <div className="cartLists__subtotal">
+              Sub-Total: $ {price.subTotal}
+            </div>
+            <div className="cartLists__tax-total">
+              Tax: $ {price.tax}
+            </div>
+            <div className="cartLists__shipping-total">
+              Shipping: $ {price.shippingTotal}
+            </div>
+            <div className="cartLists__grand-total">
+              <span>Grand Total: </span>
+              <span>$ {price.grandTotal}</span>
+            </div>
+            {cartItems.length !== 0 && updatingCart ? (
+              <div className="cartLists__btn-checkout">
+                Calculating
               </div>
             ) : (
-              cartItems.map((cart, i) => <CartItem cart={cart} key={i}/>)
+              <div className="cartLists__btn-checkout" onClick={() => checkoutHandler()}>
+                Checkout
+              </div>
             )}
           </div>
-          <div className="cartLists__total">
-            <h4 className="cartLists__total-header">Order Summary</h4>
-            <div className="cartLists__totals">
-              <div className="cartLists__subtotal">
-                Sub-Total: $ {price.subTotal}
-              </div>
-              <div className="cartLists__tax-total">
-                Tax: $ {price.tax}
-              </div>
-              <div className="cartLists__shipping-total">
-                Shipping: $ {price.shippingTotal}
-              </div>
-              <div className="cartLists__grand-total">
-                <span>Grand Total: </span>
-                <span>$ {price.grandTotal}</span>
-              </div>
-              {cartItems.length !== 0 && updatingCart ? (
-                <div className="cartLists__btn-checkout">
-                  Calculating
-                </div>
-              ) : (
-                <div className="cartLists__btn-checkout" onClick={() => checkoutHandler()}>
-                  Checkout
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      </section>
-    )}
-    </>
+      </div>
+    </section>
   )
 }
 export default CartList;

@@ -178,173 +178,169 @@ const AdminOrderDetail = () => {
     )
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : order ? (
-      <section className="admOrder">
-        <div className="admOrder__header">
-          <h2>Order #ID: {order_id}</h2>
+  return loading ? (
+    <Spinner />
+  ) : order ? (
+    <section className="admOrder">
+      <div className="admOrder__header">
+        <h2>Order #ID: {order_id}</h2>
+      </div>
+      <RefundModal order={order?.orderInfo} show={refund} showHandler={setRefund}/>
+      <DeliveryModal order={order?.orderInfo} show={delivery} showHandler={setDelivery}/>
+      <ShippingModal order={order?.orderInfo} show={isShipped} showHandler={setIsShipped}/>
+      <DeleteModal show={toDelete} showHandler={setToDelete}/>
+      <div className="admOrder__container">
+        <div className="admOrder__sub-header">
+          <h4 className="admOrder__item-count">Order Item Total: {order?.orderItems?.length}</h4>
+          <div className="btn btn-secondary">
+            <Link to={`/admin/order-list`} >
+              Orders
+            </Link>
+          </div>
         </div>
-        <RefundModal order={order?.orderInfo} show={refund} showHandler={setRefund}/>
-        <DeliveryModal order={order?.orderInfo} show={delivery} showHandler={setDelivery}/>
-        <ShippingModal order={order?.orderInfo} show={isShipped} showHandler={setIsShipped}/>
-        <DeleteModal show={toDelete} showHandler={setToDelete}/>
-        <div className="admOrder__container">
-          <div className="admOrder__sub-header">
-            <h4 className="admOrder__item-count">Order Item Total: {order?.orderItems?.length}</h4>
-            <div className="btn btn-secondary">
-              <Link to={`/admin/order-list`} >
-                Orders
-              </Link>
-            </div>
-          </div>
-          <div className="admOrder__general">
-            <div className="admOrder__user-info">
-              <div className="set-one">
-                <div className="">#ID:</div>
-                <div className="usr-brk">{order?.userInfo?.id}</div>
-                <div className="">Fullname:</div>
-                <div className="">{order?.userInfo?.f_name}  {order?.userInfo?.l_name}</div>
-              </div>
-              <div className="set-two">
-                <div className="">E-mail:</div>
-                <div className="usr-brk">{order?.userInfo?.user_email}</div>
-                <div className="">User Role:</div>
-                <div className="">{order?.userInfo?.role}</div>
-              </div>
-              <div className="set-three">
-                <div className="">User Stripe ID:</div>
-                <div className="usr-brk">{order?.userInfo?.stripe_cust_id}</div>
-              </div>
-            </div>
-            <div className="admOrder__admin-options">
-              <div className="status">
-                <h4>Order Status:</h4>
-                <div className="">
-                  {order?.orderInfo?.order_status ? order.orderInfo.order_status :'Unknown'}
-                </div>
-              </div>
-              <div className="deliver">
-                {order?.orderInfo?.order_status === 'processing' || order?.orderInfo?.order_status === null ? (
-                  <>
-                  <h4>Update Order Status:</h4>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={(e) => updateShippingHandler(true)}
-                  >
-                    Update
-                  </button>
-                  </>
-                ) : (
-                  <>
-                  <h4>Update Delivery Status:</h4>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={(e) => updateDeliveryHandler(true)}
-                    disabled={order?.orderInfo?.is_delivered || order?.orderInfo?.is_refunded}
-                  >
-                    {order?.orderInfo?.is_delivered ? 'Delivered' : 'Update'}
-                  </button>
-                  </>
-                )}
-              </div>
-              <div className="refund">
-                <h4>Refund Order:</h4>
-                <button
-                  className="btn btn-secondary"
-                  onClick={(e) => refundHandler(true)}
-                  disabled={order?.orderInfo?.is_refunded}
-                >
-                  {order?.orderInfo?.is_refunded ? 'Refunded' : 'Refund'}
-                </button>
-              </div>
-              <div className="delete">
-                <h4>Delete Order:</h4>
-                <button className="btn btn-secondary" onClick={(e) => deleteOrderHandler(true)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="admOrder__status">
-            <div className="sub">
-              <div className="sec s1">
-                <h4>Payment</h4>
-                <div className="">
-                  {order?.orderInfo?.is_paid ? 'PAID' : 'NOT PAID'}
-                </div>
-              </div>
-              <div className="sec s2">
-                <h4>Delivery</h4>
-                <div className="">
-                  {order?.orderInfo?.is_delivered ? 'DELIVERED' : 'NOT DELIVERED'}
-                </div>
-              </div>
-              <div className="sec s3">
-                <h4>Method</h4>
-                <div className="">
-                  {order?.orderInfo?.payment_method ? order?.orderInfo?.payment_method : 'Unknown'}
-                </div>
-              </div>
+        <div className="admOrder__general">
+          <div className="admOrder__user-info">
+            <div className="set-one">
+              <div className="">#ID:</div>
+              <div className="usr-brk">{order?.userInfo?.id}</div>
+              <div className="">Fullname:</div>
+              <div className="">{order?.userInfo?.f_name}  {order?.userInfo?.l_name}</div>
             </div>
             <div className="set-two">
-              <div>Subtotal: ${order?.orderInfo?.amount_subtotal}</div>
-              <div>Shipping: ${order?.orderInfo?.shipping_price}</div>
-              <div>Tax: ${order?.orderInfo?.tax_price}</div>
-              <div>Total: ${order?.orderInfo?.total_price}</div>
+              <div className="">E-mail:</div>
+              <div className="usr-brk">{order?.userInfo?.user_email}</div>
+              <div className="">User Role:</div>
+              <div className="">{order?.userInfo?.role}</div>
+            </div>
+            <div className="set-three">
+              <div className="">User Stripe ID:</div>
+              <div className="usr-brk">{order?.userInfo?.stripe_cust_id}</div>
             </div>
           </div>
-          <div className="admOrder__details">
-            {order?.orderItems?.map(item => (
-              <div className="admOrder__detail" key={item.id}>
-                <div className="admOrder__image">
-                  <Link to={`/product/${item.product_id}`} >
-                    <img className="admOrder__img" src={item.product_image_url} alt="product view" />
-                  </Link>
-                </div>
-                <div className="admOrder__info">
-                  <div className="set-one">
-                    <h4>Shipping Info</h4>
-                    <div>
-                      <Link to={`/product/${item.product_id}`} >
-                        Name: {item.name}
-                      </Link>
-                    </div>
-                    <div>Brand: {item.brand}</div>
-                    <div>Category: {item.category}</div>
-                    <div>Purchased: {item.created_at}</div>
-                  </div>
-                  <div className="set-two">$ {item.price}</div>
-                  <div className="set-three">Quantity: {item.quantity}</div>
-                  
-                </div>
+          <div className="admOrder__admin-options">
+            <div className="status">
+              <h4>Order Status:</h4>
+              <div className="">
+                {order?.orderInfo?.order_status ? order.orderInfo.order_status :'Unknown'}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    ) : (
-      <section className="admOrder">
-        <div className="admOrder__header">
-          <h2>Order #ID: {order_id}</h2>
-        </div>
-        <div className="admOrder__container">
-          <div className="admOrder__sub-header">
-            <div className="btn btn-secondary">
-              <Link to={`/admin/order-list`} >
-                Orders
-              </Link>
+            </div>
+            <div className="deliver">
+              {order?.orderInfo?.order_status === 'processing' || order?.orderInfo?.order_status === null ? (
+                <>
+                <h4>Update Order Status:</h4>
+                <button
+                  className="btn btn-secondary"
+                  onClick={(e) => updateShippingHandler(true)}
+                >
+                  Update
+                </button>
+                </>
+              ) : (
+                <>
+                <h4>Update Delivery Status:</h4>
+                <button
+                  className="btn btn-secondary"
+                  onClick={(e) => updateDeliveryHandler(true)}
+                  disabled={order?.orderInfo?.is_delivered || order?.orderInfo?.is_refunded}
+                >
+                  {order?.orderInfo?.is_delivered ? 'Delivered' : 'Update'}
+                </button>
+                </>
+              )}
+            </div>
+            <div className="refund">
+              <h4>Refund Order:</h4>
+              <button
+                className="btn btn-secondary"
+                onClick={(e) => refundHandler(true)}
+                disabled={order?.orderInfo?.is_refunded}
+              >
+                {order?.orderInfo?.is_refunded ? 'Refunded' : 'Refund'}
+              </button>
+            </div>
+            <div className="delete">
+              <h4>Delete Order:</h4>
+              <button className="btn btn-secondary" onClick={(e) => deleteOrderHandler(true)}>
+                Delete
+              </button>
             </div>
           </div>
         </div>
-        <div className="admOrder__not-found">
-          Order not found.
+        <div className="admOrder__status">
+          <div className="sub">
+            <div className="sec s1">
+              <h4>Payment</h4>
+              <div className="">
+                {order?.orderInfo?.is_paid ? 'PAID' : 'NOT PAID'}
+              </div>
+            </div>
+            <div className="sec s2">
+              <h4>Delivery</h4>
+              <div className="">
+                {order?.orderInfo?.is_delivered ? 'DELIVERED' : 'NOT DELIVERED'}
+              </div>
+            </div>
+            <div className="sec s3">
+              <h4>Method</h4>
+              <div className="">
+                {order?.orderInfo?.payment_method ? order?.orderInfo?.payment_method : 'Unknown'}
+              </div>
+            </div>
+          </div>
+          <div className="set-two">
+            <div>Subtotal: ${order?.orderInfo?.amount_subtotal}</div>
+            <div>Shipping: ${order?.orderInfo?.shipping_price}</div>
+            <div>Tax: ${order?.orderInfo?.tax_price}</div>
+            <div>Total: ${order?.orderInfo?.total_price}</div>
+          </div>
         </div>
-      </section>
-    )}
-    </>
+        <div className="admOrder__details">
+          {order?.orderItems?.map(item => (
+            <div className="admOrder__detail" key={item.id}>
+              <div className="admOrder__image">
+                <Link to={`/product/${item.product_id}`} >
+                  <img className="admOrder__img" src={item.product_image_url} alt="product view" />
+                </Link>
+              </div>
+              <div className="admOrder__info">
+                <div className="set-one">
+                  <h4>Shipping Info</h4>
+                  <div>
+                    <Link to={`/product/${item.product_id}`} >
+                      Name: {item.name}
+                    </Link>
+                  </div>
+                  <div>Brand: {item.brand}</div>
+                  <div>Category: {item.category}</div>
+                  <div>Purchased: {item.created_at}</div>
+                </div>
+                <div className="set-two">$ {item.price}</div>
+                <div className="set-three">Quantity: {item.quantity}</div>
+                
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section className="admOrder">
+      <div className="admOrder__header">
+        <h2>Order #ID: {order_id}</h2>
+      </div>
+      <div className="admOrder__container">
+        <div className="admOrder__sub-header">
+          <div className="btn btn-secondary">
+            <Link to={`/admin/order-list`} >
+              Orders
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="admOrder__not-found">
+        Order not found.
+      </div>
+    </section>
   )
 }
 export default AdminOrderDetail;

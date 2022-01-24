@@ -87,103 +87,99 @@ const AdminSlideUpdate = ({stateChanger}) => {
     stateChanger(false);
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="">
-        <form className="admForm" onSubmit={onSubmit} >
-          <div className="admForm__inner-container">
-            <div className="admForm__section">
-              <div className="admForm__group">
-                <label htmlFor="title" className="admForm__label">Title: </label>
-                <input
-                  type="text"
-                  placeholder="Summer Camping Gear"
-                  className=""
-                  name="title"
-                  onChange={e => onChange(e)}
-                  value={title}
-                  maxLength="40"
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="theme" className="admForm__label">Theme: </label>
-                <input
-                  type="text"
-                  placeholder="Fall Clothing"
-                  className=""
-                  name="theme"
-                  onChange={e => onChange(e)}
-                  value={theme}
-                  maxLength="40"
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="category" className="admForm__label">Category: </label>
-                <select name="category" value={category} onChange={e => onChange(e)}>
-                  <option value="Video Games">Video Games</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Sneakers">Sneakers</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Camping">Camping</option>
-                  <option value="Desktop">Desktop</option>
-                  <option value="Laptops">Laptops</option>
-                  <option value="Clothes">Clothes</option>
-                </select>
-              </div>
-            </div>
-            <div className="admForm__section prod-image">
-              <div className="admForm__group">
-                <label htmlFor="image_url" className="admForm_label">
-                  Slide Image
-                </label>
-                <input
-                  type="file"
-                  accept=".jpeg, .jpg, .png, .gif"
-                  placeholder=".jpeg, .jpg, .png, .gif formats only"
-                  className="file-btn-input file-slim"
-                  name="image_url"
-                  onChange={handleImageChange}
-                  ref={fileInputText}
-                />
-              </div>
-              {imageData && (
-                <div className="admForm__image">
-                  <img className="admForm__img" src={imageData} alt="Uploaded Slide" />
-                </div>
-              )}
-            </div>
-          </div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="">
+      <form className="admForm" onSubmit={onSubmit} >
+        <div className="admForm__inner-container">
           <div className="admForm__section">
             <div className="admForm__group">
-              <textarea
-                name="description"
-                cols="30"
-                rows="5"
-                placeholder="Update slide description"
+              <label htmlFor="title" className="admForm__label">Title: </label>
+              <input
+                type="text"
+                placeholder="Summer Camping Gear"
+                className=""
+                name="title"
                 onChange={e => onChange(e)}
-                value={description}
-                maxLength="120"
-              ></textarea>
+                value={title}
+                maxLength="40"
+              />
+            </div>
+            <div className="admForm__group">
+              <label htmlFor="theme" className="admForm__label">Theme: </label>
+              <input
+                type="text"
+                placeholder="Fall Clothing"
+                className=""
+                name="theme"
+                onChange={e => onChange(e)}
+                value={theme}
+                maxLength="40"
+              />
+            </div>
+            <div className="admForm__group">
+              <label htmlFor="category" className="admForm__label">Category: </label>
+              <select name="category" value={category} onChange={e => onChange(e)}>
+                <option value="Video Games">Video Games</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Sneakers">Sneakers</option>
+                <option value="Sports">Sports</option>
+                <option value="Camping">Camping</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Laptops">Laptops</option>
+                <option value="Clothes">Clothes</option>
+              </select>
             </div>
           </div>
-          <div className="admForm__section">
-            {fileTypeError || fileSizeError ? (
-              <div className="admForm__error">
-                File type or size limit exceeded: jpg, jpeg, png, gif only and size must be less than 3mb.
-              </div>
-            ) : (
-              <div className="admForm__submit-update">
-                <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Submit Slide Update" />
+          <div className="admForm__section prod-image">
+            <div className="admForm__group">
+              <label htmlFor="image_url" className="admForm_label">
+                Slide Image
+              </label>
+              <input
+                type="file"
+                accept=".jpeg, .jpg, .png, .gif"
+                placeholder=".jpeg, .jpg, .png, .gif formats only"
+                className="file-btn-input file-slim"
+                name="image_url"
+                onChange={handleImageChange}
+                ref={fileInputText}
+              />
+            </div>
+            {imageData && (
+              <div className="admForm__image">
+                <img className="admForm__img" src={imageData} alt="Uploaded Slide" />
               </div>
             )}
           </div>
-        </form>
-      </section>
-    )}
-    </>
+        </div>
+        <div className="admForm__section">
+          <div className="admForm__group">
+            <textarea
+              name="description"
+              cols="30"
+              rows="5"
+              placeholder="Update slide description"
+              onChange={e => onChange(e)}
+              value={description}
+              maxLength="120"
+            ></textarea>
+          </div>
+        </div>
+        <div className="admForm__section">
+          {fileTypeError || fileSizeError ? (
+            <div className="admForm__error">
+              File type or size limit exceeded: jpg, jpeg, png, gif only and size must be less than 3mb.
+            </div>
+          ) : (
+            <div className="admForm__submit-update">
+              <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Submit Slide Update" />
+            </div>
+          )}
+        </div>
+      </form>
+    </section>
   );
 };
 export default AdminSlideUpdate;

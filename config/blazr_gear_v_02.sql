@@ -252,6 +252,8 @@ CREATE TABLE shipping_addresses(
   postal_code VARCHAR(255) NOT NULL,
   state VARCHAR(255) NOT NULL,
   country VARCHAR(255) NOT NULL,
+  lat NUMERIC(20,16) NOT NULL DEFAULT 0.0,
+  lng NUMERIC(20,16) NOT NULL DEFAULT 0.0,
   order_id UUID,
   user_id UUID,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,

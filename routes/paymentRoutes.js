@@ -3,8 +3,13 @@ const router = express.Router();
 const { authJWT, admin } = require('../middleware/authenticator');
 // const { createPostValidator, validatorResult } = require('../middleware/validator');
 
-const { makeOrderPayment, getStripeApiKey, addCardToUser, singlePayment, addCardMakePayment, makePayment, deleteCard, getStripeCharge, refundCharge, makePayPalPayment, refundPayPalPayment } = require('../controllers/paymentController'); 
+const { makeOrderPayment, getPaypalClientApiKey, getStripeApiKey, addCardToUser, singlePayment, addCardMakePayment, makePayment, deleteCard, getStripeCharge, refundCharge, makePayPalPayment, refundPayPalPayment } = require('../controllers/paymentController'); 
 // const { singleCharge } = require('../client/src/redux/actions/stripeActions');
+
+// @route    GET /payment/get-paypal-key
+// @desc     Preload public stripe key.
+// @access   Private
+router.get('/get-paypal-key', authJWT, getPaypalClientApiKey);
 
 // @route    GET /payment/get-stripe-key
 // @desc     Preload public stripe key.

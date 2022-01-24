@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  whiteList = ['http://localhost:3000', 'https://www.sandbox.paypal.com'];
+  whiteList = ['http://localhost:3000', 'https://www.sandbox.paypal.com', 'https://api.mapbox.com/'];
   app.use(morgan('dev'));
 }
 // server can interact with client
@@ -63,8 +63,11 @@ app.use('/api/slides', slideRoutes);
 app.use('/api/images', imageRoutes);
 
 // PAYPAL - configure order
-app.get('/api/config/paypal', (req, res) => {
-  res.send(process.env.PAYPAL_CLIENT_ID);
+// app.get('/api/config/google-api-key', (req, res) => {
+//   res.send(process.env.GOOGLE_API_KEY);
+// });
+app.get('/api/config/mapbox', (req, res) => {
+  res.send(process.env.MAPBOX_API_PUBLIC_KEY);
 });
 
 // uploads go to cloudinary

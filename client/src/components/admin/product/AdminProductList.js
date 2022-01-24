@@ -46,61 +46,57 @@ const AdminProductList = () => {
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="admProducts">
-        <div className="admProducts__header prod-item">
-          <h2 className="admProducts__title">Products in Store</h2>
-          <div className="admProducts__header-options prod-item">
-            <div className="admProducts__items-page prod-item">
-              <span>Items per Page:{" "}</span>
-              <div className="admProducts__items-select">
-                <select name="category" value={category} onChange={(e) => categoryChange(e)}>
-                  {categories.map((category, index) => (
-                    <option value={category.category} key={index}>{category.category}</option>
-                  ))}
-                </select>
-                <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
-                  <option value="12">12</option>
-                  <option value="20">20</option>
-                </select>
-              </div>
-            </div>
-            <div className="admProducts__create-item prod-item">
-              <Link to="/admin/product/create">
-                <button className="btn btn-secondary">
-                  Add Product
-                </button>
-              </Link>
-            </div>
-            <div className="admProducts__create-item prod-item">
-              <Link to='/admin/image/list'>
-                <button className="btn btn-secondary">
-                  Images List
-                </button>
-              </Link>
-            </div>
-            <div className="admProducts__total-items prod-item">
-              {products.length} Products
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="admProducts">
+      <div className="admProducts__header prod-item">
+        <h2 className="admProducts__title">Products in Store</h2>
+        <div className="admProducts__header-options prod-item">
+          <div className="admProducts__items-page prod-item">
+            <span>Items per Page:{" "}</span>
+            <div className="admProducts__items-select">
+              <select name="category" value={category} onChange={(e) => categoryChange(e)}>
+                {categories.map((category, index) => (
+                  <option value={category.category} key={index}>{category.category}</option>
+                ))}
+              </select>
+              <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
+                <option value="12">12</option>
+                <option value="20">20</option>
+              </select>
             </div>
           </div>
-        </div>
-        <div className="admProducts__content">
-          <div className="admProducts__list">
-            <>
-            {products.map(product => (
-              <AdminProductItem key={product.id} product={product} />
-            ))}
-            </>
+          <div className="admProducts__create-item prod-item">
+            <Link to="/admin/product/create">
+              <button className="btn btn-secondary">
+                Add Product
+              </button>
+            </Link>
+          </div>
+          <div className="admProducts__create-item prod-item">
+            <Link to='/admin/image/list'>
+              <button className="btn btn-secondary">
+                Images List
+              </button>
+            </Link>
+          </div>
+          <div className="admProducts__total-items prod-item">
+            {products.length} Products
           </div>
         </div>
-        <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
-      </section>
-    )}
-    </>
+      </div>
+      <div className="admProducts__content">
+        <div className="admProducts__list">
+          <>
+          {products.map(product => (
+            <AdminProductItem key={product.id} product={product} />
+          ))}
+          </>
+        </div>
+      </div>
+      <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
+    </section>
   )
 }
 export default AdminProductList;

@@ -109,7 +109,7 @@ exports.createUserProfile = async (req, res, next) => {
   
   for (const [key, value] of Object.entries(profileDataCheck)) {
     if (!value) {
-      profileDataCheck[key] = ''; // console.log(value);
+      profileDataCheck[key] = '';
     }
   }
 

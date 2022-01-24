@@ -39,39 +39,37 @@ const Orders = () => {
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <>
-      <section className="orders">
-        <div className="orders__header">
-          <h2 className="orders__title">My Orders</h2>
-          <div className="orders__sub-header">
-            <div className="total-items">
-              <span>Orders per Page:{" "}</span>
-            </div>
-            <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
-              <option value="12">12</option>
-              <option value="20">20</option>
-            </select>
+    <section className="orders">
+      <div className="orders__header">
+        <h2 className="orders__title">My Orders</h2>
+        <div className="orders__sub-header">
+          <div className="total-items">
+            <span>Orders per Page:{" "}</span>
           </div>
+          <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
+            <option value="12">12</option>
+            <option value="20">20</option>
+          </select>
         </div>
-        <div className="orders__content">
-          <div className="orders__list">
-            {orders && orders.length > 0 ? (
-              orders.map(order => (
-                <OrderItem key={order.id} order={order} />
-              ))
-            ) : (
-              <div className="">No orders found.</div>
-            )}
-          </div>
+      </div>
+      <div className="orders__content">
+        <div className="orders__list">
+          {orders && orders.length > 0 ? (
+            orders.map(order => (
+              <OrderItem key={order.id} order={order} />
+            ))
+          ) : (
+            <div className="">No orders found.</div>
+          )}
         </div>
-      </section>
+      </div>
+    </section>
+    {orders.length > 0 && (
       <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
-      </>
     )}
     </>
   )

@@ -62,7 +62,7 @@ const Navbar = () => {
   const authLinks = (
     <>
     <li className="nav__link-item--secondary">
-      <Link to="/orders">Orders</Link>
+      <Link to="/orders">My Orders</Link>
     </li>
     <li className="nav__link-item--secondary">
       <Link to="/profile">Account</Link>
@@ -177,7 +177,7 @@ const Navbar = () => {
                 {!isAuthenticated ? 'Login' : userInfo?.role === 'admin' &&  isAuthenticated ? 'Admin' : userInfo && (`${userInfo.f_name}`)}
                 <span><FaCaretDown className="nav__caret" /></span>
               </span>
-              <ul className="nav__links--secondary large">
+              <ul className={`nav__links--secondary large ${userInfo?.role === 'admin' ? 'adminLink' : userInfo?.role === 'visitor' ? 'authLink' : 'guestLink'}`}>
                 {!isAuthenticated ? (
                   guestLinks
                 ) : userInfo?.role === 'admin' &&  isAuthenticated ? (

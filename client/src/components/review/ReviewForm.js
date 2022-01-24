@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom';
 import ReactStars from 'react-rating-stars-component';
 import { createProductReview } from '../../redux/actions/productActions';
 
-const initialState = {
-  title: '', description: ''
-}
+const initialState = { title: '', description: '' }
 
 const ReviewForm = ({prodId}) => {
   const dispatch = useDispatch();

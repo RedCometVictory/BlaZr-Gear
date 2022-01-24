@@ -67,19 +67,19 @@ const Register = () => {
             </div>
             <div className="form__section section-two">
               <div className="form__group">
-                <input type="text" name="username" value={username} onChange={onChange} maxLength={120} placeholder="White Owl-01 " aria-required="true" required/>
+                <input type="text" name="username" value={username} onChange={onChange} maxLength={20} placeholder="White Owl-01 " aria-required="true" required/>
                 <label htmlFor="username" className="form__label">
                   <span className="form__label-name">Username</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="text" name="firstName" value={firstName} onChange={onChange} maxLength={60} placeholder="Jose" aria-required="true" required/>
+                <input type="text" name="firstName" value={firstName} onChange={onChange} maxLength={12} placeholder="Jose" aria-required="true" required/>
                 <label htmlFor="firstName" className="form__label">
                   <span className="form__label-name">First Name</span>
                 </label>
               </div>
               <div className="form__group">
-                <input type="text" name="lastName" value={lastName} onChange={onChange} maxLength={60} placeholder="Price" aria-required="true" required/>
+                <input type="text" name="lastName" value={lastName} onChange={onChange} maxLength={20} placeholder="Price" aria-required="true" required/>
                 <label htmlFor="lastName" className="form__label">
                   <span className="form__label-name">Last Name</span>
                 </label>

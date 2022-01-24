@@ -56,7 +56,7 @@ router.post('/:prod_id/reviews', authJWT, createPostValidator, validatorResult, 
 // @route    PUT /products/:prod_id
 // @desc     Admin updates content of a product.
 // @access   Private/Admin
-router.put('/:prod_id', authJWT, admin, upload.single('image_url'), createPostValidator, validatorResult, updateProduct);
+router.put('/:prod_id', authJWT, admin, upload.single('image_url'), updateProduct);
 
 // @route    PUT /products/:prod_id/reviews/:review_id
 // @desc     Admin updates content of a product.

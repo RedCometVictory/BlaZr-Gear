@@ -31,10 +31,6 @@ const ReviewItem = ({ review }) => {
     setRating(1);
   };
 
-  // const deleteReviewHandler = () => {
-  //   isSetConfirmDelete(true);
-  // };
-
   return (
     <div className="review">
       <div className="review__header">

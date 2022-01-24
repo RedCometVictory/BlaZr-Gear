@@ -41,9 +41,6 @@
     }
   }
   &__list {
-    // max-height: 1080px;
-    // overflow-y: auto;
-    // overflow-x: hidden;
     -ms-overflow-style: none;  /* hide scroll in IE and Edge */
     scrollbar-width: none; /* hide scroll in Firefox */
     // for fairfox only, color of bar dragger and bg
@@ -61,10 +58,8 @@
       // draggable area chrome
       background-color: rgb(82, 82, 85);
       border-radius: 20px;
-      // border: 3px solid orange;
     }
   }
-  // &__list {}
   &__total {
     width: 18%;
     text-align: end;
@@ -89,7 +84,7 @@
   &__btn-checkout {
     text-align: center;
     border-radius: 6px;
-    background-color: purple;
+    background-color: var(--color-btn-primary);
     padding: 6px 0px 6px 0;
   }
   &__paginate-menu {
@@ -137,11 +132,9 @@
 // ----------------------------------------
 // ----------------------------------------
 .admProdItem {
-  // border: 1px solid powderblue; // ---
   &:nth-child(even) {
     background-color: grey;
   }
-  // &__detail {}
   &__row {
     display: flex;
     justify-content: space-between;
@@ -326,10 +319,9 @@
   }
   // seems not to be used
   &__btn-details {
-    // background: orange;
     border-radius: 6px;
     padding: 4px 6px;
-    text-align: center
+    text-align: center;
   }
 }
 // --------------------------------------------------
@@ -663,7 +655,6 @@
     &__detail-set {
       &.five {
         &.user-item {
-          // margin-top: 4px;
           margin-top: initial;
           grid-row: 1;
           grid-column: 5;

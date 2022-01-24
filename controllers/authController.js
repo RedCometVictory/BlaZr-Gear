@@ -63,6 +63,18 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).json({ errors: [{ msg: 'Error. Passwords do not match.' }] });
     }
 
+    if (username.length > 20) {
+      return res.status(400).json({ errors: [{ msg: 'Error. Username must be less than 20 characters.' }] });
+    }
+
+    if (firstName.length > 12) {
+      return res.status(400).json({ errors: [{ msg: 'Error. First name must be less than 12 characters.' }] });
+    }
+
+    if (lastName.length > 20) {
+      return res.status(400).json({ errors: [{ msg: 'Error. Last name must be less than 20 characters.' }] });
+    }
+
     // Generate new user - encrypt password
     const salt = await bcrypt.genSalt(11);
     const encryptedPassword = await bcrypt.hash(password, salt);
@@ -398,27 +410,19 @@ exports.authLogout = async (req, res, next) => {
   try {
     const verifiedRefToken = validateRefreshToken(refresh);
 
-    // if (verifiedRefToken === null) {
-      // res.status(403).send('Failed to verify refresh token.');
-    // }
-
     // clear existing cookies:
     if (verifiedRefToken) {
       // clear Refresh Token 
       await pool.query(
         'UPDATE users SET refresh_token = null WHERE refresh_token = $1 RETURNING *', [verifiedRefToken.refreshToken]
       );
-      // if (clearRefreshToken.rows[0].refresh_token !== null) {
-      //   return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to nullify refresh token." }] });
-      // }
-      // res.clearCookie('refresh'); // instead of deleting, override
+
       res.cookie('refresh', '', { expires: new Date(1) });
       // to effectively "delete" a cookie, one must set the expiration to essentially be maxAge=1
     };
     
     res.status(200).send({ "success": "Logged out successfully!" });
   } catch (err) {
-    // res.send("no cookie?????");
     console.error(err.message);
     res.status(500).send("Failed while attempting logout!");
   }
@@ -440,10 +444,6 @@ exports.authDelete = async (req, res, next) => {
 
     // if user role = admin || staff remove comments they made
     if (role === 'staff' || role === 'admin') {
-      // const deleteAllComments = await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
-      // if (!deleteAllComments) {
-        // res.status(404).json({ errors: [{ msg: "Error. User comments found." }] });
-      // }
       await pool.query('DELETE FROM comments WHERE user_id = $1;', [id]);
     }
     // delete All User Reviews

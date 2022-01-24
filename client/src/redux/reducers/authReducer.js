@@ -36,14 +36,11 @@ const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: localStorage.getItem("__userInfo") ? true : false,
   loading: false,
-  // user: null,
   userInfo: localStorage.getItem("__userInfo") ? JSON.parse(localStorage.getItem("__userInfo")) : {},
   errors: null,
   allowReset: false
 }
 
-// pass state and action that's dispatched via request made
-// export default (state = initialState, action) => {
 const authReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
@@ -76,7 +73,6 @@ const authReducer = (state = initialState, action) => {
     case AUTH_LOGIN_SUCCESS:
       return {
         ...state,
-        // ...payload,
         // token: payload,
         isAuthenticated: true,
         loading: false,
@@ -88,7 +84,6 @@ const authReducer = (state = initialState, action) => {
         loading: false,
         status: payload.status,
         allowReset: true
-        // allowReset: payload.data.allowReset
       }
     case AUTH_FORGOT_PASSWORD_SUCCESS:
     case AUTH_NEW_PASSWORD_SUCCESS:
@@ -106,8 +101,6 @@ const authReducer = (state = initialState, action) => {
         isAuthenticated: false,
         loading: false,
         userInfo: null,
-        // allowReset: false
-        // user: null
       }
     case AUTH_REGISTER_FAILURE:
     case AUTH_LOGIN_FAILURE:
@@ -116,21 +109,16 @@ const authReducer = (state = initialState, action) => {
     case AUTH_ERROR:
       return {
         ...state,
-        // token: null,
         isAuthenticated: false,
         loading: false,
-        // user: null,
         userInfo: null,
         errors: payload
       }
-      // return { loading: false, error: payload }
     case AUTH_VERIFY_PASSWORD_FAILURE:
       return {
         ...state,
         loading: false,
-        // status: payload.status,
         errors: payload,
-        // allowReset: payload.data.allowReset
         allowReset: false
       }
     // case TOKEN_FAILURE:
@@ -140,7 +128,6 @@ const authReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         allowReset: false,
-        // status: payload.status,
         errors: payload
       }
     case AUTH_VERIFY_PASSWORD_RESET:

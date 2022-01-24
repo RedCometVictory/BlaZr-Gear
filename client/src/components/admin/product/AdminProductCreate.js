@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { createProduct } from '../../../redux/actions/productActions';
 
 const initialState = {name: '', image_url: '', brand: '', category: '', description: '', price: '', count_in_stock: ''};
@@ -76,7 +76,16 @@ const AdminProductCreate = () => {
   return (
     <section className="">
       <form className="admForm" onSubmit={onSubmit} >
-        <h2 className="admForm__header prod-item">Create Product</h2>
+        <div className="admForm__header prod-item">
+          <h2>Create Product</h2>
+          <div className="">
+            <Link to='/admin/product-list'>
+              <div className="btn btn-secondary update-btn">
+                Product List
+              </div>
+            </Link>
+          </div>
+        </div>
         <div className="admForm__section create-form">
           <div className="admForm__group">
             <label htmlFor="image_url" className="admForm_label">

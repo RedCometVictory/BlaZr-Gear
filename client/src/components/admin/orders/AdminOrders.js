@@ -38,40 +38,36 @@ const AdminOrders = () => {
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <>
-      <section className="admOrders">
-        <div className="admOrders__header">
-          <h2 className="admOrders__title">Orders (Admin)</h2>
-          <div className="admOrders__sub-header">
-            <div className="total-items">
-              <span>Orders per Page:{" "}</span>
-            </div>
-            <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
-              <option value="12">12</option>
-              <option value="20">20</option>
-            </select>
+    <section className="admOrders">
+      <div className="admOrders__header">
+        <h2 className="admOrders__title">Orders (Admin)</h2>
+        <div className="admOrders__sub-header">
+          <div className="total-items">
+            <span>Orders per Page:{" "}</span>
           </div>
+          <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
+            <option value="12">12</option>
+            <option value="20">20</option>
+          </select>
         </div>
-        <div className="admOrders__content">
-          <div className="admOrders__list">
-            {orders && orders?.length > 0 ? (
-              orders.map(order => (
-                <AdminOrderItem key={order.id} order={order} />
-              ))
-            ) : (
-              <div className="">No orders found.</div>
-            )}
-          </div>
+      </div>
+      <div className="admOrders__content">
+        <div className="admOrders__list">
+          {orders && orders?.length > 0 ? (
+            orders.map(order => (
+              <AdminOrderItem key={order.id} order={order} />
+            ))
+          ) : (
+            <div className="">No orders found.</div>
+          )}
         </div>
-      </section>
-      <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
-      </>
-    )}
+      </div>
+    </section>
+    <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
     </>
   )
 }

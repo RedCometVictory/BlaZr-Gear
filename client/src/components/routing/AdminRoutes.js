@@ -3,9 +3,9 @@ import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Spinner from '../layouts/Spinner';
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
+const AdminRoute = ({ component: Component, ...rest }) => {
   const userAuth = useSelector(state => state.auth);
-  const { isAuthenticated, loading } = userAuth;
+  const { isAuthenticated, userInfo, loading } = userAuth;
 
   return (
     <Route
@@ -13,7 +13,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       render={props =>
         loading ? (
           <Spinner />
-        ) : !loading && isAuthenticated ? (
+        ) : !loading && isAuthenticated && userInfo.role === 'admin' ? (
           <Component {...props} />
         ) : (
           // when logging out redirect to...
@@ -23,4 +23,4 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     />
   );
 };
-export default PrivateRoute;
+export default AdminRoute;

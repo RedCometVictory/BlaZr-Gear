@@ -30,85 +30,79 @@ const ProfileUserForm = ({stateChanger}) => {
   }
 
   const { f_name, l_name, username, user_email } = formUserData;
-
   const onChange = e => setFormUserData({ ...formUserData, [e.target.name]: e.target.value });
-
   const onSubmit = e => {
     e.preventDefault();
     dispatch(updateUserInfo(formUserData))
     stateChanger(false);
   }
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="">
-        <form className="admForm" onSubmit={onSubmit} >
-          <div className="admForm__inner-container">
-            <div className="admForm__section">
-              <div className="admForm__group">
-                <label htmlFor="f_name" className="admForm__label">First Name: </label>
-                <input
-                  type="text"
-                  placeholder="Jose"
-                  className=""
-                  name="f_name"
-                  onChange={e => onChange(e)}
-                  value={f_name}
-                  required
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="l_name" className="admForm__label">Last Name: </label>
-                <input
-                  type="text"
-                  placeholder="Henriquez"
-                  className=""
-                  name="l_name"
-                  onChange={e => onChange(e)}
-                  value={l_name}
-                  required
-                />
-              </div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="">
+      <form className="admForm" onSubmit={onSubmit} >
+        <div className="admForm__inner-container">
+          <div className="admForm__section">
+            <div className="admForm__group">
+              <label htmlFor="f_name" className="admForm__label">First Name: </label>
+              <input
+                type="text"
+                placeholder="Jose"
+                className=""
+                name="f_name"
+                onChange={e => onChange(e)}
+                value={f_name}
+                required
+              />
             </div>
-            <div className="admForm__section">
-              <div className="admForm__group">
-                <label htmlFor="username" className="admForm__label">Username: </label>
-                <input
-                  type="text"
-                  placeholder="JollyRancher11"
-                  className=""
-                  name="username"
-                  onChange={e => onChange(e)}
-                  value={username}
-                  required
-                />
-              </div>
-              <div className="admForm__group">
-                <label htmlFor="user_email" className="admForm__label">E-mail: </label>
-                <input
-                  type="text"
-                  placeholder="myemail@mail.com"
-                  className=""
-                  name="user_email"
-                  onChange={e => onChange(e)}
-                  value={user_email}
-                  required
-                />
-              </div>
+            <div className="admForm__group">
+              <label htmlFor="l_name" className="admForm__label">Last Name: </label>
+              <input
+                type="text"
+                placeholder="Henriquez"
+                className=""
+                name="l_name"
+                onChange={e => onChange(e)}
+                value={l_name}
+                required
+              />
             </div>
           </div>
           <div className="admForm__section">
-            <div className="admForm__submit-update">
-              <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Update User Info" />
+            <div className="admForm__group">
+              <label htmlFor="username" className="admForm__label">Username: </label>
+              <input
+                type="text"
+                placeholder="JollyRancher11"
+                className=""
+                name="username"
+                onChange={e => onChange(e)}
+                value={username}
+                required
+              />
+            </div>
+            <div className="admForm__group">
+              <label htmlFor="user_email" className="admForm__label">E-mail: </label>
+              <input
+                type="text"
+                placeholder="myemail@mail.com"
+                className=""
+                name="user_email"
+                onChange={e => onChange(e)}
+                value={user_email}
+                required
+              />
             </div>
           </div>
-        </form>
-      </section>
-    )}
-    </>
+        </div>
+        <div className="admForm__section">
+          <div className="admForm__submit-update">
+            <input type="submit" className="btn btn-primary btn-full-width admForm__submit" value="Update User Info" />
+          </div>
+        </div>
+      </form>
+    </section>
   )
 }
 export default ProfileUserForm;

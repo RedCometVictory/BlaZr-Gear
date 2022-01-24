@@ -50,45 +50,41 @@ const Product = () => {
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <>
-      <section className="products">
-        <div className="products__header">
-          <h2>
-            <Link to="/shop">Shop</Link>
-          </h2>
-          <div className="products__items-page">
-            <span>Items per Page:{" "}</span>
-            <div className="products__items-select">
-              <select name="category" value={category} onChange={e => categoryChange(e)}>
-                {categories.map((category, index) => (
-                  <option value={category.category} key={index}>{category.category}</option>
-                ))}
-              </select>
-              <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
-                <option value="12">12</option>
-                <option value="20">20</option>
-              </select>
-            </div>
+    <section className="products">
+      <div className="products__header">
+        <h2>
+          <Link to="/shop">Shop</Link>
+        </h2>
+        <div className="products__items-page">
+          <span>Items per Page:{" "}</span>
+          <div className="products__items-select">
+            <select name="category" value={category} onChange={e => categoryChange(e)}>
+              {categories.map((category, index) => (
+                <option value={category.category} key={index}>{category.category}</option>
+              ))}
+            </select>
+            <select name="itemCount" value={itemsPerPage} onChange={e => itemCountChange(e)}>
+              <option value="12">12</option>
+              <option value="20">20</option>
+            </select>
           </div>
         </div>
-        <div className="products__container">
-        {products && products.length > 0 ? (
-          products.map(product => (
-            <ProductItem key={product.id} product={product} />
-          ))
-        ) : (
-          <div className="">No items found. Try another search term.</div>
-        )}
-        </div>
-      </section>
-      <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
-      </>
-    )}
+      </div>
+      <div className="products__container">
+      {products && products.length > 0 ? (
+        products.map(product => (
+          <ProductItem key={product.id} product={product} />
+        ))
+      ) : (
+        <div className="">No items found. Try another search term.</div>
+      )}
+      </div>
+    </section>
+    <Paginate currentPage={currentPage} itemsPerPage={itemsPerPage} pages={pages} pageChange={pageChange} />
     </>
   )
 }

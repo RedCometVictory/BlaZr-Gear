@@ -33,16 +33,6 @@ api.interceptors.request.use(
   }
 );
 
-// api.interceptors.response.use(
-//   res => res,
-//   err => {
-//     if (err.response.status === 401) {
-//       store.dispatch({ type: LOGOUT });
-//     }
-//     return Promise.reject(err);
-//   }
-// );
-
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -51,28 +41,23 @@ api.interceptors.response.use(
     //checking if error is Aunothorized error
     let originalRequest = config;
 
-    if (response.status === 401 && originalRequest.url.includes("auth/refresh-token")) {
+    if (response?.status === 401 && originalRequest.url.includes("auth/refresh-token")) {
       // stop loop
       store.dispatch(logout(history));
       return Promise.reject(error);
-    // } else if (response.status === 401 && !originalRequest._retry) {
     }
-    if (response.status === 401 && !originalRequest._retry) {
+    if (response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const refResponse = await api.get("/auth/refresh-token");
         let accessToken = refResponse.data.data.token;
         if (accessToken) {
           store.dispatch(refreshAccessToken(accessToken));
-
           config.headers["Authorization"] = "Bearer " + accessToken;
         }
         //with new token retry original request
-
         return api(originalRequest);
-        // }
       } catch (err) {
-        // console.log(err);
         // store.dispatch(logout())
         if (err.response && err.response.data) {
           return Promise.reject(err.response.data);

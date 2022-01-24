@@ -1,17 +1,9 @@
-// .nav-btn {
-//   background-color: var(--navbar-btn-a);
-//   color: var(--navbar-btn-icon);
-//   border: 2px solid var(--color-navbar-border-a);
-// }
 .btn {
   border-radius: 3px;
   padding: 0.3rem 1rem 0.3rem;
   font-weight: 400;
-  // margin: 0 0.6rem;
-  // color: var(--overlay-text);
   color: var(--color-btn-text);
   // max-height: 28.8px; // may add this to larger screens
-  // color: var(--color-logo);
   font-size: 0.85rem;
   text-align: center;
   &:focus {outline: none}
@@ -24,11 +16,9 @@
   white-space: nowrap;
   border: none;
   transition: 0.5s;
-  // color: var(--color-btn-text);
   &:hover {
     background-color: var(--color-btn-hover);
     color: var(--color-btn-text-hover);
-    // opacity: 0.8;
   }
 }
 .btn-secondary {
@@ -37,11 +27,12 @@
   transition: 0.5s;
   color: var(--color-btn-text);
   &:hover {
-    // color: var(--color-navbar);
-    // border: 1px solid var(--color-navbar);
     color: var(--color-btn-secondary-hover);
     border: 1px solid var(--color-btn-secondary-hover);
   }
+}
+.btn-w-lg {
+  width: 100%;
 }
 .btn-cart-card {
   padding-bottom: 6px;
@@ -62,9 +53,6 @@
   background-color: rgba(0, 0, 0, 0);
   border: 1px solid var(--overlay-text);
   transition: 0.5s;
-  // &.no-side-margin {
-  //   margin: 0.3rem 0 0.3rem;
-  // }
 }
 .btn-overlay {
   color: var(--overlay-text);
@@ -72,7 +60,6 @@
 }
 .btn-full-width {
     width: 100%;
-    // padding: 0.4rem 1rem;
     display: block;
     text-align: center;
     margin: 0;
@@ -113,23 +100,12 @@
 }
 .no-side-margin {
       margin: 0.3rem 0 0.3rem;
-      // margin: 0 0 0 0;
 }
-// }
-// Small Phone / Tablet Screen Format & larger
-// @media (min-width: 352px) {
-//   .btn {
-//     max-height: 28.8px;
-//   }
-  
-// }
 @media (min-width: 388px) {
   .btn {
-    // margin: 0 0.8rem;
     &.btn-full-width {
       margin-left: 0;
       margin-right: 0;
-      // margin-top 1.4rem;
     }
   }
 }

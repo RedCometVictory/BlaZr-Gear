@@ -39,7 +39,6 @@ const ProductItem = ({
   const addToCart = (prod_id, qty = 1) => {
     if (!isAuthenticated) {
       dispatch(addItemToCartGuest(prod_id, qty));
-      // console.log("guest: checking if item is in cart")
       // itemIsInCart(prod_id, cartItems)
     }
     if (isAuthenticated) {

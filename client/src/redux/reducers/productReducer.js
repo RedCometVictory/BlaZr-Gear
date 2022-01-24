@@ -116,7 +116,6 @@ const productReducer = (state = initialState, action) => {
     case PRODUCT_UPDATE_SUCCESS:
       return {
         loading: false,
-        // success: true,
         // product: payload
         productById: {
           productInfo: payload,
@@ -137,8 +136,7 @@ const productReducer = (state = initialState, action) => {
           productInfo: {...state.productById.productInfo},
           productRating: {...state.productById.productRating},
           productReviews: [payload, ...state.productById.productReviews]
-        },
-        success: true
+        }
       }
     case PRODUCT_UPDATE_REVIEW_SUCCESS:
       // let updatedReviews = state.productById.productReviews.map(review => review.id === payload.review_id ? review = payload.updatedReview : review);
@@ -149,8 +147,7 @@ const productReducer = (state = initialState, action) => {
           productInfo: {...state.productById.productInfo},
           productRating: {...state.productById.productRating},
           productReviews: [...state.productById.productReviews.map(review => review.id === payload.id ? review = payload: review)]
-        },
-        // isSuccess: true
+        }
       }
     case PRODUCT_DELETE_REVIEW_SUCCESS:
       const reviewRemoved = state.productById.productReviews.filter(review => review.id !== payload.review_id);

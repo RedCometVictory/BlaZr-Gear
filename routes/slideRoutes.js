@@ -13,7 +13,7 @@ const upload = multer({
     return cb(null, true);
   }
 }); //3MB
-const { createUpdateSlideValidator, validatorResult } = require('../middleware/validator');
+// const { createUpdateSlideValidator, validatorResult } = require('../middleware/validator');
 const { getSlideShow, getSlideById, createSlide, updateSlide, deleteSlide } = require('../controllers/slideController');
 
 // @route    GET /slides/all

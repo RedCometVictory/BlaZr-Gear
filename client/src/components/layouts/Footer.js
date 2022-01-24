@@ -27,7 +27,7 @@ const Footer = () => {
         </section> */}
       </div>
       <div className="footer__copyright">
-        BlaZr Gear &copy; 2021
+        BlaZr Gear &copy; 2021, 2022
       </div>
     </footer>
   )

@@ -43,7 +43,7 @@ exports.getImages  = async (req, res, next) => {
     res.status(500).send('Server Error!');
   }
 };
-// 
+
 exports.getImageById = async (req, res, next) => {
   const { image_id } = req.params;
   try {

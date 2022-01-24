@@ -34,6 +34,7 @@ const Payment = () => {
       dispatch(setAlert('Please sign in to continue with payment.', 'danger'));
       history.push('/login');
     }
+    if (cartItems.length === 0) history.push('/cart');
   }, [dispatch]);
 
   // *** PAYPAL INTEGRATION ***

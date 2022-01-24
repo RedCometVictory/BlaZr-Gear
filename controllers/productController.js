@@ -42,7 +42,6 @@ exports.getCategories = async (req, res, next) => {
 exports.getAllProducts = async (req, res, next) => {
   let { keyword, category, pageNumber, offsetItems } = req.query;
   let page = Number(pageNumber) || 1;
-  // if (page < 1) page = 1;
   let totalProducts;
   let products;
   let limit = Number(offsetItems) || 12;
@@ -213,22 +212,22 @@ exports.createProduct = async (req, res, next) => {
 
     if (name.length > 110) {
       if (req.file) await removeOnErr(req.file.filename);
-      return res.status(409).json({ errors: [{ msg: "Name is too long." }] });
+      return res.status(403).json({ errors: [{ msg: "Name is too long." }] });
     };
 
     if (brand.length > 255) {
       if (req.file) await removeOnErr(req.file.filename);
-      return res.status(409).json({ errors: [{ msg: "Brand is too long." }] });
+      return res.status(403).json({ errors: [{ msg: "Brand is too long." }] });
     };
 
     if (count_in_stock === 0 || count_in_stock === '0') {
       if (req.file) await removeOnErr(req.file.filename);
-      return res.status(409).json({ errors: [{ msg: "Count in stock must be at least 1 or more." }] });
+      return res.status(403).json({ errors: [{ msg: "Count in stock must be at least 1 or more." }] });
     };
 
     if (price.startsWith("-")) {
       if (req.file) await removeOnErr(req.file.filename);
-      return res.status(409).json({ errors: [{ msg: "Price number cannot be negative." }] });
+      return res.status(403).json({ errors: [{ msg: "Price number cannot be negative." }] });
     };
 
     // provided via multer cloudinary
@@ -286,7 +285,7 @@ exports.createProductReview = async (req, res, next) => {
     };
 
     if (title.length > 120) {
-      return res.status(409).json({ errors: [{ msg: "Title is too long." }] });
+      return res.status(403).json({ errors: [{ msg: "Title is too long." }] });
     };
 
     const productExists = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
@@ -388,13 +387,15 @@ exports.updateProduct = async (req, res, next) => {
       if (req.file) await removeOnErr(req.file.filename);
       return res.status(401).json({ errors: [{ msg: 'All fields are required.' }] });
     };
-
+    
     if (name.length > 110) {
-      return res.status(409).json({ errors: [{ msg: "Name is too long." }] });
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(403).json({ errors: [{ msg: "Name is too long." }] });
     };
-
+    
     if (brand.length > 255) {
-      return res.status(409).json({ errors: [{ msg: "Brand is too long." }] });
+      if (req.file) await removeOnErr(req.file.filename);
+      return res.status(403).json({ errors: [{ msg: "Brand is too long." }] });
     };
 
     // provided via multer cloudinary
@@ -412,6 +413,7 @@ exports.updateProduct = async (req, res, next) => {
     const findProduct = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
       
     if (findProduct.rowCount === 0 || !findProduct) {
+      if (req.file) await removeOnErr(req.file.filename);
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
     };
 
@@ -449,7 +451,7 @@ exports.updateProduct = async (req, res, next) => {
     }
 
     if (updateProduct.rowCount < 1) {
-      return res.status(403).json({ errors: [{ msg: "Failed to update user post." }] });
+      return res.status(403).json({ errors: [{ msg: "Failed to update product." }] });
     }
 
     if (updateProduct.rowCount > 0) {
@@ -480,7 +482,7 @@ exports.updateProductReview = async (req, res, next) => {
 
   try {
     if (title.length > 120) {
-      return res.status(409).json({ errors: [{ msg: "Title is too long." }] });
+      return res.status(403).json({ errors: [{ msg: "Title is too long." }] });
     };
 
     if (!description) {
@@ -576,7 +578,6 @@ exports.deleteProduct = async (req, res, next) => {
   const { prod_id } = req.params;
   try {
     const findProduct = await pool.query('SELECT * FROM products WHERE id = $1;', [prod_id]);
-
     if (findProduct.rowCount === 0 || !findProduct) {
       return res.status(404).json({ errors: [{ msg: "Product does not exist." }] });
     }

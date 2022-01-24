@@ -2,12 +2,16 @@
   --navbar-brand: rgb(253, 53, 53);
   // --navbar-color: rgb(236, 235, 235);
   // --navbar-color: rgb(214, 214, 214);
-  --navbar-color: rgb(27, 40, 233);
+  // --navbar-color: rgb(27, 40, 233);
+  --navbar-color: rgb(223, 9, 9);
   // --navbar-color: rgb(238, 232, 232);
   --navbar-color-a: rgba(51, 51, 51, 0.6);
-  --navbar-color-a-02: rgba(27, 40, 233, 0.45);
-  --navbar-text: rgb(65, 65, 65);
-  --navbar-title: rgb(243, 243, 243);
+  // --navbar-color-a-02: rgba(27, 40, 233, 0.45);
+  --navbar-color-a-02: rgba(233, 9, 9, 0.75);
+  // --navbar-text: rgb(65, 65, 65);
+  --navbar-text: rgb(221, 221, 221);
+  --navbar-title: rgb(221, 221, 221);
+  // --navbar-title: rgb(243, 243, 243);
   --navbar-text-hover: rgb(221, 171, 8);
   // --bg-primary: rgb(214, 214, 214);
   --bg-primary: rgb(224, 224, 224);
@@ -51,7 +55,8 @@
   --navbar-color-a: rgba(51, 51, 51, 0.6);
   --navbar-color-a-02: rgba(233, 9, 9, 0.75);
   --navbar-text: rgb(221, 221, 221);
-  --navbar-title: rgb(243, 243, 243);
+  --navbar-title: rgb(221, 221, 221);
+  // --navbar-title: rgb(243, 243, 243);
   --navbar-text-hover: rgb(243, 247, 16);
   --bg-primary: rgb(66, 61, 61);
   --bg-panel: rgb(54, 54, 54);
@@ -181,40 +186,4 @@
   --section-product-info-bg-a: rgba(235, 235, 235, 0);
   --section-product-info-border-a: initial;
 }
-
-
-
-
-
-
-// swap dark / light mode
-// key=className, value=$variable
-$themes: (
-  light: (
-    backgroundColor: $light-bg,
-    foregroundColor: $light-bg-panel,
-    header: $light-color-heading,
-    textColor: $light-color-text
-  ),
-  dark: (
-    backgroundColor: $dark-bg,
-    foregroundColor: $dark-bg-panel,
-    header: $dark-color-heading,
-    textColor: $dark-color-text
-  )
-);
-// change border color of buttons and other elements
-$borderSwap: (
-  winter: (
-    border: $dark-pt-winter,
-    buttonColor: $dark-pt-winter,
-    buttonBorder: $dark-pt-winter
-    // buttonTextColor: $dark-pt-winter
-  ),
-  summer: (
-    border: $dark-pt-summer,
-    buttonColor: $dark-pt-summer,
-    buttonBorder: $dark-pt-summer
-  )
-);
 */

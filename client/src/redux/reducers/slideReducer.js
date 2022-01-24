@@ -58,7 +58,6 @@ const slideReducer = (state = initialState, action) => {
         loading: false,
         slide: {
           payload
-          // slideInfo: payload
         }
       }
     case SLIDE_DELETE_SUCCESS:
@@ -70,13 +69,6 @@ const slideReducer = (state = initialState, action) => {
         ...state,
         loading: false
       }
-      /* delete from the slideshow
-        return {
-          ...state,
-          loading: false,
-          slides: state.slides.filter(slide => slide.id !== payload.id)
-        }
-      */
     case SLIDE_CREATE_RESET:
       return { slide: {} }
     case SLIDE_UPDATE_RESET:

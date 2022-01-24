@@ -34,100 +34,96 @@ const AdminUserDetail = () => {
 
   const scrollToUpdateForm = () => myRef.current.scrollIntoView({ behavior: 'smooth'});
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="admProductDetail">
-        <div className="admProductDetail__title">
-          <h2>User Information</h2>
-        </div>
-        <div className="admProductDetail__details">
-          <div className="admProductDetail__user">
-            <div className="admProductDetail__user-section user-item">
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  ID#: 
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.id}
-                </div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="admProductDetail">
+      <div className="admProductDetail__title">
+        <h2>User Information</h2>
+      </div>
+      <div className="admProductDetail__details">
+        <div className="admProductDetail__user">
+          <div className="admProductDetail__user-section user-item">
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                ID#: 
               </div>
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  Username: 
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.username}
-                </div>
-              </div>
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  Full Name:  
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.f_name} {userById.userData?.l_name}
-                </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.id}
               </div>
             </div>
-            <div className="admProductDetail__user-section">
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  Joined: 
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.created_at}
-                </div>
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                Username: 
               </div>
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  Email: 
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.user_email}
-                </div>
-              </div>
-              <div className="admProductDetail__user-group">
-                <div className="admProductDetail__user-label">
-                  Current Role: 
-                </div>
-                <div className="admProductDetail__user-info">
-                  {userById.userData.role}
-                </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.username}
               </div>
             </div>
-            <div className="admProductDetail__user-section">
-              <div className="admProductDetail__btn-container user-item">
-                {confirmUpdate ? (
-                  <div className="btn btn-primary update-btn" onClick={() => setConfirmUpdate(false)}>
-                    Cancel Update
-                  </div>
-                ) : (
-                  <div className="btn btn-primary update-btn" onClick={() => setConfirmUpdate(true)}>
-                    Update User
-                  </div>
-                )}
-                <Link to='/admin/user-list'>
-                  <div className="btn btn-primary update-btn">
-                      Users List
-                  </div>
-                </Link>
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                Full Name:  
+              </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.f_name} {userById.userData?.l_name}
               </div>
             </div>
           </div>
+          <div className="admProductDetail__user-section">
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                Joined: 
+              </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.created_at}
+              </div>
+            </div>
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                Email: 
+              </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.user_email}
+              </div>
+            </div>
+            <div className="admProductDetail__user-group">
+              <div className="admProductDetail__user-label">
+                Current Role: 
+              </div>
+              <div className="admProductDetail__user-info">
+                {userById.userData.role}
+              </div>
+            </div>
+          </div>
+          <div className="admProductDetail__user-section">
+            <div className="admProductDetail__btn-container user-item">
+              {confirmUpdate ? (
+                <div className="btn btn-primary update-btn" onClick={() => setConfirmUpdate(false)}>
+                  Cancel Update
+                </div>
+              ) : (
+                <div className="btn btn-primary update-btn" onClick={() => setConfirmUpdate(true)}>
+                  Update User
+                </div>
+              )}
+              <Link to='/admin/user-list'>
+                <div className="btn btn-primary update-btn">
+                    Users List
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="admProductDetail__info-section three" ref={myRef}>
-          {confirmUpdate && (
-            <>
-            <h2 className="info-header two">Update User Information</h2>
-            <AdminUserUpdate stateChanger={setConfirmUpdate} />
-            </>
-          )}
-        </div>
-      </section>
-    )}
-    </>
+      </div>
+      <div className="admProductDetail__info-section three" ref={myRef}>
+        {confirmUpdate && (
+          <>
+          <h2 className="info-header two">Update User Information</h2>
+          <AdminUserUpdate stateChanger={setConfirmUpdate} />
+          </>
+        )}
+      </div>
+    </section>
   )
 }
 export default AdminUserDetail;

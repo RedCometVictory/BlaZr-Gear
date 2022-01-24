@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { setAlert } from '../../redux/actions/alertActions';
 import { shippingAddressForCart } from '../../redux/actions/cartActions';
 import { getUserProfile } from '../../redux/actions/userActions';
@@ -24,6 +24,9 @@ const Shipping = () => {
   const [city, setCity] = useState(shippingAddress.city || userById?.myProfileInfo?.city || '');
   const [state, setState] = useState(shippingAddress.state || userById?.myProfileInfo?.state || '');
   const [country, setCountry] = useState(shippingAddress.country || userById?.myProfileInfo?.country || '');
+  const [lat, setLat] = useState(shippingAddress?.lat || '');
+  const [lng, setLng] = useState(shippingAddress?.lng || '');
+  const [mapLocation, setMapLocation] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -33,11 +36,11 @@ const Shipping = () => {
     if (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress) {
       dispatch(setAlert('Please provide an shipping address. Primary address is considered shipping address.', 'danger'));
     };
+    if (cartDetails.cartItems.length === 0) history.push('/cart');
   }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     if(isAuthenticated && (!shippingAddress.address || Object.keys(shippingAddress).length === 0 || !shippingAddress)) {
-      console.log("looking for user inffo")
       dispatch(getUserProfile());
     };
   }, [dispatch, isAuthenticated]);
@@ -49,6 +52,16 @@ const Shipping = () => {
   if (!hasMounted) {
     return null;
   }
+  const modalHandler = (e) => {
+    e.preventDefault();
+    if (!lat || !lng) {
+      setMapLocation(true);
+    }
+    
+    if (lat && lng) {
+      submitHandler(e);
+    }
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -68,13 +81,63 @@ const Shipping = () => {
       }
     }
 
-    dispatch(shippingAddressForCart({ fullname, email, address, zipcode, city, state, country }));
+    dispatch(shippingAddressForCart({ fullname, email, address, zipcode, city, state, country, lat, lng }));
     history.push('/confirm-order');
   };
 
+  const chooseMapLocation = () => {
+    dispatch(shippingAddressForCart({ fullname, email, address, zipcode, city, state, country, lat, lng }));
+    history.push('/map');
+  }
+
+  const MapModal = ({show, showHandler}) => {
+    let activeClass = show ? 'active' : '';
+    return (
+      <section className={`admOrder__modal shipping ${activeClass}`}>
+        <div className="admOrder__modal-container">
+          <div className="header">
+            <h3>Set Map Location?</h3>
+          </div>
+          <div className="content">
+            <div className="price">
+              <p>Continue without setting your map location? While not necessary, setting a map location can help us ship your order to the right place.</p>
+            </div>
+            <div className="btn-sec">
+              <button
+                className="btn btn-secondary"
+                onClick={(e) => showHandler(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={(e) => chooseMapLocation()}
+              >
+                No
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={(e) => submitHandler(e)}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="">
-      <form className="admForm" onSubmit={submitHandler}>
+      <form className="admForm" onSubmit={(e) => modalHandler(e)}>
+        <div className="admForm__header prod-item">
+          <h2 className="">Shipping Info</h2>
+          <Link to='/map' onClick={() => chooseMapLocation()}>
+            <div className="btn btn-secondary">Set Map Location</div>
+          </Link>
+        </div>
+        <MapModal show={mapLocation} showHandler={setMapLocation} />
         <div className="admForm__inner-container">
           {!isAuthenticated && (
             <div className="admForm__section">

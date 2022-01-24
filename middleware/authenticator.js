@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const pool = require ('../config/db');
-// Get token from header, created by initial res.json, (when req sent to protected route) is required
+
 const authJWT = async (req, res, next) => {
   // varify header exists, get token from header
   const authHeader = String(req.header('Authorization'));

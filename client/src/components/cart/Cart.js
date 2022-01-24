@@ -91,58 +91,54 @@ const Cart = () => {
     );
   price.grandTotal = (Number(price.subTotal) + Number(price.tax) + Number(price.shippingTotal)).toFixed(2);
 
-  return (
-    <>
-    {loading ? (
-      <Spinner />
-    ) : (
-      <section className="carts">
-        <div className="carts__header">
-          <h2 className="carts__title">Your Cart</h2>
-          <div className="carts__total-items">{cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items</div>
+  return loading ? (
+    <Spinner />
+  ) : (
+    <section className="carts">
+      <div className="carts__header">
+        <h2 className="carts__title">Your Cart</h2>
+        <div className="carts__total-items">{cartItems.reduce((qty, item) => Number(item.qty) + qty, 0)} Items</div>
+      </div>
+      <div className="carts__content">
+        <div className="carts__list">
+          {cartItems.length === 0 || !cartItems ? (
+            <div className="">
+              <div className="">Cart is Empty</div>
+              <Link to="/shop">
+                <div className="">
+                  Continue Shopping
+                </div>
+              </Link>
+            </div>
+          ) : (
+            cartItems.map((cart, i) => <CartItem cart={cart} key={i}/>)
+          )}
         </div>
-        <div className="carts__content">
-          <div className="carts__list">
-            {cartItems.length === 0 || !cartItems ? (
-              <div className="">
-                <div className="">Cart is Empty</div>
-                <Link to="/shop">
-                  <div className="">
-                    Continue Shopping
-                  </div>
-                </Link>
+        <div className="carts__total">
+          <h4 className="carts__total-header">Order Summary</h4>
+          <div className="carts__totals">
+            <div className="carts__subtotal">
+              Sub-Total: $ {price.subTotal}
+            </div>
+            <div className="carts__tax-total">
+              Tax: $ {price.tax}
+            </div>
+            <div className="carts__shipping-total">
+              Shipping: $ {price.shippingTotal}
+            </div>
+            <div className="carts__grand-total">
+              <span>Grand Total: </span>
+              <span>$ {price.grandTotal}</span>
+            </div>
+            {cartItems.length !== 0 && (
+              <div className="carts__btn-checkout" onClick={() => checkoutHandler()}>
+                Checkout
               </div>
-            ) : (
-              cartItems.map((cart, i) => <CartItem cart={cart} key={i}/>)
             )}
           </div>
-          <div className="carts__total">
-            <h4 className="carts__total-header">Order Summary</h4>
-            <div className="carts__totals">
-              <div className="carts__subtotal">
-                Sub-Total: $ {price.subTotal}
-              </div>
-              <div className="carts__tax-total">
-                Tax: $ {price.tax}
-              </div>
-              <div className="carts__shipping-total">
-                Shipping: $ {price.shippingTotal}
-              </div>
-              <div className="carts__grand-total">
-                <span>Grand Total: </span>
-                <span>$ {price.grandTotal}</span>
-              </div>
-              {cartItems.length !== 0 && (
-                <div className="carts__btn-checkout" onClick={() => checkoutHandler()}>
-                  Checkout
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      </section>
-    )}
-    </>
+      </div>
+    </section>
   )
 }
 export default Cart;

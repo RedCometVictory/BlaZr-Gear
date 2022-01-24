@@ -25,11 +25,12 @@
 @use './4layout/footer';
 @use './4layout/forms';
 @use './4layout/mainNav';
+@use './4layout/map';
 // @use './4layout/section';
 
 
 // 5 - PAGES
-@use './5pages/dashboard';
+// @use './5pages/dashboard';
 @use './5pages/landing';
 // @use './5pages/posts';
 @use './5pages/search';

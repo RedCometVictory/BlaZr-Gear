@@ -26,7 +26,6 @@ router.get('/', authJWT, authTest);
 // @access   Public
 router.post('/login', signinAuthValidator, validatorResult, authValidToken);
 
-// *** be mindful of secure app security from gmail
 // @route    POST auth/register
 // @desc     register a user
 // @access   Public

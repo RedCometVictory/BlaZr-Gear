@@ -69,6 +69,7 @@ exports.createSlide = async (req,res, next) => {
   let slideImgFilename = '';
 
   if (title && title.length > 40) {
+    // if (req.file) await removeOnErr(req.file.filename);
     title = title.trim().substring(0, 37) + "...";
   }
   if (theme && theme.length > 40) {

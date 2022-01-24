@@ -3,6 +3,7 @@ const pool = require('../config/db');
 const paypalSDK = require('@paypal/checkout-server-sdk')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const {v4: uuidv4} = require('uuid');
+const { purchaseRefundMail } = require('../middleware/emailService');
 
 // LiveEnvironment = poduction build
 // SandboxEnvironment = testing build
@@ -72,6 +73,16 @@ const calculateTotalAmount = async (cartItems) => {
     console.error(err.message);
     res.status(500).send("Server error...");
   }
+};
+
+// *** tested / works in app
+// GET /payment/get-stripe-key
+// Preload public stripe key.
+// Private
+exports.getPaypalClientApiKey = async (req, res, next) => {
+  res.status(200).json({
+    paypalApiKey: process.env.PAYPAL_CLIENT_ID
+  });
 };
 
 // *** tested / works in app
@@ -368,8 +379,7 @@ exports.makePayPalPayment = async (req, res, next) => {
 // /payment/refund-paypal/order/:order_id
 // private / Admin
 exports.refundPayPalPayment = async (req, res, next) => {
-  let {orderId, paypalPaymentId, paypalCaptureId, amount } = req.body;
-
+  let {orderId, userId, paypalPaymentId, paypalCaptureId, amount } = req.body;
   try {
     const refundedAtDate = new Date().toString().slice(0,10);
 
@@ -393,6 +403,14 @@ exports.refundPayPalPayment = async (req, res, next) => {
         errors: [{ msg: "No order found." }]
       });
     };
+
+    let userEmail = await pool.query(
+      'SELECT f_name, user_email FROM users WHERE id = $1;', [userId]
+    );
+
+    let firstName = userEmail.rows[0].f_name;
+    let email = userEmail.rows[0].user_email;
+    await purchaseRefundMail(email, orderId, firstName);
 
     res.status(200).json({ 
       status: "Success. Paypal order refunded.",
@@ -428,11 +446,7 @@ exports.addCardToUser = async (req, res, next) => {
       customer: stripeId,
       type: "card"
     });
-    // returns obj list of user's stored card details. Pass to client where customer could pick one of the saved cards.
 
-    // picked card, pass it's id to api call for a new paymentIntent. card id serves as value of payment_method of paymentIntent.
-
-    // A card can be set as the default payment method for a customer, it will be used whenever an invoice needs to be paid. Refer to defaultCard const in makePayment.
     if (cards) {
       if (cards.data.length === 0) {
         return res.status(404).json({ errors: [{ msg: "No card data found." }] });
@@ -503,10 +517,7 @@ exports.getStripeCharge = async (req, res, next) => {
   const {chargeId, stripeId} = req.body;
   try {
     const charge = await stripe.charges.retrieve(chargeId);
-    // if (user.rowCount === 0 || !user.rows[0]) {
-    //   return res.status(403).json({ errors: [{ msg: "Unauthorized. Failed to get user data." }] });
-    // }
-    console.log(charge);
+
     return res.status(200).json({
       status: "Listing customers who use stripe.",
       data: {
@@ -529,7 +540,16 @@ exports.refundCharge = async (req, res, next) => {
     const refund = await stripe.refunds.create({
       amount: roundedAmount,
       payment_intent: stripePaymentId
-    })
+    });
+
+    let userEmail = await pool.query(
+      'SELECT f_name, user_email FROM users WHERE id = $1;', [userId]
+    );
+
+    let firstName = userEmail.rows[0].f_name;
+    let email = userEmail.rows[0].user_email;
+
+    await purchaseRefundMail(email, orderId, firstName);
 
     // if successful set is_refunded to true and refunded to a date and order status to refunded
     // const refundedAtDate = new Date().toString();
