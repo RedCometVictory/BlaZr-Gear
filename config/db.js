@@ -2,7 +2,7 @@ require('dotenv').config();
 
 // PostgreSQL
 const { Pool } = require('pg');
-
+/*
 // for local development
 const pool = new Pool({
   host: process.env.PG_HOST,
@@ -24,11 +24,11 @@ pool.on("error", (err) => {
 pool.on("end", () => {
   console.log("Connection to Posgres db ended...");
 });
-
+*/
 // **********************************************************************
 // ******************** THIS SET UP FOR PRODUTION ***********************
 // **********************************************************************
-/*
+
 const devConfig = `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
   
 // for production
@@ -44,7 +44,7 @@ const pool = new Pool({
     rejectUnauthorized: false
   } 
 });
-*/
+
 // **********************************************************************
 // **********************************************************************
 // **********************************************************************

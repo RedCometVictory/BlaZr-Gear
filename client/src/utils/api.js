@@ -4,10 +4,10 @@ import store from '../redux/store';
 import { logout, refreshAccessToken } from '../redux/actions/authActions';
 
 const api = Axios.create({
-  baseURL: 'http://localhost:5000/api',
-  timeout:5000,
+  // baseURL: 'http://localhost:5000/api',
   // baseURL: `${process.env.HEROKU_DOMAIN}/api`,
-  // baseURL: `https://squadupsocial.herokuapp.com/api`,
+  baseURL: `https://squadupsocial.herokuapp.com/api`,
+  timeout:5000,
   // 'Content-Type': 'multipart/form-data'
   // headers: {
     // "Authorization": "Bearer " + localStorage.getItem("token"),
