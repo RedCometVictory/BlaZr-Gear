@@ -57,7 +57,6 @@ CREATE TABLE users(
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE reset_tokens(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email_address VARCHAR(60) NOT NULL,
