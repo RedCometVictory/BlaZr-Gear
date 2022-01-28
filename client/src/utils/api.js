@@ -6,7 +6,7 @@ import { logout, refreshAccessToken } from '../redux/actions/authActions';
 const api = Axios.create({
   // baseURL: 'http://localhost:5000/api',
   // baseURL: `${process.env.HEROKU_DOMAIN}/api`,
-  baseURL: `https://squadupsocial.herokuapp.com/api`,
+  baseURL: `https://blazrgear.herokuapp.com/api`,
   timeout:5000,
   // 'Content-Type': 'multipart/form-data'
   // headers: {
