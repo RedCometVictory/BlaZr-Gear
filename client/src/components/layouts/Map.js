@@ -139,11 +139,17 @@ const Map = () => {
     }
   };
 
-  const setAddPinHandler = (e) => {
+  const setAddPinHandler = async (e) => {
     e.preventDefault();
-    let [longitude, latitude] = e.lngLat
-    revGeoLocate(longitude, latitude)
+    let [longitude, latitude] = e.lngLat;
+    await revGeoLocate(longitude, latitude);
   };
+
+  const geoLocatehandler = async (e) => {
+    let longitude = e.coords.longitude;
+    let latitude = e.coords.latitude;
+    await revGeoLocate(longitude, latitude);
+  }
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -204,6 +210,8 @@ const Map = () => {
             style={glStyle}
             positionOptions={{enableHighAccuracy: true}}
             trackUserLocation={true}
+            showUserHeading={true}
+            onGeolocate={geoLocatehandler}
             auto
           />
           <Geocoder 

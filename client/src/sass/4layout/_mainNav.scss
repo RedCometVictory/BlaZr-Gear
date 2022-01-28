@@ -390,6 +390,9 @@
       top: 14px;
       margin: 0;
       transform: scale(3.26);
+      &:checked ~ span {
+        color: var(--navbar-text-hover);
+      }
       &:checked ~ ul {
         &.large {
           top: 50.4px;

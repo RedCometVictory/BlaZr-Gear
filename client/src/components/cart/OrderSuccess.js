@@ -13,7 +13,7 @@ const OrderSuccess = () => {
   useEffect(() => {
     setHasMounted(true);
     dispatch(addCardToUser(userInfo?.stripe_cust_id));
-  }, []);
+  }, [dispatch]);
   
   if (!hasMounted) {
     return null;

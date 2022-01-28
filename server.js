@@ -14,7 +14,7 @@ const HOST = process.env.HEROKU_DOMAIN;
 let whiteList;
 //  'https://www.sandbox.paypal.com'
 if (process.env.NODE_ENV === 'production') {
-  whiteList = [HOST, 'https://www.sandbox.paypal.com'];
+  whiteList = [HOST, 'https://www.sandbox.paypal.com', 'https://api.mapbox.com/'];
 }
 
 if (process.env.NODE_ENV === 'development') {
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'development') {
   app.get('/', async (req, res, next) => res.send("API is running..."));
 };
 
-// const Environment = process.env.NODE_ENV === "production" ? paypalSDK.core.SandboxEnvironment : paypalSDK.core.SandboxEnvironment;
+// const Environment = process.env.NODE_ENV === "production" ? paypalSDK.core.LiveEnvironment : paypalSDK.core.SandboxEnvironment;
 // const paypalClient = new paypalSDK.core.PayPalHttpClient(
 //   new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET)
 // );

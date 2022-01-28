@@ -17,8 +17,6 @@ let currentState = store.getState();
 store.subscribe(() => {
   let previousState = currentState;
   currentState = store.getState(); // from rootReducer
-  // console.log("current state");
-  // console.log(currentState);
   if (previousState.auth.token !== currentState.auth.token) {
     const token = currentState.auth.token;
     setAuthToken(token);

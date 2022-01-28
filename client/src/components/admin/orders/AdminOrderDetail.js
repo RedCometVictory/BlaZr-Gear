@@ -192,11 +192,11 @@ const AdminOrderDetail = () => {
       <div className="admOrder__container">
         <div className="admOrder__sub-header">
           <h4 className="admOrder__item-count">Order Item Total: {order?.orderItems?.length}</h4>
-          <div className="btn btn-secondary">
-            <Link to={`/admin/order-list`} >
+          <Link to={`/admin/order-list`} >
+            <div className="btn btn-secondary">
               Orders
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
         <div className="admOrder__general">
           <div className="admOrder__user-info">

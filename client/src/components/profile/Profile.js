@@ -89,7 +89,7 @@ const Profile = () => {
                 ID#: 
               </div>
               <div className="admProductDetail__user-info">
-                {userById.userData.id}
+                {userById?.userData?.id}
               </div>
             </div>
             <div className="admProductDetail__user-group">
@@ -97,7 +97,7 @@ const Profile = () => {
                 Username: 
               </div>
               <div className="admProductDetail__user-info">
-                {userById.userData.username}
+                {userById?.userData?.username}
               </div>
             </div>
             <div className="admProductDetail__user-group">
@@ -105,7 +105,7 @@ const Profile = () => {
                 Full Name:  
               </div>
               <div className="admProductDetail__user-info">
-                {userById.userData.f_name} {userById.userData?.l_name}
+                {userById?.userData?.f_name} {userById?.userData?.l_name}
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ const Profile = () => {
                 Joined: 
               </div>
               <div className="admProductDetail__user-info">
-                {userById.userData.created_at}
+                {userById?.userData?.created_at}
               </div>
             </div>
             <div className="admProductDetail__user-group">
@@ -123,7 +123,7 @@ const Profile = () => {
                 Email: 
               </div>
               <div className="admProductDetail__user-info">
-                {userById.userData.user_email}
+                {userById?.userData?.user_email}
               </div>
             </div>
           </div>

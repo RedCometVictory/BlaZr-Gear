@@ -29,7 +29,7 @@ import {
   AUTH_NEW_PASSWORD_FAILURE,
   // TOKEN_REQUEST,
   TOKEN_RECEIVED,
-  // TOKEN_FAILURE
+  TOKEN_FAILURE
 } from '../constants/authConstants';
 // import { ACCOUNT_DELETED } from '../constants/profileConstants';
 const initialState = {
@@ -121,7 +121,7 @@ const authReducer = (state = initialState, action) => {
         errors: payload,
         allowReset: false
       }
-    // case TOKEN_FAILURE:
+    case TOKEN_FAILURE:
     case AUTH_FORGOT_PASSWORD_FAILURE:
     case AUTH_NEW_PASSWORD_FAILURE:
       return {

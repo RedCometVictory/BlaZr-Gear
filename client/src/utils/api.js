@@ -5,6 +5,7 @@ import { logout, refreshAccessToken } from '../redux/actions/authActions';
 
 const api = Axios.create({
   baseURL: 'http://localhost:5000/api',
+  timeout:5000,
   // baseURL: `${process.env.HEROKU_DOMAIN}/api`,
   // baseURL: `https://squadupsocial.herokuapp.com/api`,
   // 'Content-Type': 'multipart/form-data'
@@ -16,6 +17,7 @@ const api = Axios.create({
     // "Content-Type": 'multipart/form-data',
     // 'Content-Type': 'application/json',
   // },
+  credentials: 'include',
   withCredentials: true
 });
 
@@ -33,6 +35,7 @@ api.interceptors.request.use(
   }
 );
 
+//*** ORIGINAL REQQUEST
 api.interceptors.response.use(
   (response) => response,
   async (error) => {

@@ -38,6 +38,7 @@ function accessTokenGenerator (user_id, role, cart_id) {
     }
   }
   return jwt.sign(
+    // payload, JWT_SECRET, { expiresIn: '30s' }, // 30secs
     // payload, JWT_SECRET, { expiresIn: '180s' }, // 3m
     // payload, JWT_SECRET, { expiresIn: '1800s' }, //30m
     // payload, JWT_SECRET, { expiresIn: "5 days" }
@@ -65,9 +66,9 @@ async function getAccessTokenFromHeaders(headers) {
 }
 
 // for now leave off async await, causes ref cookie to read as undefined....
-function validateRefreshToken(refToken) {
+async function validateRefreshToken(refToken) {
   try {
-    const refDecoded = jwt.verify(refToken, JWT_REFRESH_SECRET);
+    const refDecoded = await jwt.verify(refToken, JWT_REFRESH_SECRET);
     return refDecoded;
   } catch (err) {
     console.error('something went wrong with validating the refresh token!');
@@ -85,16 +86,20 @@ function validateResetToken(resetToken) {
   }
 }
 
+// * Reminder: chromium browser security requires cookie option secure to be true in order to create cookie, this applies for development mode as well
 function refreshTokenCookieOptions() {
   return {
     // maxAge: 300 * 1000,
     // expires: new Date(Date.now() + 1*60*60*1000), // 1hr
     // expires: new Date(Date.now() + 10*60*1000), // 10min
     expires: new Date(Date.now() + 7*24*60*60*1000), //7d
-    secure: NODE_ENV === 'production' ? true : false,
+    // secure: NODE_ENV === 'production' ? true : false,
+    secure: NODE_ENV === 'production' ? true : true,
     httpOnly: NODE_ENV === 'production' ? true : false,
     sameSite: NODE_ENV === 'production' ? "strict" : "none",
-    path: '/'
+    // path: '/'
+    // * Ensure cookie only interact with specified url, prevents 401 loop when err occurs but auth still valid
+    path: '/api/auth/refresh-token'
   }
 };
 

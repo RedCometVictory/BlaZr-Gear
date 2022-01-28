@@ -23,6 +23,7 @@
     margin: 0 6px 0 6px;
   }
   &__card {
+    width: 100%;
     margin: 1.8rem auto 0;
     border-radius: 6px;
     max-width: 300px;
@@ -34,6 +35,7 @@
     height: 160px;
     max-height: 160px;
     width: 100%;
+    justify-content: center;
     display: flex;
     overflow-y: hidden;
     background-color: white;

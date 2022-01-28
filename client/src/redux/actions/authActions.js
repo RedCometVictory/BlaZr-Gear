@@ -21,16 +21,9 @@ import {
   AUTH_VERIFY_PASSWORD_SUCCESS,
   AUTH_VERIFY_PASSWORD_FAILURE,
   // AUTH_VERIFY_PASSWORD_RESET,
-  // AUTH_UPDATE_PASSWORD_REQUEST,
-  // AUTH_UPDATE_PASSWORD_SUCCESS,
-  // AUTH_UPDATE_PASSWORD_FAILURE,
-  // AUTH_UPDATE_PASSWORD_RESET,
-  // AUTH_NEW_PASSWORD_REQUEST,
-  // AUTH_NEW_PASSWORD_SUCCESS,
-  // AUTH_NEW_PASSWORD_FAILURE,
   // TOKEN_REQUEST,
   TOKEN_RECEIVED,
-  // TOKEN_FAILURE,
+  TOKEN_FAILURE,
   AUTH_USER_LOADED_REQUEST,
   // AUTH_USER_LOADED_FAILURE
 } from '../constants/authConstants';
@@ -48,7 +41,7 @@ export const loadUser = () => async (dispatch, getState) => {
     if (result.userInfo.stripe_cust_id) {
       await dispatch(addCardToUser(result.userInfo.stripe_cust_id));
     }
-    
+
     dispatch({
       type: AUTH_USER_LOADED,
       payload: result
@@ -235,6 +228,6 @@ export const refreshAccessToken = (newAccessToken) => async (dispatch, getState)
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
     }
-    // dispatch({type: TOKEN_FAILURE});
+    dispatch({type: TOKEN_FAILURE});
   }
 };

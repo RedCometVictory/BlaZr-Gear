@@ -13,9 +13,6 @@
 -- CREATE DATABASE blazr_gear;
 -- CREATE DATABASE blazr_gear_ver_02;
 
--- EXAMPLE ADMIN QUERY
--- INSERT INTO users (f_name, l_name, username, user_email, user_password, user_avatar, user_avatar_filename, admin) VALUES (first, here, HauseMaster, thehausewins@mail.com, , , , true); 
-
 -- Check the syntax of a query, if passed returns: DO:
 -- DO $SYNTAX_CHECK$ BEGIN RETURN;
 -- query goes here
@@ -35,6 +32,9 @@
 --   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 -- END; $SYNTAX_CHECK$;
+
+-- EXAMPLE ADMIN QUERY
+-- INSERT INTO users (f_name, l_name, username, user_email, user_password, user_avatar, user_avatar_filename, admin) VALUES (first, here, HauseMaster, thehausewins@mail.com, , , , true); 
 
 -- ALTER TABLE table_name
 -- ADD COLUMN new_column_name data_type constraint;
@@ -56,6 +56,7 @@ CREATE TABLE users(
   role VARCHAR(10) NOT NULL DEFAULT 'visitor',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE reset_tokens(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

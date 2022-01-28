@@ -9,12 +9,14 @@
     justify-content: space-between;
   }
   &__image {
+    width: 100%;
     margin-right: initial;
     display: flex;
     justify-content: center;
   }
   &__img {
-    width: auto;
+    width: 100%;
+    object-fit: contain;
     max-height: 400px;
   }
   &__info-sec {

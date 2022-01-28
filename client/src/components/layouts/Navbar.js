@@ -14,7 +14,6 @@ const Navbar = () => {
   const history = useHistory();
   const caretToggleRef = useRef();
   // const cartIconRef = useRef();
-  // const { height, width } = useWindow();
   const userAuth = useSelector(state => state.auth);
   const cart = useSelector(state => state.cart);
   const { isAuthenticated, userInfo } = userAuth;
@@ -38,7 +37,6 @@ const Navbar = () => {
     // if (!isAuthenticated) return dispatch(getCartGuest());
     // if (isAuthenticated) return dispatch(getCart());
     // dispatch(getCartGuest());
-  // }, [dispatch, isAuthenticated]);
   }, [dispatch]);
 
   if (!hasMounted) {

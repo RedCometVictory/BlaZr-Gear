@@ -182,18 +182,16 @@ exports.getOrderById = async (req, res, next) => {
 // /orders/:order_id
 // admin
 exports.getOrderByIdAdmin = async (req, res, next) => {
-  const { id } = req.user;
   const { order_id } = req.params;
 
   try {
     const order = await pool.query(
       'SELECT * FROM orders WHERE id = $1;', [order_id]
     );
-    
     if (order.rowCount === 0 || !order) {
       return res.status(404).json({ errors: [{ msg: "Order not found." }] });
     }
-    
+
     if (order.rowCount >= 1) {
       for (let i = 0; i < order.rows.length; i++) {
         let created_at = order.rows[i].created_at;
@@ -201,9 +199,11 @@ exports.getOrderByIdAdmin = async (req, res, next) => {
         order.rows[i].created_at = newCreatedAt;
       }
     };
+
+    let orderUserId = order.rows[0].user_id;
     
     let orderItems = await pool.query(
-      'SELECT O.id, P.*, I.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id JOIN images AS I ON I.product_id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, id]
+      'SELECT O.id, P.*, I.*, OI.quantity FROM orders AS O JOIN order_items AS OI ON OI.order_id = O.id JOIN products AS P ON P.id = OI.product_id JOIN images AS I ON I.product_id = OI.product_id WHERE O.id = $1 AND O.user_id = $2;', [order_id, orderUserId]
     );
 
     if (orderItems.rowCount >= 1) {

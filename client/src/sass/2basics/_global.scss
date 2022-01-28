@@ -91,6 +91,42 @@ img {
     margin-bottom: 1rem;
   }
 }
+
+.cookie-notif {
+  max-width: 260px;
+  height: auto;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  margin: 0 0 0 20px;
+  display: none;
+  &.active {
+    display: block;
+  }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    span {
+      cursor: pointer;
+      padding: 0 6px;
+    }
+  }
+  &__container {
+    padding: 12px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--color-text);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    button {
+      cursor: pointer;
+    }
+  }
+  &__desc {
+    margin: 10px 0;
+  }
+}
 // for desktop
 @media (min-width: 820px) {
   .container {

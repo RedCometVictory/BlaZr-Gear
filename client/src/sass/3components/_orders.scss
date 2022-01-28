@@ -97,8 +97,8 @@
     border-bottom-left-radius: 6px;
   }
   &__img {
-    height: 100%;
-    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
   }
   &__info {
     width: 100%;
@@ -123,7 +123,7 @@
 .orderItem {
   padding: 14px;
   &:nth-child(even) {
-    background-color: grey;
+    background-color: var(--color-child-item);
   }
   &__row {
     display: flex;
@@ -356,7 +356,7 @@
 .admOrderItem {
   padding: 14px;
   &:nth-child(even) {
-    background-color: grey;
+    background-color: var(--color-child-item);
   }
   &__row {
     display: flex;

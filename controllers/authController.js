@@ -80,7 +80,7 @@ exports.registerUser = async (req, res, next) => {
     const encryptedPassword = await bcrypt.hash(password, salt);
 
     let newUser = await pool.query(
-      'INSERT INTO users (f_name, l_name, username, user_email, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *', [firstName, lastName, username, email, encryptedPassword]
+      'INSERT INTO users (f_name, l_name, username, user_email, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *;', [firstName, lastName, username, email, encryptedPassword]
     );
 
     if (newUser.rowCount === 0 || !newUser) {
@@ -157,7 +157,7 @@ exports.authValidToken = async (req, res, next) => {
     // create access & refresh token, save refToken to db
     const jwtToken = accessTokenGenerator(user.rows[0].id, user.rows[0].role, user.rows[0].cart_id);
 
-    const refreshToken = refreshTokenString();    
+    const refreshToken = refreshTokenString();
     const setRefreshToken = await pool.query(
       'UPDATE users SET refresh_token = $1 WHERE user_email = $2 RETURNING *;', [refreshToken, user.rows[0].user_email]
     );
@@ -170,7 +170,7 @@ exports.authValidToken = async (req, res, next) => {
     const signedRefreshToken = refreshTokenGenerator(user.rows[0].id, user.rows[0].role, refreshToken);
 
     const refreshOptions = refreshTokenCookieOptions();
-    
+
     // keep password from client by 'overriding it'
     user.rows[0].user_password = undefined;
 
@@ -341,7 +341,7 @@ exports.authRefreshToken = async (req, res, next) => {
   }
   // check if access token delivered via headers
   // verify token to get payload...
-  const verifiedRefToken = validateRefreshToken(refresh);
+  const verifiedRefToken = await validateRefreshToken(refresh);
 
   if (verifiedRefToken === undefined || !verifiedRefToken) {
     res.status(401).send('Failed to verify refresh token.');
@@ -408,7 +408,7 @@ exports.authLogout = async (req, res, next) => {
   const { refresh } = req.cookies; 
   // verify token to get payload...
   try {
-    const verifiedRefToken = validateRefreshToken(refresh);
+    const verifiedRefToken = await validateRefreshToken(refresh);
 
     // clear existing cookies:
     if (verifiedRefToken) {

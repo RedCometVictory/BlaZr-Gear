@@ -30,7 +30,7 @@ const AdminProductItem = ({
           </div>
           <div className="admProdItem__detail-set four prod-item">
             <div className="admProdItem__set md">Stock Total: {count_in_stock}</div>
-            <div className="admProdItem__set md">Grand Total: ${price}</div>
+            <div className="admProdItem__set md">List Price: ${price}</div>
           </div>
           <div className="admProdItem__detail-set five prod-item">
             <Link to={`/admin/product/${product_id}/detail`}>
