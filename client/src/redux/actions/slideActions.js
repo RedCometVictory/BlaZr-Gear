@@ -20,7 +20,7 @@ import {
   SLIDE_DELETE_FAILURE
 } from '../constants/slideConstants';
 
-import createUpdateSlideShowForm from '../../utils/formDataServices';
+import { createUpdateSlideShowForm } from '../../utils/formDataServices';
 
 export const getAllSlides = () => async dispatch => {
   try {
