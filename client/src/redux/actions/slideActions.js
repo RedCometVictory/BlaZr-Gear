@@ -65,7 +65,7 @@ export const getSlideDetails = (slide_id) => async dispatch => {
 
 export const createSlide = (slideForm, history) => async dispatch => {
   try {
-    let servicedData = await createUpdateSlideShowForm(slideForm);
+    let servicedData = createUpdateSlideShowForm(slideForm);
     dispatch({type: SLIDE_CREATE_REQUEST});
 
     await api.post(`/slides/add`, servicedData);
