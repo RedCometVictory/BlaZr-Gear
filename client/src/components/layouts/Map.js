@@ -10,6 +10,8 @@ import axios from "axios";
 import Spinner from './Spinner';
 import { shippingAddressForCart } from '../../redux/actions/cartActions';
 import { setAlert } from '../../redux/actions/alertActions';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+ReactMapGl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
 const defaultLocation = { lat: 30.265, lng: -97.724 }
 
