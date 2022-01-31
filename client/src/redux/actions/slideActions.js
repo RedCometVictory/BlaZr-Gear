@@ -77,7 +77,7 @@ export const createSlide = (slideForm, history) => async dispatch => {
     history.push('/admin/slide/list');
   } catch (err) {
     dispatch(setAlert('Failed to create slide.', 'danger'));
-    const errors = err.response.data.errors;
+    const errors = err?.response?.data?.errors;
     
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
