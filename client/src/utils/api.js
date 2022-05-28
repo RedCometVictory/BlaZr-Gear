@@ -6,9 +6,10 @@ import { logout, refreshAccessToken } from '../redux/actions/authActions';
 const api = Axios.create({
   // baseURL: 'http://localhost:5000/api',
   // baseURL: `${process.env.HEROKU_DOMAIN}/api`,
-  baseURL: `https://blazrgear.herokuapp.com/api`,
+  // baseURL: `https://blazrgear.herokuapp.com/api`,
   // timeout:5000,
   timeout:25000,
+  baseURL: "/api",
   // 'Content-Type': 'multipart/form-data'
   // headers: {
     // "Authorization": "Bearer " + localStorage.getItem("token"),
